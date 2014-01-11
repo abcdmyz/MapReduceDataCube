@@ -1,4 +1,4 @@
-package mrcube.holisticmeasure;
+package mrcube.holistic;
 
 import java.util.ArrayList;
 
@@ -7,27 +7,42 @@ import java.util.ArrayList;
  * Generate all region in the lattice, including hierarchical lattice
  */
 
-public class Lattice 
+public class CubeLattice 
 {
 	private ArrayList<Tuple<Integer>> regionBag;
+	private ArrayList<String> regionStringBag;
 	private int[] attributeParent;
 	private int[] rollupGroup;
 	private int attributeSize; 
+	private int groupAttributeSize;
 	
-	public Lattice(int attributeSize)
+	public CubeLattice(int attributeSize, int groupAttributeSize)
 	{
 		this.attributeSize = attributeSize;
+		this.groupAttributeSize = groupAttributeSize;
 		
 		attributeParent = new int[attributeSize];
 		rollupGroup = new int[attributeSize];
 		
 		regionBag = new ArrayList<Tuple<Integer>>();
+		regionStringBag = new ArrayList<String>();
 	}
 	
 	public ArrayList<Tuple<Integer>> getRegionBag()
 	{
 		return regionBag;
 	}
+	
+	public ArrayList<String> getRegionStringBag()
+	{
+		return regionStringBag;
+	}
+	
+	public void setregionBag(ArrayList<Tuple<Integer>> regionBag)
+	{
+		this.regionBag = regionBag;
+	}
+	
 	
 	/*
 	 * Calculate all region according to the attribute information of cube and roll up
@@ -56,6 +71,7 @@ public class Lattice
 		}
 		
 		dfsCalculateAllRegion(curRegion, flag, 0);
+		convertRegionBagToString();
 		
 		/*
 		 * print for debug
@@ -95,6 +111,12 @@ public class Lattice
 	 */
 	private void initializeBeforeCalculate(ArrayList<Tuple<Integer>> attributeCubeRollUp)
 	{
+		for (int i = 0; i < attributeSize; i++)
+		{
+			attributeParent[i] = -1;
+			rollupGroup[i] = -1;
+		}
+		
 		Tuple<Integer> tuple = attributeCubeRollUp.get(0);
 		
 		if (tuple != null)
@@ -158,6 +180,11 @@ public class Lattice
 		
 		for (int i = start; i < attributeSize; i++)
 		{
+			if (attributeParent[i] == -1)
+			{
+				continue;
+			}
+			
 			/*
 			 * In case duplicate choose
 			 * for example, (year, month, day), if year is chosen, day won't be chosen.
@@ -207,5 +234,56 @@ public class Lattice
 				}
 			}
 		}
+	}
+	
+	public void convertRegionBagToString()
+	{
+		for (int i = 0; i < regionBag.size(); i++)
+		{
+			String s = new String();
+			
+			for (int j = 0; j < regionBag.get(i).getSize(); j++)
+			{
+				if (regionBag.get(i).getField(j) == null)
+					s += "*|";
+				
+				else
+					s += regionBag.get(i).getField(j).toString() + "|";
+			}
+			
+			regionStringBag.add(s);
+		}
+	}
+
+	public void printLattice()
+	{
+		int count = 0;
+		
+		for (int i = 0; i < regionBag.size(); i++)
+		{
+			
+			for (int j = 0; j < regionBag.get(i).getSize(); j++)
+			{
+				if (regionBag.get(i).getField(j) == null)
+					System.out.print("* ");
+				
+				else
+					System.out.print(regionBag.get(i).getField(j) + " ");
+			}
+			
+			count++;
+			System.out.println();
+		}
+		
+		System.out.println("Total Region: " + count);
+	}
+
+	public void printLatticeString()
+	{
+		for (int i = 0; i < regionStringBag.size(); i++)
+		{
+			System.out.println(regionStringBag.get(i));
+		}
+		
 	}
 }

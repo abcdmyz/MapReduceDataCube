@@ -3,16 +3,18 @@ package test;
 
 import java.util.ArrayList;
 
-import mrcube.holisticmeasure.Lattice;
-import mrcube.holisticmeasure.Tuple;
+import mrcube.configuration.MRCubeParameter;
+import mrcube.holistic.CubeLattice;
+import mrcube.holistic.Tuple;
 
-public class LatticeTest 
+public class CubeLatticeTest 
 {
+	
 	public static void exec()
 	{
-		test1();
-		test2();
-		test3();
+		//test1();
+		//test2();
+		test4();
 	}
 	
 	/*
@@ -20,7 +22,7 @@ public class LatticeTest
 	 */
 	public static void test1()
 	{
-		Lattice lattice = new Lattice(8);
+		CubeLattice lattice = new CubeLattice(8,8);
 		
 		ArrayList<Tuple<Integer>> aCubeRollUp = new ArrayList<Tuple<Integer>>();
 		
@@ -43,18 +45,7 @@ public class LatticeTest
 		aCubeRollUp.add(tuple2);
 		
 		lattice.calculateAllRegion(aCubeRollUp);
-		ArrayList<Tuple<Integer>> regionBag = lattice.getRegionBag();
-		
-		for (int i = 0; i < regionBag.size(); i++)
-		{
-			
-			for (int j = 0; j < regionBag.get(i).getSize(); j++)
-			{
-				System.out.print(regionBag.get(i).getField(j) + " ");
-			}
-			
-			System.out.println();
-		}	
+		printLattice(lattice);
 	}
 	
 	/*
@@ -62,7 +53,7 @@ public class LatticeTest
 	 */
 	public static void test2()
 	{
-		Lattice lattice = new Lattice(5);
+		CubeLattice lattice = new CubeLattice(5, 5);
 		
 		ArrayList<Tuple<Integer>> aCubeRollUp = new ArrayList<Tuple<Integer>>();
 		
@@ -74,18 +65,7 @@ public class LatticeTest
 		aCubeRollUp.add(tuple0);
 		
 		lattice.calculateAllRegion(aCubeRollUp);
-		ArrayList<Tuple<Integer>> regionBag = lattice.getRegionBag();
-		
-		for (int i = 0; i < regionBag.size(); i++)
-		{
-			
-			for (int j = 0; j < regionBag.get(i).getSize(); j++)
-			{
-				System.out.print(regionBag.get(i).getField(j) + " ");
-			}
-			
-			System.out.println();
-		}	
+		printLattice(lattice);
 	}
 	
 	/*
@@ -93,7 +73,7 @@ public class LatticeTest
 	 */
 	public static void test3()
 	{
-		Lattice lattice = new Lattice(5);
+		CubeLattice lattice = new CubeLattice(6, 6);
 		
 		ArrayList<Tuple<Integer>> aCubeRollUp = new ArrayList<Tuple<Integer>>();
 	
@@ -105,22 +85,78 @@ public class LatticeTest
 		Tuple<Integer> tuple2 = new Tuple<Integer>(2);
 		tuple2.addField(0, 3);
 		tuple2.addField(1, 4);
+		tuple2.addField(2, 5);
+
+		Tuple<Integer> tuple3 = null;
 		
+		aCubeRollUp.add(tuple3);
 		aCubeRollUp.add(tuple1);
 		aCubeRollUp.add(tuple2);
 		
 		lattice.calculateAllRegion(aCubeRollUp);
+	
+		//printLattice(lattice);
+		printLatticeString(lattice);
+	}
+	
+	public static void test4()
+	{
+		CubeLattice lattice = new CubeLattice(9, 6);
+		
+		ArrayList<Tuple<Integer>> aCubeRollUp = new ArrayList<Tuple<Integer>>();
+		
+		Tuple<Integer> tuple0 = null;
+
+		Tuple<Integer> tuple1 = new Tuple<Integer>(3);
+		tuple1.addField(0, 2);
+		tuple1.addField(1, 3);
+		tuple1.addField(2, 4);
+
+		Tuple<Integer> tuple2 = new Tuple<Integer>(3);
+		tuple2.addField(0, 5);
+		tuple2.addField(1, 6);
+		tuple2.addField(2, 7);
+		
+		aCubeRollUp.add(tuple0);
+		aCubeRollUp.add(tuple1);
+		aCubeRollUp.add(tuple2);
+		
+		lattice.calculateAllRegion(aCubeRollUp);
+		
+		printLattice(lattice);
+		//printLatticeString(lattice);
+	}
+	
+	public static void printLattice(CubeLattice lattice)
+	{
 		ArrayList<Tuple<Integer>> regionBag = lattice.getRegionBag();
+		int count = 0;
 		
 		for (int i = 0; i < regionBag.size(); i++)
 		{
 			
 			for (int j = 0; j < regionBag.get(i).getSize(); j++)
 			{
-				System.out.print(regionBag.get(i).getField(j) + " ");
+				if (regionBag.get(i).getField(j) == null)
+					System.out.print("* ");
+				
+				else
+					System.out.print(regionBag.get(i).getField(j) + " ");
 			}
 			
+			count++;
 			System.out.println();
-		}	
+		}
+		
+		System.out.println("Total Region: " + count);
+	}
+
+	public static void printLatticeString(CubeLattice lattice)
+	{
+		for (int i = 0; i < lattice.getRegionStringBag().size(); i++)
+		{
+			System.out.println(lattice.getRegionStringBag().get(i));
+		}
+		
 	}
 }
