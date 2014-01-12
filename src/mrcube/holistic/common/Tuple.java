@@ -1,4 +1,4 @@
-package mrcube.holistic;
+package mrcube.holistic.common;
 
 import java.io.DataInput;
 import java.io.DataOutput;

@@ -5,7 +5,7 @@ import java.net.URI;
 
 
 import mrcube.configuration.MRCubeParameter;
-import mrcube.holistic.StringPair;
+import mrcube.holistic.common.StringPair;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;

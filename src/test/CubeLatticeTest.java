@@ -4,8 +4,8 @@ package test;
 import java.util.ArrayList;
 
 import mrcube.configuration.MRCubeParameter;
-import mrcube.holistic.CubeLattice;
-import mrcube.holistic.Tuple;
+import mrcube.holistic.common.CubeLattice;
+import mrcube.holistic.common.Tuple;
 
 public class CubeLatticeTest 
 {

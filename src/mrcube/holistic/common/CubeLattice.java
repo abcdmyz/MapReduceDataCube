@@ -1,4 +1,4 @@
-package mrcube.holistic;
+package mrcube.holistic.common;
 
 import java.util.ArrayList;
 

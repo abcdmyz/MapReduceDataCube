@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.Random;
 
 import mrcube.configuration.MRCubeParameter;
-import mrcube.holistic.CubeLattice;
-import mrcube.holistic.StringPair;
-import mrcube.holistic.Tuple;
+import mrcube.holistic.common.CubeLattice;
+import mrcube.holistic.common.StringPair;
+import mrcube.holistic.common.Tuple;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;

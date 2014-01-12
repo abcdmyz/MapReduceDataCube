@@ -1,9 +1,9 @@
 package mrcube.holistic.mr2materialize;
 
 import mrcube.configuration.MRCubeParameter;
-import mrcube.holistic.StringPair;
-import mrcube.holistic.StringTripple;
-import mrcube.holistic.Tuple;
+import mrcube.holistic.common.StringMultiple;
+import mrcube.holistic.common.StringPair;
+import mrcube.holistic.common.Tuple;
 import mrcube.holistic.mr1estimate.HolisticMRCubeEstimate;
 import mrcube.holistic.mr1estimate.HolisticMRCubeEstimateMapper;
 import mrcube.holistic.mr1estimate.HolisticMRCubeEstimateReducer;
@@ -35,12 +35,13 @@ public class HolisticMRCubeMaterialize
 		//job.setCombinerClass(HolisticMRCubeEstimateReducer.class);
 		job.setReducerClass(HolisticMRCubeMaterializeReducer.class);
 		
-		job.setOutputKeyClass(StringTripple.class);
+		job.setOutputKeyClass(StringMultiple.class);
 		job.setOutputValueClass(IntWritable.class);
-		
-		job.setPartitionerClass(StringTripplePartitioner.class);
-		job.setSortComparatorClass(StringTrippleKeyComparator.class);
-		job.setGroupingComparatorClass(StringTrippleGroupComparator.class);
+
+
+		job.setPartitionerClass(StringMultiplePartitioner.class);
+		job.setSortComparatorClass(StringMultipleKeyComparator.class);
+		job.setGroupingComparatorClass(StringMultipleGroupComparator.class);
     
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setNumReduceTasks(1);

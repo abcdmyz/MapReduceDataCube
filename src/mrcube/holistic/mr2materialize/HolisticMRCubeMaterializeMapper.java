@@ -6,9 +6,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import mrcube.configuration.MRCubeParameter;
-import mrcube.holistic.CubeLattice;
-import mrcube.holistic.StringTripple;
-import mrcube.holistic.Tuple;
+import mrcube.holistic.common.CubeLattice;
+import mrcube.holistic.common.StringMultiple;
+import mrcube.holistic.common.Tuple;
 
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -18,7 +18,8 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
-public class HolisticMRCubeMaterializeMapper extends Mapper<Object, Text, StringTripple, IntWritable> 
+//StringMultiple
+public class HolisticMRCubeMaterializeMapper extends Mapper<Object, Text, StringMultiple, IntWritable> 
 {
 	private CubeLattice cubeLattice;
 	ArrayList<Tuple<Integer>> regionTupleBag = new ArrayList<Tuple<Integer>>();
@@ -78,12 +79,14 @@ public class HolisticMRCubeMaterializeMapper extends Mapper<Object, Text, String
 		String tupleSplit[] = value.toString().split("\t");
 		String regionNum = new String();
 		String pfKey = new String();
+		String measureString = new String();
 		
 		for (int i = 0; i < cubeLattice.getRegionStringBag().size(); i++)
 		{
 			partitionFactor = cubeLattice.getRegionBag().get(i).getPartitionFactor();
 			regionNum = String.valueOf(i);
 			pfKey = String.valueOf(MRCubeParameter.getTestDataPartitionFactorKey(value.toString(), partitionFactor));
+			measureString = MRCubeParameter.getTestDataMeasureString(value.toString());
 
 			String groupKey = new String();
 			
@@ -91,19 +94,34 @@ public class HolisticMRCubeMaterializeMapper extends Mapper<Object, Text, String
 			{
 				if (cubeLattice.getRegionBag().get(i).getField(k) != null)
 				{
-					groupKey += tupleSplit[k] + " ";
+					if (groupKey.length() > 0)
+					{
+						groupKey += " " + tupleSplit[k];
+					}
+					else
+					{
+						groupKey += tupleSplit[k];
+					}
 				}
 			}
 			
+			/*
 			StringTripple outputKey = new StringTripple();
 
 			outputKey.setFirstString(regionNum);
 			outputKey.setSecondString(groupKey);
 			outputKey.setThirdString(pfKey);
+			*/
 			
+			StringMultiple outputKey = new StringMultiple(4);
+			outputKey.addString(regionNum);
+			outputKey.addString(groupKey);
+			outputKey.addString(pfKey);
+			outputKey.addString(measureString);
+
 			/*
 			Text outputKey = new Text();
-			outputKey.set(regionNum + " " + groupKey + " " + pfKey);
+			outputKey.set(regionNum + "|" + groupKey + "|" + pfKey + "|" + measureString + "|");
 			*/
 			
 			context.write(outputKey, one);

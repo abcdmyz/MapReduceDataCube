@@ -1,6 +1,6 @@
 package mrcube.holistic.mr1estimate;
 
-import mrcube.holistic.StringPair;
+import mrcube.holistic.common.StringPair;
 
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;

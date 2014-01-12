@@ -19,18 +19,12 @@ public class NaiveMRCube {
 	{
 		Configuration conf = new Configuration();
 		String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
-		
-		if (otherArgs.length != 2) 
-		{
-			System.err.println("Usage: mrcube <in> <out>");
-			System.exit(2);
-		}
-		
+	
 		Job job = new Job(conf, "mrcube");
 		job.setJarByClass(NaiveMRCube.class);
 		
 		job.setMapperClass(NaiveMRCubeMapper.class);
-		job.setCombinerClass(NaiveMRCubeReducer.class);
+		//job.setCombinerClass(NaiveMRCubeReducer.class);
 		job.setReducerClass(NaiveMRCubeReducer.class);
 		
 		job.setOutputKeyClass(Text.class);

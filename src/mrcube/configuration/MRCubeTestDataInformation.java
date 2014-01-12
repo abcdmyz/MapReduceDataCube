@@ -2,7 +2,7 @@ package mrcube.configuration;
 
 import java.util.ArrayList;
 
-import mrcube.holistic.Tuple;
+import mrcube.holistic.common.Tuple;
 
 public class MRCubeTestDataInformation 
 {

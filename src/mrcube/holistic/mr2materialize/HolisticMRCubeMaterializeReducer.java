@@ -2,9 +2,7 @@ package mrcube.holistic.mr2materialize;
 
 import java.io.IOException;
 
-import mrcube.holistic.StringPair;
-import mrcube.holistic.StringTripple;
-import mrcube.holistic.Tuple;
+import mrcube.holistic.common.StringMultiple;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -13,11 +11,13 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 
-public class HolisticMRCubeMaterializeReducer extends Reducer<StringTripple, IntWritable, Text, IntWritable> 
+//StringMultiple
+public class HolisticMRCubeMaterializeReducer extends Reducer<StringMultiple, IntWritable, Text, IntWritable> 
 {
 	private IntWritable one = new IntWritable(1);
 
-	public void reduce(StringTripple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+	@Override
+	public void reduce(StringMultiple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
 		Text outputKey = new Text();
 		int count = 0;
@@ -25,16 +25,21 @@ public class HolisticMRCubeMaterializeReducer extends Reducer<StringTripple, Int
 		
 		for(IntWritable val : values)
 		{
-			if (key.getSecondString() != last)
+			if (key.getString(3) != last)
 			{
 				count++;
 			}
-			last = key.getThirdString();
+			last = key.getString(3);
 		}
 		
-		outputKey.set(key.getFirstString() + " " +  key.getSecondString());
+		String outputString = new String();
+		for (int i = 0; i < key.getSize() - 2; i++)
+		{
+			outputString += key.getString(i) + "|";
+		}
+		outputKey.set(outputString);
+			
 		IntWritable outputValue = new IntWritable(count);
-		
 		context.write(outputKey, outputValue);
 	}
 }

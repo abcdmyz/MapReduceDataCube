@@ -1,6 +1,6 @@
 package mrcube.configuration;
 
-import mrcube.holistic.Tuple;
+import mrcube.holistic.common.Tuple;
 
 public class MRCubeParameter 
 {
@@ -16,6 +16,9 @@ public class MRCubeParameter
 	final public static String MR1_OUTPUT_PATH = "lattice";
 	final public static String MR2_INPUT_PATH = "input_d2_20";
 	final public static String MR2_OUTPUT_PATH = "output";
+	final public static String MR3_INPUT_PATH = "output";
+	final public static String MR3_OUTPUT_PATH = "output_end";
+	final public static String MR3_INPUT_PATH_FILTER = ".*part.*";
 	
 	
 	public static MRCubeTestDataInformation testDataInfor = MRCubeTestData.getTestData2();
@@ -34,6 +37,11 @@ public class MRCubeParameter
 	{
 		return MRCubeTestData.transformLineStringtoTupleForTestData2(line);
 	}	
+
+	public static String getTestDataMeasureString(String tuple)
+	{
+		return MRCubeTestData.getMeasureStringForTestData2(tuple);
+	}
 
 	
 	public static int getSampleTuplePercent()

@@ -2,7 +2,7 @@ package mrcube.configuration;
 
 import java.util.ArrayList;
 
-import mrcube.holistic.Tuple;
+import mrcube.holistic.common.Tuple;
 
 public class MRCubeTestData 
 {	
@@ -92,5 +92,11 @@ public class MRCubeTestData
 		int uid = Integer.valueOf(tupleSplit[1]);
 		
 		return uid % partitionFactor;
+	}
+
+	public static String getMeasureStringForTestData2(String tuple)
+	{
+		String[] tupleSplit = tuple.split("\t");
+		return tupleSplit[1];
 	}
 }
