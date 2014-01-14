@@ -2,61 +2,77 @@ package mrcube.naive;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.StringTokenizer;
 
+import mrcube.configuration.MRCubeParameter;
+import mrcube.holistic.common.CubeLattice;
+import mrcube.holistic.common.StringPair;
+import mrcube.holistic.common.Tuple;
+
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
-public class NaiveMRCubeMapper extends Mapper<Object, Text, Text, LongWritable> 
+public class NaiveMRCubeMapper extends Mapper<Object, Text, StringPair, IntWritable> 
 {
-	private LongWritable measure = new LongWritable();
-	private Text groupby = new Text();
-	//private static ArrayList[] cubeKey = new ArrayList[10];
+	private IntWritable one = new IntWritable(1);
+	private CubeLattice lattice = new CubeLattice(MRCubeParameter.getTestDataInfor().getAttributeSize(), MRCubeParameter.getTestDataInfor().getGroupAttributeSize());
      
+	@Override
+	public void setup(Context context)
+	{
+		lattice.calculateAllRegion(MRCubeParameter.getTestDataInfor().getAttributeCubeRollUp());
+		//lattice.printLattice();
+		Configuration conf = context.getConfiguration();
+		System.out.println(conf.get("total.tuple.size"));
+	}
+	
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException 
 	{
-		String line = value.toString();
-		String linesplit[] = line.split("\\|");
-		String dimension[] = new String[4];
-		String dimensionName[] = {"orderkey", "partkey", "suppkey", "shipdate"};
-		int dimensionNumber = 4;
+		produceAllRegionFromTule(value, context);
+		//justOutputTupleString(value, context);
+		//justOutputValue(value, context);
+	}
+
+	void produceAllRegionFromTule(Text value, Context context) throws IOException, InterruptedException
+	{
+		Text groupValue = new Text();
+		Text regionKey = new Text();
+		Tuple<String> tuple;
+		StringPair regionGroupKey = new StringPair();
 		
-		measure.set(Integer.parseInt(linesplit[4]));
-		dimension[0] = linesplit[0];
-		dimension[1] = linesplit[1];
-		dimension[2] = linesplit[2];
-		dimension[3] = linesplit[10];
+		String tupleSplit[] = value.toString().split("\t");
+		Tuple<String> region = new Tuple<String>(MRCubeParameter.getTestDataInfor().getAttributeSize() + 1);
 		
-		for (int i = 0; i < dimensionNumber; i++)
+		for (int i = 0; i < lattice.getRegionBag().size(); i++)
 		{
-			//groupby.set(dimensionName[i] + " " + dimension[i]);	
-			groupby.set(dimension[i]);	
-			context.write(groupby, measure);
-		}
-	
-		for (int i = 0; i < dimensionNumber; i++)
-		{
-			for (int j = i+1; j < dimensionNumber; j++)
+			String group = new String();
+			
+			for (int j = 0; j < lattice.getRegionBag().get(i).getSize(); j++)
 			{
-				//groupby.set(dimensionName[i] + " " + dimensionName[j] + " " + dimension[i] + " " + dimension[j]);	
-				groupby.set(dimension[i] + " " + dimension[j]);	
-				context.write(groupby, measure);
+				if (lattice.getRegionBag().get(i).getField(j) != null)
+				{
+					if (group.length() > 0)
+					{
+						group += " " + tupleSplit[j];
+					}
+					else
+					{
+						group += tupleSplit[j];
+					}
+				}
 			}
-		}
-		
-		for (int i = 0; i < dimensionNumber; i++)
-		{
-			for (int j = i+1; j < dimensionNumber; j++)
-			{
-				for (int k = j+1; k < dimensionNumber; k++)
-				//groupby.set(dimensionName[i] + " " + dimensionName[j] + " " + dimensionName[k] + " " + 
-					//	dimension[i] + " " + dimension[j] + " " + dimension[k]);	
-				groupby.set(dimension[i] + " " + dimension[j] + " " + dimension[k]);	
-				context.write(groupby, measure);
-			}
+			
+			regionGroupKey.setFirstString(i + "|" + group + "|");
+			regionGroupKey.setSecondString(MRCubeParameter.getTestDataMeasureString(value.toString()));
+			
+			context.write(regionGroupKey, one);
 		}
 	}
+
+
 }

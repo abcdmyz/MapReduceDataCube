@@ -48,7 +48,8 @@ public class HolisticMRCubePostProcessFilePathFilter extends Configured implemen
 		{
 			try {
 				fs = FileSystem.get(conf);
-				pattern = Pattern.compile(MRCubeParameter.MR3_INPUT_PATH_FILTER);
+				String inputPathFilter = conf.get("mrcube.mr3.input.path.filter");
+				pattern = Pattern.compile(inputPathFilter);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

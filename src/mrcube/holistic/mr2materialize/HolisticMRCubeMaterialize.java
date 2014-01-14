@@ -23,33 +23,36 @@ import org.apache.hadoop.util.GenericOptionsParser;
 
 public class HolisticMRCubeMaterialize 
 {
-	public void run(String[] args) throws Exception 
+	public void run(Configuration conf) throws Exception 
 	{
-		Configuration conf = new Configuration();
-		String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
-		
-		Job job = new Job(conf, "mrcube_m2");
+		Job job = new Job(conf, "mrcube_mr2");
 		job.setJarByClass(HolisticMRCubeMaterialize.class);
 		
 		job.setMapperClass(HolisticMRCubeMaterializeMapper.class);
-		//job.setCombinerClass(HolisticMRCubeEstimateReducer.class);
 		job.setReducerClass(HolisticMRCubeMaterializeReducer.class);
 		
-		job.setOutputKeyClass(StringMultiple.class);
+		job.setMapOutputKeyClass(StringMultiple.class);
+		job.setMapOutputValueClass(IntWritable.class);
+		
+		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
-
 
 		job.setPartitionerClass(StringMultiplePartitioner.class);
 		job.setSortComparatorClass(StringMultipleKeyComparator.class);
 		job.setGroupingComparatorClass(StringMultipleGroupComparator.class);
     
 		job.setInputFormatClass(TextInputFormat.class);
-		job.setNumReduceTasks(1);
+		job.setNumReduceTasks(Integer.valueOf(conf.get("mapred.reduce.tasks")));
 		
-		FileInputFormat.addInputPath(job, new Path(MRCubeParameter.MR2_INPUT_PATH));
-		FileOutputFormat.setOutputPath(job, new Path(MRCubeParameter.MR2_OUTPUT_PATH));
+		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
+		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("mrcube.mr2.output.path");  
 		
-		System.exit(job.waitForCompletion(true) ? 0 : 1);
+		System.out.println("mr2 input: " + inputPath);
+		System.out.println("mr2 output: " + outputPath);
+		
+		FileInputFormat.addInputPath(job, new Path(inputPath));
+		FileOutputFormat.setOutputPath(job, new Path(outputPath));	
+		job.waitForCompletion(true);
 	}
 
 

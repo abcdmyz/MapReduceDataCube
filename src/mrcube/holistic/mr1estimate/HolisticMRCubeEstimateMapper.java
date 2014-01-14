@@ -8,6 +8,7 @@ import mrcube.holistic.common.CubeLattice;
 import mrcube.holistic.common.StringPair;
 import mrcube.holistic.common.Tuple;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -18,11 +19,13 @@ public class HolisticMRCubeEstimateMapper extends Mapper<Object, Text, StringPai
 {
 	private IntWritable one = new IntWritable(1);
 	private CubeLattice lattice = new CubeLattice(MRCubeParameter.getTestDataInfor().getAttributeSize(), MRCubeParameter.getTestDataInfor().getGroupAttributeSize());
+	private Configuration conf;
      
 	@Override
 	public void setup(Context context)
 	{
 		lattice.calculateAllRegion(MRCubeParameter.getTestDataInfor().getAttributeCubeRollUp());
+		conf = context.getConfiguration();
 		//lattice.printLattice();
 	}
 	
@@ -30,19 +33,13 @@ public class HolisticMRCubeEstimateMapper extends Mapper<Object, Text, StringPai
 	{
 		
 		Random random = new Random();
+		int randomNum = random.nextInt(MRCubeParameter.getSampleTuplePercent(Integer.valueOf(conf.get("total.tuple.size"))) * 10);
 		
-		int randomNum = random.nextInt(MRCubeParameter.getSampleTuplePercent() * 10);
-		//int randomNum = random.nextInt(10 * 10);
-		
-		/*
 		if (randomNum <= 10)
 		{
 			produceAllRegionFromTule(value, context);
 		}
-		*/
-		
 
-		produceAllRegionFromTule(value, context);
 		//justOutputTupleString(value, context);
 		//justOutputValue(value, context);
 	}
@@ -54,7 +51,6 @@ public class HolisticMRCubeEstimateMapper extends Mapper<Object, Text, StringPai
 		Tuple<String> tuple;
 		StringPair regionGroupKey = new StringPair();
 		
-		//tuple = MRCubeParameter.transformTestDataLineStringtoTuple(value.toString());
 		String tupleSplit[] = value.toString().split("\t");
 		Tuple<String> region = new Tuple<String>(MRCubeParameter.getTestDataInfor().getAttributeSize() + 1);
 		
@@ -66,7 +62,6 @@ public class HolisticMRCubeEstimateMapper extends Mapper<Object, Text, StringPai
 			{
 				if (lattice.getRegionBag().get(i).getField(j) != null)
 				{
-					//group += tuple.getField(j).toString() + " ";
 					group += tupleSplit[j] + " ";
 				}
 			}

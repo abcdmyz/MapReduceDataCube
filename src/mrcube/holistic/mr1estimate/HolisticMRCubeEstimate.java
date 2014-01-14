@@ -19,20 +19,19 @@ import org.apache.hadoop.util.GenericOptionsParser;
 
 public class HolisticMRCubeEstimate 
 {
-	public void run(String[] args) throws Exception 
+	public void run(Configuration conf) throws Exception 
 	{
-		Configuration conf = new Configuration();
-		String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
-		
-		Job job = new Job(conf, "mrcube_m1");
+		Job job = new Job(conf, "mrcube_mr1");
 		job.setJarByClass(HolisticMRCubeEstimate.class);
 		
 		job.setMapperClass(HolisticMRCubeEstimateMapper.class);
-		//job.setCombinerClass(HolisticMRCubeEstimateReducer.class);
 		job.setReducerClass(HolisticMRCubeEstimateReducer.class);
+
+		job.setMapOutputKeyClass(StringPair.class);
+		job.setMapOutputValueClass(IntWritable.class);
 		
-		job.setOutputKeyClass(StringPair.class);
-		job.setOutputValueClass(IntWritable.class);
+		job.setOutputKeyClass(Text.class);
+		job.setOutputValueClass(Text.class);
 		
 		job.setPartitionerClass(StringPairPartitioner.class);
 		job.setSortComparatorClass(StringPairKeyComparator.class);
@@ -41,17 +40,15 @@ public class HolisticMRCubeEstimate
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setNumReduceTasks(1);
 
-		/*
-		InputFormat<IntWritable, Text> inputFormat = null;
-		InputSampler.Sampler<IntWritable, Text> sampler =
-				new InputSampler.RandomSampler<IntWritable, Text>(0.1, 10000, 10);
-		Object[] p = sampler.getSample(inputFormat, job);
-		*/
+		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
+		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("mrcube.mr1.output.path");  
 		
-		FileInputFormat.addInputPath(job, new Path(MRCubeParameter.MR1_INPUT_PATH));
-		FileOutputFormat.setOutputPath(job, new Path(MRCubeParameter.MR1_OUTPUT_PATH));
+		System.out.println("mr1 input: " + inputPath);
+		System.out.println("mr1 output: " + outputPath);
 		
-		System.exit(job.waitForCompletion(true) ? 0 : 1);
+		FileInputFormat.addInputPath(job, new Path(inputPath));
+		FileOutputFormat.setOutputPath(job, new Path(outputPath));
+		job.waitForCompletion(true);
 	}
 
 }

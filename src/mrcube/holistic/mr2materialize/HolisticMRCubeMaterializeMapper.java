@@ -10,6 +10,7 @@ import mrcube.holistic.common.CubeLattice;
 import mrcube.holistic.common.StringMultiple;
 import mrcube.holistic.common.Tuple;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -29,8 +30,12 @@ public class HolisticMRCubeMaterializeMapper extends Mapper<Object, Text, String
 	public void setup(Context context) throws IOException
 	{
 		cubeLattice = new CubeLattice(MRCubeParameter.testDataInfor.getAttributeSize(), MRCubeParameter.testDataInfor.getGroupAttributeSize());
+		Configuration conf = context.getConfiguration();
+
+		String latticePath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("mrcube.mr1.output.path") + conf.get("mrcube.region.partition.file.path");
+		System.out.println("lattice Path: " + latticePath);
 		
-		Path path = new Path(MRCubeParameter.REGION_PARTITION_FILE_PATH);
+		Path path = new Path(latticePath);
 		
 		FileSystem fs = FileSystem.get(context.getConfiguration());
 		BufferedReader br=new BufferedReader(new InputStreamReader(fs.open(path)));

@@ -13,7 +13,6 @@ public class BatchArea
 	public BatchArea(int attributeSize)
 	{
 		this.attributeSize = attributeSize;
-		regionParent = new int[MRCubeParameter.MAX_BATCH_AREA_SIZE];
 	}
 	
 	public void addRegion(Tuple<Integer> region, int rParent)

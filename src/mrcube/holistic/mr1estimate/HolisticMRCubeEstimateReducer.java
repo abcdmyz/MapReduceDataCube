@@ -31,31 +31,30 @@ public class HolisticMRCubeEstimateReducer  extends Reducer<StringPair,IntWritab
 	private double maxTupleByReducer = 0;
 	private double r = 0;
 	
+	private Configuration conf;
+	private long maxReducerLimitByte;
+	private double percentMemUsage;
+	private int oneTupleSizeByByte;
+	private long totalTupleSize;
+	private long totalSampleSize;
+	
 	@Override
 	public void setup(Context context) throws IOException
 	{
-		/*
-		System.out.println("setup start");
+		conf = context.getConfiguration();
 		
-		config = new Configuration();
-		fs = FileSystem.get(config);
+		maxReducerLimitByte = Long.valueOf(conf.get("max.reducer.limit.byte"));
+		percentMemUsage = Double.valueOf(conf.get("percent.mem.usage"));
+		oneTupleSizeByByte = Integer.valueOf(conf.get("one.tuple.size.by.byte"));
+		totalTupleSize = Long.valueOf(conf.get("total.tuple.size"));
+		totalSampleSize = MRCubeParameter.getTotalSampleSize(totalTupleSize);
 
-		path = new Path(MRCubeParameter.REGION_PARTITION_FILE_PATH);
-		//fs.open(path);
+		//System.out.println("estimate: " + maxReducerLimitByte + " " + percentMemUsage + " " 
+			//		+ oneTupleSizeByByte + " " + totalTupleSize + " " + totalSampleSize);
 		
-		if (fs.exists(path))
-		{
-			fs.delete(path, true);
-		}
-	
-		out = fs.create(path);
-
-		System.out.println("setup end");
-		*/
-		
-		heapMemAvail = (double)MRCubeParameter.MAX_REDUCER_LIMIT_BYTE * (double)MRCubeParameter.PERCENT_MEM_USAGE;
-		maxTupleByReducer = (double)heapMemAvail / (double)MRCubeParameter.ONE_TUPLE_SIZE_BY_BYTE;
-		r = (double)maxTupleByReducer / (double)MRCubeParameter.TOTAL_TUPLE_SIZE;
+		heapMemAvail = (double)maxReducerLimitByte * (double)percentMemUsage;
+		maxTupleByReducer = (double)heapMemAvail / (double)oneTupleSizeByByte;
+		r = (double)maxTupleByReducer / (double)totalTupleSize;
 	}
 	
 	public void reduce(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
@@ -126,13 +125,7 @@ public class HolisticMRCubeEstimateReducer  extends Reducer<StringPair,IntWritab
 	@Override
 	public void cleanup(Context context) throws IOException
 	{
-		/*
-		System.out.println("cleanup start");
-		
-		fs.close();
-		
-		System.out.println("cleanup end");
-		*/
+
 	}
 	
 	private int determinePartitionFactor(int maxGroup)
@@ -141,7 +134,12 @@ public class HolisticMRCubeEstimateReducer  extends Reducer<StringPair,IntWritab
 		
 		//if (maxGroup >= 0.75 * r  * MRCubeParameter.getTotalSampleSize())
 		{
-			partitionFactor = (int) (maxGroup / (r * MRCubeParameter.getTotalSampleSize()) + 1);
+			partitionFactor = (int) (maxGroup / (r * totalSampleSize));
+		}
+		
+		if (partitionFactor <= 0)
+		{
+			partitionFactor = 1;
 		}
 		
 		return partitionFactor;
