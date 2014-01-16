@@ -4,15 +4,16 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-import mrcube.holistic.common.StringPair;
 
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
 
-public class StringPairGroupComparator extends WritableComparator 
+import datacube.common.StringPair;
+
+public class StringPairMRCubeMR1GroupComparator extends WritableComparator 
 {
 
-	protected StringPairGroupComparator() 
+	protected StringPairMRCubeMR1GroupComparator() 
 	{
 		super(StringPair.class, true);
 	}

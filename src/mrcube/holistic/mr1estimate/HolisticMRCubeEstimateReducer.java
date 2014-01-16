@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.URI;
 
 
-import mrcube.configuration.MRCubeParameter;
-import mrcube.holistic.common.StringPair;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
@@ -16,6 +14,9 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
+
+import datacube.common.StringPair;
+import datacube.configuration.DataCubeParameter;
 
 public class HolisticMRCubeEstimateReducer  extends Reducer<StringPair,IntWritable,Text,Text> 
 {
@@ -47,14 +48,16 @@ public class HolisticMRCubeEstimateReducer  extends Reducer<StringPair,IntWritab
 		percentMemUsage = Double.valueOf(conf.get("percent.mem.usage"));
 		oneTupleSizeByByte = Integer.valueOf(conf.get("one.tuple.size.by.byte"));
 		totalTupleSize = Long.valueOf(conf.get("total.tuple.size"));
-		totalSampleSize = MRCubeParameter.getTotalSampleSize(totalTupleSize);
+		totalSampleSize = DataCubeParameter.getMRCubeTotalSampleSize(totalTupleSize);
 
-		//System.out.println("estimate: " + maxReducerLimitByte + " " + percentMemUsage + " " 
-			//		+ oneTupleSizeByByte + " " + totalTupleSize + " " + totalSampleSize);
+		System.out.println("estimate: " + maxReducerLimitByte + " " + percentMemUsage + " " 
+					+ oneTupleSizeByByte + " " + totalTupleSize + " " + totalSampleSize);
 		
 		heapMemAvail = (double)maxReducerLimitByte * (double)percentMemUsage;
 		maxTupleByReducer = (double)heapMemAvail / (double)oneTupleSizeByByte;
 		r = (double)maxTupleByReducer / (double)totalTupleSize;
+
+		System.out.println(heapMemAvail + " " + maxTupleByReducer + " " + r);
 	}
 	
 	public void reduce(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException

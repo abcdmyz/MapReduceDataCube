@@ -1,8 +1,9 @@
-package mrcube.holistic.common;
+package datacube.common;
 
 import java.util.ArrayList;
 
-import mrcube.configuration.MRCubeParameter;
+import datacube.configuration.DataCubeParameter;
+
 
 public class BatchArea 
 {

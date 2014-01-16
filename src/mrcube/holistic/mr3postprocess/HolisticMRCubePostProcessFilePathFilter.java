@@ -4,13 +4,14 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import mrcube.configuration.MRCubeParameter;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.PathFilter;
+
+import datacube.configuration.DataCubeParameter;
 
 public class HolisticMRCubePostProcessFilePathFilter extends Configured implements PathFilter 
 {

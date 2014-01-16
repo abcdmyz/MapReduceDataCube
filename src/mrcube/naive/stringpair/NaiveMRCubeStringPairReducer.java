@@ -1,8 +1,7 @@
-package mrcube.naive;
+package mrcube.naive.stringpair;
 
 import java.io.IOException;
 
-import mrcube.holistic.common.StringPair;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -10,7 +9,9 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 
-public class NaiveMRCubeReducer extends Reducer<StringPair, IntWritable, Text, IntWritable> 
+import datacube.common.StringPair;
+
+public class NaiveMRCubeStringPairReducer extends Reducer<StringPair, IntWritable, Text, IntWritable> 
 {
 	@Override
 	public void reduce(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
@@ -36,7 +37,7 @@ public class NaiveMRCubeReducer extends Reducer<StringPair, IntWritable, Text, I
 	{
 		String last = null;
 		int count = 0;
-	
+
 		for (IntWritable val : values) 
 	    {
 			if (!key.getSecondString().equals(last))

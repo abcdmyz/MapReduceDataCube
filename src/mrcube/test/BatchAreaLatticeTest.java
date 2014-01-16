@@ -1,6 +1,6 @@
-package test;
+package mrcube.test;
 
-import mrcube.holistic.common.BatchAreaLattice;
+import datacube.common.BatchAreaLattice;
 
 public class BatchAreaLatticeTest 
 {

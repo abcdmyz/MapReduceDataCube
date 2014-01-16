@@ -1,13 +1,14 @@
-package mrcube.holistic.mr2materialize;
+package mrcube.holistic.mr2materialize.stringmultiple;
 
-import mrcube.holistic.common.StringMultiple;
 
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
 
-public class StringMultipleKeyComparator extends WritableComparator 
+import datacube.common.StringMultiple;
+
+public class StringMultipleMRCubeMR2KeyComparator extends WritableComparator 
 {
-	protected StringMultipleKeyComparator()
+	protected StringMultipleMRCubeMR2KeyComparator()
 	{
 		super(StringMultiple.class, true);
 	}

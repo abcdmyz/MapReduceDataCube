@@ -1,6 +1,7 @@
-package mrcube.holistic.common;
+package datacube.common;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /*
  * Data cube lattice
@@ -10,7 +11,8 @@ import java.util.ArrayList;
 public class CubeLattice 
 {
 	private ArrayList<Tuple<Integer>> regionBag;
-	private ArrayList<String> regionStringBag;
+	private ArrayList<String> regionStringSepLineBag;
+	private ArrayList<String> regionStringSepBlankBag;
 	private int[] attributeParent;
 	private int[] rollupGroup;
 	private int attributeSize; 
@@ -25,7 +27,8 @@ public class CubeLattice
 		rollupGroup = new int[attributeSize];
 		
 		regionBag = new ArrayList<Tuple<Integer>>();
-		regionStringBag = new ArrayList<String>();
+		regionStringSepLineBag = new ArrayList<String>();
+		regionStringSepBlankBag = new ArrayList<String>();
 	}
 	
 	public ArrayList<Tuple<Integer>> getRegionBag()
@@ -33,9 +36,14 @@ public class CubeLattice
 		return regionBag;
 	}
 	
-	public ArrayList<String> getRegionStringBag()
+	public ArrayList<String> getRegionStringSepLineBag()
 	{
-		return regionStringBag;
+		return regionStringSepLineBag;
+	}
+
+	public ArrayList<String> getRegionStringSepBlankBag()
+	{
+		return regionStringSepBlankBag;
 	}
 	
 	public void setregionBag(ArrayList<Tuple<Integer>> regionBag)
@@ -71,7 +79,10 @@ public class CubeLattice
 		}
 		
 		dfsCalculateAllRegion(curRegion, flag, 0);
-		convertRegionBagToString();
+		Collections.sort(regionBag, new TupleComparator());
+		convertRegionBagToString('|');
+		convertRegionBagToString(' ');
+		
 		
 		/*
 		 * print for debug
@@ -236,7 +247,7 @@ public class CubeLattice
 		}
 	}
 	
-	public void convertRegionBagToString()
+	public void convertRegionBagToString(char sep)
 	{
 		for (int i = 0; i < regionBag.size(); i++)
 		{
@@ -245,13 +256,20 @@ public class CubeLattice
 			for (int j = 0; j < regionBag.get(i).getSize(); j++)
 			{
 				if (regionBag.get(i).getField(j) == null)
-					s += "*|";
+					s += "*" + sep;
 				
 				else
-					s += regionBag.get(i).getField(j).toString() + "|";
+					s += regionBag.get(i).getField(j).toString() + sep;
 			}
 			
-			regionStringBag.add(s);
+			if (sep == '|')
+			{
+				regionStringSepLineBag.add(s);
+			}
+			else if (sep == ' ')
+			{
+				regionStringSepBlankBag.add(s);
+			}
 		}
 	}
 
@@ -280,9 +298,9 @@ public class CubeLattice
 
 	public void printLatticeString()
 	{
-		for (int i = 0; i < regionStringBag.size(); i++)
+		for (int i = 0; i < regionStringSepLineBag.size(); i++)
 		{
-			System.out.println(regionStringBag.get(i));
+			System.out.println(regionStringSepLineBag.get(i));
 		}
 		
 	}

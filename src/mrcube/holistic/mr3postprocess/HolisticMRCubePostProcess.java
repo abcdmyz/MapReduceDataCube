@@ -1,11 +1,9 @@
 package mrcube.holistic.mr3postprocess;
 
-import mrcube.configuration.MRCubeParameter;
 
-import mrcube.holistic.common.Tuple;
-import mrcube.holistic.mr2materialize.HolisticMRCubeMaterialize;
-import mrcube.holistic.mr2materialize.HolisticMRCubeMaterializeMapper;
-import mrcube.holistic.mr2materialize.HolisticMRCubeMaterializeReducer;
+import mrcube.holistic.mr2materialize.stringmultiple.HolisticMRCubeMaterializeStringMultiple;
+import mrcube.holistic.mr2materialize.stringmultiple.HolisticMRCubeMaterializeStringMultipleMapper;
+import mrcube.holistic.mr2materialize.stringmultiple.HolisticMRCubeMaterializeStringMultipleReducer;
 
 
 import org.apache.hadoop.conf.Configuration;
@@ -18,11 +16,17 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 
+import datacube.common.Tuple;
+import datacube.configuration.DataCubeParameter;
+
 public class HolisticMRCubePostProcess 
 {
 	public void run(Configuration conf) throws Exception 
 	{
-		Job job = new Job(conf, "mrcube_mr3");
+		String jobName = "mrcube_mr3_" + conf.get("total.tuple.size") + "_" + conf.get("percent.mem.usage");
+		
+		Job job = new Job(conf, jobName);
+
 		job.setJarByClass(HolisticMRCubePostProcess.class);
 		
 		job.setMapperClass(HolisticMRCubePostProcessMapper.class);

@@ -1,20 +1,21 @@
-package test;
+package mrcube.test;
 
 
 import java.util.ArrayList;
 
-import mrcube.configuration.MRCubeParameter;
-import mrcube.holistic.common.CubeLattice;
-import mrcube.holistic.common.Tuple;
+import datacube.common.CubeLattice;
+import datacube.common.Tuple;
+import datacube.configuration.DataCubeParameter;
+
 
 public class CubeLatticeTest 
 {
 	
 	public static void exec()
 	{
-		//test1();
+		test1();
 		//test2();
-		test4();
+		//test4();
 	}
 	
 	/*
@@ -45,7 +46,9 @@ public class CubeLatticeTest
 		aCubeRollUp.add(tuple2);
 		
 		lattice.calculateAllRegion(aCubeRollUp);
-		printLattice(lattice);
+		//printLattice(lattice);
+		printLatticeStringSepLine(lattice);
+		printLatticeStringSepBlank(lattice);
 	}
 	
 	/*
@@ -96,7 +99,7 @@ public class CubeLatticeTest
 		lattice.calculateAllRegion(aCubeRollUp);
 	
 		//printLattice(lattice);
-		printLatticeString(lattice);
+		printLatticeStringSepLine(lattice);
 	}
 	
 	public static void test4()
@@ -124,7 +127,8 @@ public class CubeLatticeTest
 		lattice.calculateAllRegion(aCubeRollUp);
 		
 		printLattice(lattice);
-		//printLatticeString(lattice);
+		printLatticeStringSepLine(lattice);
+		printLatticeStringSepBlank(lattice);
 	}
 	
 	public static void printLattice(CubeLattice lattice)
@@ -151,12 +155,19 @@ public class CubeLatticeTest
 		System.out.println("Total Region: " + count);
 	}
 
-	public static void printLatticeString(CubeLattice lattice)
+	public static void printLatticeStringSepLine(CubeLattice lattice)
 	{
-		for (int i = 0; i < lattice.getRegionStringBag().size(); i++)
+		for (int i = 0; i < lattice.getRegionStringSepLineBag().size(); i++)
 		{
-			System.out.println(lattice.getRegionStringBag().get(i));
+			System.out.println(lattice.getRegionStringSepLineBag().get(i));
 		}
-		
+	}
+
+	public static void printLatticeStringSepBlank(CubeLattice lattice)
+	{
+		for (int i = 0; i < lattice.getRegionStringSepBlankBag().size(); i++)
+		{
+			System.out.println(lattice.getRegionStringSepBlankBag().get(i));
+		}
 	}
 }

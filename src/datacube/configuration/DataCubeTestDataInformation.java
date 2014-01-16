@@ -1,10 +1,11 @@
-package mrcube.configuration;
+package datacube.configuration;
 
 import java.util.ArrayList;
 
-import mrcube.holistic.common.Tuple;
+import datacube.common.Tuple;
 
-public class MRCubeTestDataInformation 
+
+public class DataCubeTestDataInformation 
 {
 	private int attributeSize;
 	private int groupAttributeSize;

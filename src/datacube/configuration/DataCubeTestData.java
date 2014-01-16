@@ -1,14 +1,15 @@
-package mrcube.configuration;
+package datacube.configuration;
 
 import java.util.ArrayList;
 
-import mrcube.holistic.common.Tuple;
+import datacube.common.Tuple;
 
-public class MRCubeTestData 
+
+public class DataCubeTestData 
 {	
-	public static MRCubeTestDataInformation getTestData1()
+	public static DataCubeTestDataInformation getTestData1()
 	{
-		MRCubeTestDataInformation dataInfor = new MRCubeTestDataInformation();
+		DataCubeTestDataInformation dataInfor = new DataCubeTestDataInformation();
 
 		ArrayList<Tuple<Integer>> aCubeRollUp = new ArrayList<Tuple<Integer>>();
 		
@@ -29,9 +30,9 @@ public class MRCubeTestData
 	}
 
 
-	public static MRCubeTestDataInformation getTestData2()
+	public static DataCubeTestDataInformation getTestData2()
 	{
-		MRCubeTestDataInformation dataInfor = new MRCubeTestDataInformation();
+		DataCubeTestDataInformation dataInfor = new DataCubeTestDataInformation();
 
 		ArrayList<Tuple<Integer>> aCubeRollUp = new ArrayList<Tuple<Integer>>();
 		

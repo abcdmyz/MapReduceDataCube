@@ -1,11 +1,12 @@
-package mrcube.holistic.mr2materialize;
+package mrcube.holistic.mr2materialize.stringmultiple;
 
-import mrcube.holistic.common.StringMultiple;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Partitioner;
 
-public class StringMultiplePartitioner extends Partitioner<StringMultiple, IntWritable> 
+import datacube.common.StringMultiple;
+
+public class StringMultipleMRCubeMR2Partitioner extends Partitioner<StringMultiple, IntWritable> 
 {
 
 	@Override
@@ -18,6 +19,6 @@ public class StringMultiplePartitioner extends Partitioner<StringMultiple, IntWr
 			keyString += key.getString(i);
 		}
 		
-		return Math.abs(key.hashCode()) % numPartitions;
+		return Math.abs(keyString.hashCode()) % numPartitions;
 	}
 }

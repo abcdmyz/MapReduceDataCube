@@ -1,15 +1,13 @@
-package mrcube.naive;
+package mrcube.naive.stringpair;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-import mrcube.configuration.MRCubeParameter;
-import mrcube.holistic.common.StringPair;
-import mrcube.holistic.mr1estimate.StringPairGroupComparator;
-import mrcube.holistic.mr1estimate.StringPairKeyComparator;
-import mrcube.holistic.mr1estimate.StringPairPartitioner;
-import mrcube.holistic.mr2materialize.StringMultipleGroupComparator;
-import mrcube.holistic.mr2materialize.StringMultipleKeyComparator;
-import mrcube.holistic.mr2materialize.StringMultiplePartitioner;
+import mrcube.holistic.mr1estimate.StringPairMRCubeMR1GroupComparator;
+import mrcube.holistic.mr1estimate.StringPairMRCubeMR1KeyComparator;
+import mrcube.holistic.mr1estimate.StringPairMRCubeMR1Partitioner;
+import mrcube.holistic.mr2materialize.stringmultiple.StringMultipleMRCubeMR2GroupComparator;
+import mrcube.holistic.mr2materialize.stringmultiple.StringMultipleMRCubeMR2KeyComparator;
+import mrcube.holistic.mr2materialize.stringmultiple.StringMultipleMRCubeMR2Partitioner;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -24,15 +22,21 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 import org.apache.hadoop.util.Tool;
 
-public class NaiveMRCube
+import datacube.common.StringPair;
+import datacube.configuration.DataCubeParameter;
+
+public class NaiveMRCubeStringPair
 {
 	public void run(Configuration conf) throws Exception 
 	{
-		Job job = new Job(conf, "naive mrcube");
-		job.setJarByClass(NaiveMRCube.class);
+		String jobName = "naive_mrcube_sp_" + conf.get("total.tuple.size");
 		
-		job.setMapperClass(NaiveMRCubeMapper.class);
-		job.setReducerClass(NaiveMRCubeReducer.class);
+		Job job = new Job(conf, jobName);
+		job.setJarByClass(NaiveMRCubeStringPair.class);
+		
+		job.setMapperClass(NaiveMRCubeStringPairMapper.class);
+		job.setCombinerClass(NaiveMRCubeStringPairCombiner.class);
+		job.setReducerClass(NaiveMRCubeStringPairReducer.class);
 		
 		job.setMapOutputKeyClass(StringPair.class);
 		job.setMapOutputValueClass(IntWritable.class);
@@ -40,9 +44,9 @@ public class NaiveMRCube
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
 		
-		job.setPartitionerClass(StringPairPartitioner.class);
-		job.setSortComparatorClass(StringPairKeyComparator.class);
-		job.setGroupingComparatorClass(StringPairGroupComparator.class);
+		job.setPartitionerClass(StringPairMRCubeMR1Partitioner.class);
+		job.setSortComparatorClass(StringPairMRCubeMR1KeyComparator.class);
+		job.setGroupingComparatorClass(StringPairMRCubeMR1GroupComparator.class);
     
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setNumReduceTasks(Integer.valueOf(conf.get("mapred.reduce.tasks")));

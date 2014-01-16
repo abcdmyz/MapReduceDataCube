@@ -1,8 +1,7 @@
-package mrcube.holistic.mr2materialize;
+package mrcube.holistic.mr2materialize.stringmultiple;
 
 import java.io.IOException;
 
-import mrcube.holistic.common.StringMultiple;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -11,8 +10,10 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 
+import datacube.common.StringMultiple;
+
 //StringMultiple
-public class HolisticMRCubeMaterializeReducer extends Reducer<StringMultiple, IntWritable, Text, IntWritable> 
+public class HolisticMRCubeMaterializeStringMultipleReducer extends Reducer<StringMultiple, IntWritable, Text, IntWritable> 
 {
 	private IntWritable one = new IntWritable(1);
 
@@ -25,7 +26,7 @@ public class HolisticMRCubeMaterializeReducer extends Reducer<StringMultiple, In
 		
 		for(IntWritable val : values)
 		{
-			if (key.getString(3) != last)
+			if (key.getString(3).equals(last))
 			{
 				count++;
 			}

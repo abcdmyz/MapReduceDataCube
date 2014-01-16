@@ -1,13 +1,14 @@
 package mrcube.holistic.mr1estimate;
 
-import mrcube.holistic.common.StringPair;
 
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
 
-public class StringPairKeyComparator extends WritableComparator 
+import datacube.common.StringPair;
+
+public class StringPairMRCubeMR1KeyComparator extends WritableComparator 
 {
-	protected StringPairKeyComparator()
+	protected StringPairMRCubeMR1KeyComparator()
 	{
 		super(StringPair.class, true);
 	}

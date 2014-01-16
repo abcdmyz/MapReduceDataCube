@@ -11,10 +11,10 @@
 	</property>
 
 	<property>
-		<name>max.reducer.limit.byte</name>
-		<value>1000000000</value>
+		<name>total.machine.number</name>
+		<value>10</value>
 	</property>
-	
+
 	<property>
 		<name>max.reducer.limit.byte</name>
 		<value>1000000000</value>
@@ -22,12 +22,12 @@
 	
 	<property>
 		<name>percent.mem.usage</name>
-		<value>1</value>
+		<value>0.1</value>
 	</property>	
 
 	<property>
 		<name>one.tuple.size.by.byte</name>
-		<value>50</value>
+		<value>100</value>
 	</property>	
 
 	<property>

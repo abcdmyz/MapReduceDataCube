@@ -1,4 +1,4 @@
-package mrcube.holistic.common;
+package datacube.common;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -43,6 +43,18 @@ public class Tuple<T>
 	public T getField(int index)
 	{
 		return fieldList.get(index);
+	}
+
+	public String getFieldString(int index)
+	{
+		String ret = "*";
+		if (fieldList.get(index) == null)
+		{
+			return ret;
+		}
+		ret = fieldList.get(index).toString();
+		
+		return ret;
 	}
 	
 	public void setFieldList(ArrayList<T> fieldList)
