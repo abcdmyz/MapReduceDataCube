@@ -27,6 +27,7 @@ public class HolisticTSCubeEstimateMapper extends Mapper<Object, Text, StringPai
 	{
 		lattice.calculateAllRegion(DataCubeParameter.getTestDataInfor().getAttributeCubeRollUp());
 		conf = context.getConfiguration();
+		conf.set("d2.lattice.region.number", String.valueOf(lattice.getRegionStringSepLineBag().size()));
 		//lattice.printLattice();
 	}
 	
@@ -63,7 +64,14 @@ public class HolisticTSCubeEstimateMapper extends Mapper<Object, Text, StringPai
 			{
 				if (lattice.getRegionBag().get(i).getField(j) != null)
 				{
-					group += tupleSplit[j] + " ";
+					if (group.length() > 0)
+					{
+						group += " " + tupleSplit[j];
+					}
+					else
+					{
+						group += tupleSplit[j];
+					}
 				}
 			}
 

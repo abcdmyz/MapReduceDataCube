@@ -11,17 +11,21 @@ import org.apache.hadoop.util.GenericOptionsParser;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-import datacube.common.CubeLattice;
-import datacube.common.Tuple;
-import datacube.configuration.DataCubeParameter;
+import tscube.holistic.mr1estimate.HolisticTSCubeEstimate;
+import tscube.holistic.mr2materialize.HolisticTSCubeMaterialize;
+import tscube.holistic.mr3postprocess.HolisticTSCubePostProcess;
 
+import datacube.common.*;
+import datacube.configuration.DataCubeParameter;
+import datacube.test.*;
 import mrcube.holistic.mr1estimate.HolisticMRCubeEstimate;
+import mrcube.holistic.mr2materialize.batcharea.HolisticMRCubeMaterializeBatchArea;
 import mrcube.holistic.mr2materialize.stringmultiple.HolisticMRCubeMaterializeStringMultiple;
 import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPair;
 import mrcube.holistic.mr3postprocess.HolisticMRCubePostProcess;
+import mrcube.naive.batcharea.NaiveMRCubeBatchArea;
 import mrcube.naive.stringpair.NaiveMRCubeStringPair;
 import mrcube.naive.text.NaiveMRCubeText;
-import mrcube.test.CubeLatticeTest;
 
 
 public class DataCubeMain extends Configured implements Tool
@@ -33,12 +37,16 @@ public class DataCubeMain extends Configured implements Tool
 	private static void Initialize()
 	{
 		dataCubeCMD.add("naive");
-		dataCubeCMD.add("naivetext");
-		dataCubeCMD.add("naivesp");
-		dataCubeCMD.add("mrcubesm");
-		dataCubeCMD.add("mrcubesp");
-		dataCubeCMD.add("tera");
-		dataCubeCMD.add("sample");
+		dataCubeCMD.add("mrcube");
+		dataCubeCMD.add("mrcubemr1");
+		dataCubeCMD.add("tscubemr1");
+		dataCubeCMD.add("tscubemr2");
+		dataCubeCMD.add("tscubemr12");
+		dataCubeCMD.add("tscubemr123");
+		dataCubeCMD.add("tscubemr23");
+		dataCubeCMD.add("mrcubeba");
+		dataCubeCMD.add("naiveba");
+		
 		
 		dataSizeCMD.add("100");
 		dataSizeCMD.add("1000");
@@ -46,6 +54,7 @@ public class DataCubeMain extends Configured implements Tool
 		dataSizeCMD.add("10000000");
 		dataSizeCMD.add("100000000");
 		dataSizeCMD.add("1000000000");
+		dataSizeCMD.add("10");
 	}
 	
 	
@@ -55,8 +64,9 @@ public class DataCubeMain extends Configured implements Tool
 		int res = ToolRunner.run(new DataCubeMain(), args);
 		
 		//CubeLatticeTest.exec();
+		//BinarySearchPartitionerBoundaryTest.exec();
+		//BatchAreaLatticeTest.exec();
 	}
-
 
 	@Override
 	public int run(String[] args) throws Exception 
@@ -80,6 +90,7 @@ public class DataCubeMain extends Configured implements Tool
 			System.exit(2);
 		}
 		
+		
 		if (otherArgs[0].equals("naive"))
 		{
 			NaiveMRCubeStringPair mrCube = new NaiveMRCubeStringPair();
@@ -89,47 +100,7 @@ public class DataCubeMain extends Configured implements Tool
 			endTime = System.currentTimeMillis(); 
 			System.out.println("mrcube_naive_sp_" + conf.get("total.tuple.size") + " Time: " + ((endTime-startTime)/1000));
 		}
-		else if (otherArgs[0].equals("naivesp"))
-		{
-			NaiveMRCubeStringPair mrCube = new NaiveMRCubeStringPair();
-			
-			startTime = System.currentTimeMillis();
-			mrCube.run(conf);
-			endTime = System.currentTimeMillis(); 
-			System.out.println("mrcube_naive_sp_" + conf.get("total.tuple.size") + " Time: " + ((endTime-startTime)/1000));
-		}
-		else if (otherArgs[0].equals("naivetext"))
-		{
-			NaiveMRCubeText mrCube = new NaiveMRCubeText();
-			
-			startTime = System.currentTimeMillis();
-			mrCube.run(conf);
-			endTime = System.currentTimeMillis(); 
-			System.out.println("mrcube_naive_text_" + conf.get("total.tuple.size") + " Time: " + ((endTime-startTime)/1000));
-		}
-		else if (otherArgs[0].equals("mrcubesm"))
-		{
-			HolisticMRCubeEstimate mrCube1 = new HolisticMRCubeEstimate();
-			HolisticMRCubeMaterializeStringMultiple mrCube2 = new HolisticMRCubeMaterializeStringMultiple();
-			HolisticMRCubePostProcess mrCube3 = new HolisticMRCubePostProcess();
-			
-			startTime = System.currentTimeMillis();
-			mrCube1.run(conf);
-			endTime = System.currentTimeMillis(); 
-			System.out.println("mrcube_mr1_sm_" + conf.get("total.tuple.size") + " Time: " + ((endTime-startTime)/1000));
-
-			startTime = System.currentTimeMillis();
-			mrCube2.run(conf);
-			endTime = System.currentTimeMillis(); 
-			System.out.println("mrcube_mr2_sm_" + conf.get("total.tuple.size") + "  Time: " + ((endTime-startTime)/1000));
-			
-			
-			startTime = System.currentTimeMillis();
-			mrCube3.run(conf);
-			endTime = System.currentTimeMillis(); 
-			System.out.println("mrcube_mr3_sm_" + conf.get("total.tuple.size") + " Time: " + ((endTime-startTime)/1000));
-		}
-		else if (otherArgs[0].equals("mrcubesp"))
+		else if (otherArgs[0].equals("mrcube"))
 		{
 			HolisticMRCubeEstimate mrCube1 = new HolisticMRCubeEstimate();
 			HolisticMRCubeMaterializeStringPair mrCube2 = new HolisticMRCubeMaterializeStringPair();
@@ -151,7 +122,7 @@ public class DataCubeMain extends Configured implements Tool
 			endTime = System.currentTimeMillis(); 
 			System.out.println("mrcube_mr3_sp_" + conf.get("total.tuple.size") + " Time: " + ((endTime-startTime)/1000));
 		}
-		else if (otherArgs[0].equals("sample"))
+		else if (otherArgs[0].equals("mrcubemr1"))
 		{
 			HolisticMRCubeEstimate mrCube1 = new HolisticMRCubeEstimate();
 			
@@ -160,13 +131,60 @@ public class DataCubeMain extends Configured implements Tool
 			endTime = System.currentTimeMillis(); 
 			System.out.println("mrcube_mr1_sample_" + conf.get("total.tuple.size") + " Time: " + ((endTime-startTime)/1000));
 		}
-		else if (otherArgs[0].equals("tera"))
+		else if (otherArgs[0].equals("tscubemr1"))
 		{
-			System.out.println("Not Yet Implement");
+			HolisticTSCubeEstimate tsCube1 = new HolisticTSCubeEstimate();
+			tsCube1.run(conf);
+		}
+		else if (otherArgs[0].equals("tscubemr2"))
+		{
+			HolisticTSCubeMaterialize tsCube2 = new HolisticTSCubeMaterialize();
+			
+			tsCube2.run(conf);
+		}
+		else if (otherArgs[0].equals("tscubemr12"))
+		{
+			HolisticTSCubeEstimate tsCube1 = new HolisticTSCubeEstimate();
+			HolisticTSCubeMaterialize tsCube2 = new HolisticTSCubeMaterialize();
+			
+			tsCube1.run(conf);
+			tsCube2.run(conf);
+		}
+		else if (otherArgs[0].equals("tscubemr123"))
+		{
+			HolisticTSCubeEstimate tsCube1 = new HolisticTSCubeEstimate();
+			HolisticTSCubeMaterialize tsCube2 = new HolisticTSCubeMaterialize();
+			HolisticTSCubePostProcess tsCube3 = new HolisticTSCubePostProcess();
+			
+			tsCube1.run(conf);
+			tsCube2.run(conf);
+			tsCube3.run(conf);
+		}
+		else if (otherArgs[0].equals("tscubemr23"))
+		{
+			HolisticTSCubeMaterialize tsCube2 = new HolisticTSCubeMaterialize();
+			HolisticTSCubePostProcess tsCube3 = new HolisticTSCubePostProcess();
+			
+			tsCube2.run(conf);
+			tsCube3.run(conf);
+		}
+		else if (otherArgs[0].equals("mrcubeba"))
+		{
+			HolisticMRCubeEstimate mrCube1 = new HolisticMRCubeEstimate();
+			HolisticMRCubeMaterializeBatchArea mrcube2 = new HolisticMRCubeMaterializeBatchArea();
+			HolisticMRCubePostProcess mrCube3 = new HolisticMRCubePostProcess();
+			
+			mrCube1.run(conf);
+			mrcube2.run(conf);
+			mrCube3.run(conf);
+		}
+		else if (otherArgs[0].equals("naiveba"))
+		{
+			NaiveMRCubeBatchArea mrCube1 = new NaiveMRCubeBatchArea();
+			
+			mrCube1.run(conf);
 		}
 		
 		return 0;
 	}
-
-
 }

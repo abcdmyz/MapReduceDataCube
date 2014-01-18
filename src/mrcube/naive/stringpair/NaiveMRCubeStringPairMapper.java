@@ -27,9 +27,9 @@ public class NaiveMRCubeStringPairMapper extends Mapper<Object, Text, StringPair
 	public void setup(Context context)
 	{
 		lattice.calculateAllRegion(DataCubeParameter.getTestDataInfor().getAttributeCubeRollUp());
-		//lattice.printLattice();
+		lattice.printLattice();
 		Configuration conf = context.getConfiguration();
-		System.out.println(conf.get("total.tuple.size"));
+		//System.out.println(conf.get("total.tuple.size"));
 	}
 	
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException 

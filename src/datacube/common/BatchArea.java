@@ -7,23 +7,128 @@ import datacube.configuration.DataCubeParameter;
 
 public class BatchArea 
 {
-	private ArrayList<Tuple<Integer>> batch;
-	private int[] regionParent;
-	private int attributeSize;
+	private ArrayList<Integer> longestRegionAttributeID;
+	private ArrayList<Integer> allRegionID;
 	
-	public BatchArea(int attributeSize)
+	/*
+	private String type;
+	private int firstRegionID;
+	private int batchAreaSize;
+	private int prefixAttributeSize;
+	*/
+	
+	public BatchArea()
 	{
-		this.attributeSize = attributeSize;
+		longestRegionAttributeID = new  ArrayList<Integer>();
+		allRegionID = new ArrayList<Integer>();
 	}
 	
-	public void addRegion(Tuple<Integer> region, int rParent)
+	/*
+	public BatchArea(String type)
 	{
-		batch.add(region);
-		regionParent[batch.size()-1] = rParent;
+		longestRegionAttributeID = new  ArrayList<Integer>();
+		allRegionID = new ArrayList<Integer>();
+		this.setType(type);
+	}
+	
+	public BatchArea(int firstRegionID, int batchAreaSize)
+	{
+		longestRegionAttributeID = new  ArrayList<Integer>();
+		allRegionID = new ArrayList<Integer>();
+		this.firstRegionID = firstRegionID;
+		this.batchAreaSize = batchAreaSize;
 	}
 
-	public Tuple<Integer> getRegion(int index)
+	public int getPrefixAttributeSize() 
 	{
-		return batch.get(index);
+		return prefixAttributeSize;
+	}
+
+	public void setPrefixAttributeSize(int prefixAttributeSize) 
+	{
+		this.prefixAttributeSize = prefixAttributeSize;
+	}
+
+	public int getFirstRegionID() 
+	{
+		return firstRegionID;
+	}
+
+	public void setFirstRegionID(int firstRegionID) 
+	{
+		this.firstRegionID = firstRegionID;
+	}
+
+	public int getBatchAreaSize() 
+	{
+		return batchAreaSize;
+	}
+
+	public void setBatchAreaSize(int batchAreaSize) 
+	{
+		this.batchAreaSize = batchAreaSize;
+	}
+	
+	public String getType() 
+	{
+		return type;
+	}
+
+	public void setType(String type) 
+	{
+		this.type = type;
+	}
+	*/
+
+	public ArrayList<Integer> getLongestRegionAttributeID() 
+	{
+		return longestRegionAttributeID;
+	}
+
+	public void setLongestRegionAttributeID(ArrayList<Integer> longestRegionAttributeID) 
+	{
+		this.longestRegionAttributeID = longestRegionAttributeID;
+	}
+
+	public ArrayList<Integer> getallRegionID() 
+	{
+		return allRegionID;
+	}
+
+	public void setallRegionID(ArrayList<Integer> allRegionID) 
+	{
+		this.allRegionID = allRegionID;
+	}
+	
+	public void addRegionAttribute(int id)
+	{
+		longestRegionAttributeID.add(id);
+	}
+	
+	public int getRegionAttribute(int index)
+	{
+		return longestRegionAttributeID.get(index);
+		
+	}
+	
+	public int getRegionID(int index)
+	{
+		return allRegionID.get(index);
+	}
+
+	public void addRegionID(int id)
+	{
+		allRegionID.add(id);
+	}
+
+	
+	public int getlongestRegionAttributeSize()
+	{
+		return longestRegionAttributeID.size();
+	}
+	
+	public int getallRegionIDSize()
+	{
+		return allRegionID.size();
 	}
  }

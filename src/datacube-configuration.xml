@@ -2,7 +2,7 @@
 <configuration>
 	<property>
 		<name>mapred.reduce.tasks</name>
-		<value>14</value>
+		<value>11</value>
 	</property>
 	
 	<property>
@@ -12,7 +12,12 @@
 
 	<property>
 		<name>total.machine.number</name>
-		<value>10</value>
+		<value>11</value>
+	</property>
+	
+	<property>
+		<name>d2.lattice.region.number</name>
+		<value>15</value>
 	</property>
 
 	<property>
@@ -74,6 +79,16 @@
 	</property>
 	
 	<property>
+		<name>naive.mr1.output.path</name>
+		<value>_output_naive_mr1/</value>
+	</property>
+
+	<property>
+		<name>naive.mr2.output.path</name>
+		<value>_output_naive_mr2/</value>
+	</property>
+	
+	<property>
 		<name>tscube.mr1.output.path</name>
 		<value>_output_tscube_mr1/</value>
 	</property>
@@ -86,7 +101,7 @@
 	<property>
 		<name>tscube.mr3.output.path</name>
 		<value>_output_tscube_mr3/</value>
-	</property>
+	</property>d
 	
 	<property>
 		<name>tscube.boundary.file.path</name>

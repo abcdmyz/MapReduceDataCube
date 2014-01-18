@@ -63,7 +63,14 @@ public class HolisticMRCubeEstimateMapper extends Mapper<Object, Text, StringPai
 			{
 				if (lattice.getRegionBag().get(i).getField(j) != null)
 				{
-					group += tupleSplit[j] + " ";
+					if (group.length() > 0)
+					{
+						group += " " + tupleSplit[j];
+					}
+					else
+					{
+						group += tupleSplit[j];
+					}
 				}
 			}
 			

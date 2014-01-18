@@ -99,6 +99,11 @@ public class CubeLattice
 		}
 		*/
 	}
+
+	public void sortRegionTupleBagReverse()
+	{
+		Collections.sort(regionBag, new TupleComparator());
+	}
 	
 	/*
 	 * Initialize attributeParent, rollupGroup before calculation

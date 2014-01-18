@@ -40,8 +40,6 @@ public class HolisticTSCubeEstimateReducer extends Reducer<StringPair,IntWritabl
 	public void setup(Context context) throws IOException
 	{
 		conf = context.getConfiguration();
-		
-
 	}
 	
 	public void reduce(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
@@ -59,7 +57,7 @@ public class HolisticTSCubeEstimateReducer extends Reducer<StringPair,IntWritabl
 		for (IntWritable val : values) 
 	    {
 			outputKey.set(key.getFirstString().toString());
-			outputValue.set(val.toString());
+			outputValue.set(key.getSecondString().toString());
 			
 			context.write(outputKey, outputValue);
 	    }
@@ -71,8 +69,13 @@ public class HolisticTSCubeEstimateReducer extends Reducer<StringPair,IntWritabl
 		Text outputValue = new Text();
 	
 		int count = 0;
-		int interval = 0;
+		long totalTupleSize = DataCubeParameter.getMRCubeTotalSampleSize(Long.valueOf(conf.get("total.tuple.size"))) * Integer.valueOf(conf.get("d2.lattice.region.number"));
+		int machineNumber = Integer.valueOf(conf.get("total.machine.number"));
+		
+		int interval = (int) (totalTupleSize / machineNumber);
 		int id = 0;
+
+		System.out.println("boudary:" + totalTupleSize + " " + machineNumber + " " + interval);
 	
 		for (IntWritable val : values) 
 	    {

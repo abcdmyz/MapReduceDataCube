@@ -1,4 +1,4 @@
-package mrcube.test;
+package datacube.test;
 
 
 import java.util.ArrayList;
@@ -13,9 +13,10 @@ public class CubeLatticeTest
 	
 	public static void exec()
 	{
-		test1();
+		//test1();
 		//test2();
-		//test4();
+		//test3();
+		test4();
 	}
 	
 	/*
@@ -31,19 +32,20 @@ public class CubeLatticeTest
 		tuple0.addField(0, 0);
 		tuple0.addField(1, 1);
 		tuple0.addField(2, 2);
+		tuple0.addField(3, 3);
 	
 		Tuple<Integer> tuple1 = new Tuple<Integer>(3);
-		tuple1.addField(0, 3);
-		tuple1.addField(1, 4);
-		tuple1.addField(2, 5);
+		tuple1.addField(0, 4);
+		tuple1.addField(1, 5);
+		tuple1.addField(2, 6);
 	
 		Tuple<Integer> tuple2 = new Tuple<Integer>(2);
-		tuple2.addField(0, 6);
-		tuple2.addField(1, 7);
+		tuple2.addField(0, 7);
+		tuple2.addField(1, 8);
 		
 		aCubeRollUp.add(tuple0);
 		aCubeRollUp.add(tuple1);
-		aCubeRollUp.add(tuple2);
+		//aCubeRollUp.add(tuple2);
 		
 		lattice.calculateAllRegion(aCubeRollUp);
 		//printLattice(lattice);
@@ -64,6 +66,9 @@ public class CubeLatticeTest
 		tuple0.addField(0, 0);
 		tuple0.addField(1, 1);
 		tuple0.addField(2, 2);
+		tuple0.addField(3, 3);
+		tuple0.addField(4, 4);
+		
 	
 		aCubeRollUp.add(tuple0);
 		

@@ -46,8 +46,8 @@ public class HolisticMRCubePostProcess
 		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("mrcube.mr2.output.path");
 		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("mrcube.mr3.output.path");  
 
-		System.out.println("mr3 input: " + inputPath);
-		System.out.println("mr3 output: " + outputPath);
+		//System.out.println("mr3 input: " + inputPath);
+		//System.out.println("mr3 output: " + outputPath);
 		
 		FileInputFormat.addInputPath(job, new Path(inputPath));
 		FileInputFormat.setInputPathFilter(job, HolisticMRCubePostProcessFilePathFilter.class);
@@ -56,6 +56,4 @@ public class HolisticMRCubePostProcess
 		job.waitForCompletion(true);
 		
 	}
-
-
 }

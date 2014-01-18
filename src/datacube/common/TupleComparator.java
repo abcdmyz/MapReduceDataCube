@@ -35,7 +35,7 @@ public class TupleComparator implements Comparator<Tuple>
 			return -1;
 		}
 		
-		return t1.getFieldString(i).compareTo(t2.getFieldString(j));
+		return t2.getFieldString(j).compareTo(t1.getFieldString(i));
 	}
 	
 

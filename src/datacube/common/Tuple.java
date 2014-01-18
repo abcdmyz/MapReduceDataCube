@@ -15,7 +15,7 @@ public class Tuple<T>
 {
 	private ArrayList<T> fieldList;
 	private int size;
-	private int partitionFactor;
+	private int partitionFactor = 1;
 	
 	public Tuple(int size)
 	{
@@ -28,6 +28,7 @@ public class Tuple<T>
 	{
 		size = t.size;
 		fieldList = (ArrayList<T>) t.fieldList.clone();
+		partitionFactor = 1;
 	}
 	
 	public int getPartitionFactor() 

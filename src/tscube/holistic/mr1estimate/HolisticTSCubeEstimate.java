@@ -44,7 +44,7 @@ public class HolisticTSCubeEstimate
 		job.setNumReduceTasks(1);
 
 		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
-		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("mrcube.mr1.output.path");  
+		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("tscube.mr1.output.path");  
 		
 		System.out.println("mr1 input: " + inputPath);
 		System.out.println("mr1 output: " + outputPath);

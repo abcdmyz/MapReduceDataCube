@@ -22,7 +22,7 @@ public class HolisticMRCubePostProcessFilePathFilter extends Configured implemen
 	@Override
 	public boolean accept(Path path) 
 	{
-		System.out.println(path);
+		//System.out.println(path);
 
 		try {
 			if(fs.isDirectory(path))
