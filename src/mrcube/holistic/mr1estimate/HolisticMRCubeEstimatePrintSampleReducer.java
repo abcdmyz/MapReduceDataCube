@@ -18,7 +18,7 @@ import org.apache.hadoop.mapreduce.Reducer.Context;
 import datacube.common.StringPair;
 import datacube.configuration.DataCubeParameter;
 
-public class HolisticMRCubeEstimateReducer  extends Reducer<StringPair,IntWritable,Text,Text> 
+public class HolisticMRCubeEstimatePrintSampleReducer  extends Reducer<StringPair,IntWritable,Text,Text> 
 {
 	private Text one = new Text("1");
 	private Text two = new Text("2");
@@ -62,9 +62,9 @@ public class HolisticMRCubeEstimateReducer  extends Reducer<StringPair,IntWritab
 	
 	public void reduce(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
-		calculationGroupBy(key, values, context);
+		//calculationGroupBy(key, values, context);
 		
-		//justPrintKeyValue(key, values, context);
+		calculationGroupByPrint(key, values, context);
 	}
 	
 	private void justPrintKeyValue(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
@@ -75,10 +75,49 @@ public class HolisticMRCubeEstimateReducer  extends Reducer<StringPair,IntWritab
 		for (IntWritable val : values) 
 	    {
 			outputKey.set(key.getFirstString().toString());
-			outputValue.set(val.toString());
+			outputValue.set(key.getSecondString().toString());
 			
 			context.write(outputKey, outputValue);
 	    }
+		
+		outputKey.set("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+		outputValue.set("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+		
+		context.write(outputKey, outputValue);
+	}
+	
+	private void calculationGroupByPrint(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+	{
+		Text region = new Text();
+		Text maxNum = new Text();
+	
+		String last = null;
+		int maxGroup = 0;
+		int countGroup = 0;
+		String maxGroupString = null;
+		int totalTupleSize = 0;
+	
+		for (IntWritable val : values) 
+	    {
+			
+			if (last != null && !key.getSecondString().equals(last))
+			{
+				region.set(key.getFirstString().toString() + " " + last + "|||");
+				maxNum.set(String.valueOf(countGroup));
+				context.write(region, maxNum);
+
+				countGroup = 0;
+			}
+
+			last = key.getSecondString();
+			countGroup++;
+			
+			totalTupleSize++;
+	    }
+		
+		region.set(key.getFirstString().toString() + " " + last + "|||");
+		maxNum.set(String.valueOf(countGroup));
+		context.write(region, maxNum);
 	}
 
 	private void calculationGroupBy(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
@@ -117,7 +156,6 @@ public class HolisticMRCubeEstimateReducer  extends Reducer<StringPair,IntWritab
 		   maxGroup = countGroup;
 		   maxGroupString = last;
 		}
-		
 		
 		String regionPartitionFactor;
 		

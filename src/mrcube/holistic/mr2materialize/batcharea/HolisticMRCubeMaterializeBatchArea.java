@@ -1,9 +1,12 @@
-package tscube.holistic.mr2materialize;
+package mrcube.holistic.mr2materialize.batcharea;
 
 import mrcube.holistic.mr1estimate.StringPairMRCubeMR1GroupComparator;
 import mrcube.holistic.mr1estimate.StringPairMRCubeMR1KeyComparator;
 import mrcube.holistic.mr1estimate.StringPairMRCubeMR1Partitioner;
+import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPair;
 import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPairCombiner;
+import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPairMapper;
+import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPairReducer;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -14,49 +17,43 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import tscube.holistic.mr1estimate.HolisticTSCubeEstimate;
-import tscube.holistic.mr1estimate.HolisticTSCubeEstimateMapper;
-import tscube.holistic.mr1estimate.HolisticTSCubeEstimateReducer;
 import datacube.common.StringPair;
-import datacube.common.StringTripple;
 
-public class HolisticTSCubeMaterialize 
+public class HolisticMRCubeMaterializeBatchArea 
 {
 	public void run(Configuration conf) throws Exception 
 	{
-		String jobName = "tscube_mr2_" + conf.get("dataset") + "_"  + conf.get("total.tuple.size");
+		String jobName = "mrcube_mr2_batch_"  + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("percent.mem.usage");
 		
-		System.out.println("reducer number:" + Integer.valueOf(conf.get("mapred.reduce.tasks")));
+		Job job = new Job(conf, jobName);
 		
- 		Job job = new Job(conf, jobName);
-		job.setJarByClass(HolisticTSCubeMaterialize.class);
+		job.setJarByClass(HolisticMRCubeMaterializeBatchArea.class);
 		
-		job.setMapperClass(HolisticTSCubeMaterializeMapper.class);
-		job.setCombinerClass(HolisticTSCubeMaterializeCombiner.class);
-		job.setReducerClass(HolisticTSCubeMaterializeReducer.class);
-
-		job.setMapOutputKeyClass(StringTripple.class);
+		job.setMapperClass(HolisticMRCubeMaterializeBatchAreaMapper.class);
+		job.setCombinerClass(HolisticMRCubeMaterializeBatchAreaCombiner.class);
+		job.setReducerClass(HolisticMRCubeMaterializeBatchAreaReducer.class);
+		
+		job.setMapOutputKeyClass(StringPair.class);
 		job.setMapOutputValueClass(IntWritable.class);
 		
 		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(Text.class);
-		
-		job.setPartitionerClass(StringTrippleTSCubeMR2Partitioner.class);
-		job.setSortComparatorClass(StringTrippleTSCubeMR2KeyComparator.class);
-		job.setGroupingComparatorClass(StringTrippleTSCubeMR2GroupComparator.class);
+		job.setOutputValueClass(IntWritable.class);
+
+		job.setPartitionerClass(StringPairMRCubeMR1Partitioner.class);
+		job.setSortComparatorClass(StringPairMRCubeMR1KeyComparator.class);
+		job.setGroupingComparatorClass(StringPairMRCubeMR1GroupComparator.class);
     
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setNumReduceTasks(Integer.valueOf(conf.get("mapred.reduce.tasks")));
-
+		
 		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
-		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("tscube.mr2.output.path");  
+		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("mrcube.mr2.output.path");  
 		
 		System.out.println("mr2 input: " + inputPath);
 		System.out.println("mr2 output: " + outputPath);
 		
 		FileInputFormat.addInputPath(job, new Path(inputPath));
-		FileOutputFormat.setOutputPath(job, new Path(outputPath));
+		FileOutputFormat.setOutputPath(job, new Path(outputPath));	
 		job.waitForCompletion(true);
 	}
-
 }

@@ -72,7 +72,7 @@ public class HolisticTSCubeEstimateReducer extends Reducer<StringPair,IntWritabl
 		long totalTupleSize = DataCubeParameter.getMRCubeTotalSampleSize(Long.valueOf(conf.get("total.tuple.size"))) * Integer.valueOf(conf.get("d2.lattice.region.number"));
 		int machineNumber = Integer.valueOf(conf.get("total.machine.number"));
 		
-		int interval = (int) (totalTupleSize / machineNumber);
+		int interval = (int) (totalTupleSize / (machineNumber - 1));
 		int id = 0;
 
 		System.out.println("boudary:" + totalTupleSize + " " + machineNumber + " " + interval);

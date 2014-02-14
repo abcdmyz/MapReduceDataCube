@@ -1,35 +1,28 @@
 package mrcube.holistic.mr1estimate;
 
-
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.partition.*;
-import org.apache.hadoop.util.GenericOptionsParser;
 
 import datacube.common.StringPair;
-import datacube.configuration.DataCubeParameter;
 
-public class HolisticMRCubeEstimate 
+public class HolisticMRCubeEstimatePrintSample 
 {
 	public void run(Configuration conf) throws Exception 
 	{
-		String jobName = "mrcube_mr1_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("percent.mem.usage");
+		String jobName = "mrcube_mr1_print_sample_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("percent.mem.usage");
 		
 		Job job = new Job(conf, jobName);
 		
 		job.setJarByClass(HolisticMRCubeEstimate.class);
 		
 		job.setMapperClass(HolisticMRCubeEstimateMapper.class);
-		job.setReducerClass(HolisticMRCubeEstimateReducer.class);
+		job.setReducerClass(HolisticMRCubeEstimatePrintSampleReducer.class);
 
 		job.setMapOutputKeyClass(StringPair.class);
 		job.setMapOutputValueClass(IntWritable.class);
@@ -54,5 +47,4 @@ public class HolisticMRCubeEstimate
 		FileOutputFormat.setOutputPath(job, new Path(outputPath));
 		job.waitForCompletion(true);
 	}
-
 }

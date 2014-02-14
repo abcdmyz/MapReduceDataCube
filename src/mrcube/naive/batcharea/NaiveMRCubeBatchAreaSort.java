@@ -1,4 +1,4 @@
-package tscube.holistic.mr3postprocess;
+package mrcube.naive.batcharea;
 
 import mrcube.holistic.mr3postprocess.HolisticMRCubePostProcess;
 import mrcube.holistic.mr3postprocess.HolisticMRCubePostProcessFilePathFilter;
@@ -14,19 +14,19 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-public class HolisticTSCubePostProcess 
+public class NaiveMRCubeBatchAreaSort 
 {
 	public void run(Configuration conf) throws Exception 
 	{
-		String jobName = "tscube_mr3_" + conf.get("dataset") + "_" + conf.get("total.tuple.size");
+		String jobName = "naive_batch_sort_" + conf.get("total.tuple.size");
 		
 		Job job = new Job(conf, jobName);
 
-		job.setJarByClass(HolisticTSCubePostProcess.class);
+		job.setJarByClass(HolisticMRCubePostProcess.class);
 		
-		job.setMapperClass(HolisticTSCubePostProcessMapper.class);
-		job.setCombinerClass(HolisticTSCubePostProcessReducer.class);
-		job.setReducerClass(HolisticTSCubePostProcessReducer.class);
+		job.setMapperClass(HolisticMRCubePostProcessMapper.class);
+		job.setCombinerClass(HolisticMRCubePostProcessReducer.class);
+		job.setReducerClass(HolisticMRCubePostProcessReducer.class);
 		
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(IntWritable.class);
@@ -38,11 +38,8 @@ public class HolisticTSCubePostProcess
 		
 		job.setNumReduceTasks(Integer.valueOf(conf.get("mapred.reduce.tasks")));
 		
-		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("tscube.mr2.output.path");
-		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("tscube.mr3.output.path");  
-
-		System.out.println("mr3 input: " + inputPath);
-		System.out.println("mr3 output: " + outputPath);
+		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("naive.mr1.output.path");
+		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("naive.mr2.output.path");  
 		
 		FileInputFormat.addInputPath(job, new Path(inputPath));
 		FileInputFormat.setInputPathFilter(job, HolisticMRCubePostProcessFilePathFilter.class);

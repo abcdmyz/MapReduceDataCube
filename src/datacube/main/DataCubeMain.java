@@ -11,14 +11,18 @@ import org.apache.hadoop.util.GenericOptionsParser;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
+import WordCountStringPair.WordCountStringPair;
+
 import tscube.holistic.mr1estimate.HolisticTSCubeEstimate;
 import tscube.holistic.mr2materialize.HolisticTSCubeMaterialize;
+import tscube.holistic.mr2materialize.HolisticTSCubeMaterializeNoCombiner;
 import tscube.holistic.mr3postprocess.HolisticTSCubePostProcess;
 
 import datacube.common.*;
 import datacube.configuration.DataCubeParameter;
 import datacube.test.*;
 import mrcube.holistic.mr1estimate.HolisticMRCubeEstimate;
+import mrcube.holistic.mr1estimate.HolisticMRCubeEstimatePrintSample;
 import mrcube.holistic.mr2materialize.batcharea.HolisticMRCubeMaterializeBatchArea;
 import mrcube.holistic.mr2materialize.stringmultiple.HolisticMRCubeMaterializeStringMultiple;
 import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPair;
@@ -39,13 +43,17 @@ public class DataCubeMain extends Configured implements Tool
 		dataCubeCMD.add("naive");
 		dataCubeCMD.add("mrcube");
 		dataCubeCMD.add("mrcubemr1");
+		dataCubeCMD.add("mrcubemr1print");
 		dataCubeCMD.add("tscubemr1");
 		dataCubeCMD.add("tscubemr2");
 		dataCubeCMD.add("tscubemr12");
 		dataCubeCMD.add("tscubemr123");
+		dataCubeCMD.add("tscube");
+		dataCubeCMD.add("tscubenc");
 		dataCubeCMD.add("tscubemr23");
 		dataCubeCMD.add("mrcubeba");
 		dataCubeCMD.add("naiveba");
+		dataCubeCMD.add("wordcount");
 		
 		
 		dataSizeCMD.add("100");
@@ -77,6 +85,7 @@ public class DataCubeMain extends Configured implements Tool
 		long startTime;
 		long endTime;
 		
+		/*
 		if (!dataCubeCMD.contains(otherArgs[0]))
 		{
 			System.err.println(otherArgs[0] + " Wrong Data Cube CMD\n" +
@@ -89,6 +98,7 @@ public class DataCubeMain extends Configured implements Tool
 					"Usage:<data cube:mrcube/naive/tera> <data size:100/1000/1000000/10000000/100000000/1000000000>");
 			System.exit(2);
 		}
+		*/
 		
 		
 		if (otherArgs[0].equals("naive"))
@@ -150,10 +160,20 @@ public class DataCubeMain extends Configured implements Tool
 			tsCube1.run(conf);
 			tsCube2.run(conf);
 		}
-		else if (otherArgs[0].equals("tscubemr123"))
+		else if (otherArgs[0].equals("tscubemr123") || otherArgs[0].equals("tscube"))
 		{
 			HolisticTSCubeEstimate tsCube1 = new HolisticTSCubeEstimate();
 			HolisticTSCubeMaterialize tsCube2 = new HolisticTSCubeMaterialize();
+			HolisticTSCubePostProcess tsCube3 = new HolisticTSCubePostProcess();
+			
+			tsCube1.run(conf);
+			tsCube2.run(conf);
+			tsCube3.run(conf);
+		}
+		else if (otherArgs[0].equals("tscubenc"))
+		{
+			HolisticTSCubeEstimate tsCube1 = new HolisticTSCubeEstimate();
+			HolisticTSCubeMaterializeNoCombiner tsCube2 = new HolisticTSCubeMaterializeNoCombiner();
 			HolisticTSCubePostProcess tsCube3 = new HolisticTSCubePostProcess();
 			
 			tsCube1.run(conf);
@@ -184,6 +204,17 @@ public class DataCubeMain extends Configured implements Tool
 			
 			mrCube1.run(conf);
 		}
+		else if (otherArgs[0].equals("wordcount"))
+		{
+			WordCountStringPair mrCube1 = new WordCountStringPair();
+			mrCube1.run(conf);
+		}
+		else if (otherArgs[0].equals("mrcubemr1print"))
+		{
+			HolisticMRCubeEstimatePrintSample mrCube1Print = new HolisticMRCubeEstimatePrintSample();
+			mrCube1Print.run(conf);
+		}
+		
 		
 		return 0;
 	}

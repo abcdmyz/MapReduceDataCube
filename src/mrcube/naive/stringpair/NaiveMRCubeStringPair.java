@@ -29,7 +29,7 @@ public class NaiveMRCubeStringPair
 {
 	public void run(Configuration conf) throws Exception 
 	{
-		String jobName = "naive_mrcube_sp_" + conf.get("total.tuple.size");
+		String jobName = "naive_" + conf.get("dataset") + "_" + conf.get("total.tuple.size");
 		
 		Job job = new Job(conf, jobName);
 		job.setJarByClass(NaiveMRCubeStringPair.class);

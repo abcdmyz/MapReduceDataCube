@@ -1,10 +1,5 @@
 package tscube.holistic.mr2materialize;
 
-import mrcube.holistic.mr1estimate.StringPairMRCubeMR1GroupComparator;
-import mrcube.holistic.mr1estimate.StringPairMRCubeMR1KeyComparator;
-import mrcube.holistic.mr1estimate.StringPairMRCubeMR1Partitioner;
-import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPairCombiner;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -14,17 +9,13 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import tscube.holistic.mr1estimate.HolisticTSCubeEstimate;
-import tscube.holistic.mr1estimate.HolisticTSCubeEstimateMapper;
-import tscube.holistic.mr1estimate.HolisticTSCubeEstimateReducer;
-import datacube.common.StringPair;
 import datacube.common.StringTripple;
 
-public class HolisticTSCubeMaterialize 
+public class HolisticTSCubeMaterializeNoCombiner 
 {
 	public void run(Configuration conf) throws Exception 
 	{
-		String jobName = "tscube_mr2_" + conf.get("dataset") + "_"  + conf.get("total.tuple.size");
+		String jobName = "tscube_mr2_nc_" + conf.get("dataset") + "_"  + conf.get("total.tuple.size");
 		
 		System.out.println("reducer number:" + Integer.valueOf(conf.get("mapred.reduce.tasks")));
 		
@@ -32,7 +23,7 @@ public class HolisticTSCubeMaterialize
 		job.setJarByClass(HolisticTSCubeMaterialize.class);
 		
 		job.setMapperClass(HolisticTSCubeMaterializeMapper.class);
-		job.setCombinerClass(HolisticTSCubeMaterializeCombiner.class);
+		// job.setCombinerClass(HolisticTSCubeMaterializeCombiner.class);
 		job.setReducerClass(HolisticTSCubeMaterializeReducer.class);
 
 		job.setMapOutputKeyClass(StringTripple.class);
@@ -58,5 +49,4 @@ public class HolisticTSCubeMaterialize
 		FileOutputFormat.setOutputPath(job, new Path(outputPath));
 		job.waitForCompletion(true);
 	}
-
 }
