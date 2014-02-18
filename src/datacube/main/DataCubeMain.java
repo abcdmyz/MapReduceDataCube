@@ -5,6 +5,11 @@ package datacube.main;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import naive.holistic.batcharea.NaiveMRCubeBatchArea;
+import naive.holistic.hashuid.NaiveMRCubeHashUid;
+import naive.holistic.stringpair.NaiveMRCubeStringPair;
+import naive.holistic.text.NaiveMRCubeText;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.GenericOptionsParser;
@@ -13,9 +18,10 @@ import org.apache.hadoop.util.ToolRunner;
 
 import WordCountStringPair.WordCountStringPair;
 
-import tscube.holistic.mr1estimate.HolisticTSCubeEstimate;
-import tscube.holistic.mr2materialize.HolisticTSCubeMaterialize;
-import tscube.holistic.mr2materialize.HolisticTSCubeMaterializeNoCombiner;
+import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimate;
+import tscube.holistic.mr1estimate.batchregion.HolisticTSCubeEstimateBatchRegion;
+import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterialize;
+import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterializeNoCombiner;
 import tscube.holistic.mr3postprocess.HolisticTSCubePostProcess;
 
 import datacube.common.*;
@@ -27,9 +33,6 @@ import mrcube.holistic.mr2materialize.batcharea.HolisticMRCubeMaterializeBatchAr
 import mrcube.holistic.mr2materialize.stringmultiple.HolisticMRCubeMaterializeStringMultiple;
 import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPair;
 import mrcube.holistic.mr3postprocess.HolisticMRCubePostProcess;
-import mrcube.naive.batcharea.NaiveMRCubeBatchArea;
-import mrcube.naive.stringpair.NaiveMRCubeStringPair;
-import mrcube.naive.text.NaiveMRCubeText;
 
 
 public class DataCubeMain extends Configured implements Tool
@@ -41,8 +44,10 @@ public class DataCubeMain extends Configured implements Tool
 	private static void Initialize()
 	{
 		dataCubeCMD.add("naive");
+		dataCubeCMD.add("naivehu");
 		dataCubeCMD.add("mrcube");
 		dataCubeCMD.add("mrcubemr1");
+		dataCubeCMD.add("mrcubemr3");
 		dataCubeCMD.add("mrcubemr1print");
 		dataCubeCMD.add("tscubemr1");
 		dataCubeCMD.add("tscubemr2");
@@ -54,6 +59,7 @@ public class DataCubeMain extends Configured implements Tool
 		dataCubeCMD.add("mrcubeba");
 		dataCubeCMD.add("naiveba");
 		dataCubeCMD.add("wordcount");
+		dataCubeCMD.add("tscubebamr1");
 		
 		
 		dataSizeCMD.add("100");
@@ -73,7 +79,7 @@ public class DataCubeMain extends Configured implements Tool
 		
 		//CubeLatticeTest.exec();
 		//BinarySearchPartitionerBoundaryTest.exec();
-		//BatchAreaLatticeTest.exec();
+		//BatchAreaTest.exec();
 	}
 
 	@Override
@@ -84,7 +90,7 @@ public class DataCubeMain extends Configured implements Tool
 		String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
 		long startTime;
 		long endTime;
-		
+
 		/*
 		if (!dataCubeCMD.contains(otherArgs[0]))
 		{
@@ -109,6 +115,12 @@ public class DataCubeMain extends Configured implements Tool
 			mrCube.run(conf);
 			endTime = System.currentTimeMillis(); 
 			System.out.println("mrcube_naive_sp_" + conf.get("total.tuple.size") + " Time: " + ((endTime-startTime)/1000));
+		}
+		else if (otherArgs[0].equals("naivehu"))
+		{
+			NaiveMRCubeHashUid mrCube1 = new NaiveMRCubeHashUid();
+			
+			mrCube1.run(conf);
 		}
 		else if (otherArgs[0].equals("mrcube"))
 		{
@@ -135,15 +147,23 @@ public class DataCubeMain extends Configured implements Tool
 		else if (otherArgs[0].equals("mrcubemr1"))
 		{
 			HolisticMRCubeEstimate mrCube1 = new HolisticMRCubeEstimate();
+
+			mrCube1.run(conf);	
+		}
+		else if (otherArgs[0].equals("mrcubemr3"))
+		{
+			HolisticMRCubePostProcess mrCube3 = new HolisticMRCubePostProcess();
 			
-			startTime = System.currentTimeMillis();
-			mrCube1.run(conf);
-			endTime = System.currentTimeMillis(); 
-			System.out.println("mrcube_mr1_sample_" + conf.get("total.tuple.size") + " Time: " + ((endTime-startTime)/1000));
+			mrCube3.run(conf);
 		}
 		else if (otherArgs[0].equals("tscubemr1"))
 		{
 			HolisticTSCubeEstimate tsCube1 = new HolisticTSCubeEstimate();
+			tsCube1.run(conf);
+		}
+		else if (otherArgs[0].equals("tscubebamr1"))
+		{
+			HolisticTSCubeEstimateBatchRegion tsCube1 = new HolisticTSCubeEstimateBatchRegion();
 			tsCube1.run(conf);
 		}
 		else if (otherArgs[0].equals("tscubemr2"))

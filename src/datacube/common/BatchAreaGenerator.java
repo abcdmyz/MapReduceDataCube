@@ -8,12 +8,27 @@ public class BatchAreaGenerator
 	{
 		ArrayList<Integer> order = new ArrayList(4);
 
-		if (dataset.equals("d2") || dataset.equals("d2A") || dataset.equals("d2B") || dataset.equals("d2C"))
+		if (dataset.startsWith("d2"))
 		{
 			order.add(4);
 			order.add(4);
 			order.add(4);
 			order.add(3);
+		}
+		
+		return order;
+	}
+	
+	public ArrayList<Integer> getTSCubeBatchSampleRegion(String dataset)
+	{
+		ArrayList<Integer> order = new ArrayList(4);
+		
+		if (dataset.startsWith("d2"))
+		{
+			order.add(3);
+			order.add(7);
+			order.add(11);
+			order.add(14);
 		}
 		
 		return order;
@@ -31,6 +46,7 @@ public class BatchAreaGenerator
 		
 		for (int i = 0; i < cubeLattice.getRegionBag().size(); i++)
 		{
+			/*
 			if (cubeLattice.getRegionBag().get(i).getPartitionFactor() > 1)
 			{
 				if (count > 1)
@@ -41,6 +57,13 @@ public class BatchAreaGenerator
 				finalOrder.add(1);
 				
 				count = 0;
+			}
+			*/
+			
+			if (sum > 1 && cubeLattice.getRegionBag().get(i).getPartitionFactor() != cubeLattice.getRegionBag().get(i-1).getPartitionFactor())
+			{	
+				finalOrder.add(count - 1);
+				count = 1;
 			}
 			
 			if (sum >= planOrder.get(cur))

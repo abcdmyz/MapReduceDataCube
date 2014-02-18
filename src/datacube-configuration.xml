@@ -9,6 +9,11 @@
 		<name>total.tuple.size</name>
 		<value>50</value>
 	</property>
+	
+	<property>
+		<name>total.uid.size</name>
+		<value>100000000</value>
+	</property>
 
 	<property>
 		<name>total.machine.number</name>
@@ -84,8 +89,8 @@
 	</property>
 
 	<property>
-		<name>naive.mr1.output.path</name>
-		<value>_output_naive_mr1/</value>
+		<name>naive.ba.output.path</name>
+		<value>_output_naive_ba/</value>
 	</property>
 
 	<property>

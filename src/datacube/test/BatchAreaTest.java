@@ -26,7 +26,7 @@ public class BatchAreaTest
 		ArrayList<Integer> planOrder = getOriginalBatchAreaPlan();
 		ArrayList<Integer> finalOrder = new ArrayList<Integer>();
 		//int[] pf ={1, 1, 1, 4,  1, 1, 1, 2,  1, 1, 2, 1,  1, 1, 2};
-		int[] pf = {1,1,1,1, 1,1,1,4, 1,1,4,37, 1,1,11};
+		int[] pf = {1,1,1,1, 1,1,1,1, 1,1,1,2, 2,1,1};
 		
 		int cur = 0;
 		int count = 1;
@@ -34,6 +34,7 @@ public class BatchAreaTest
 
 		for (int i = 0; i < pf.length; i++)
 		{
+			/*
 			if (pf[i] > 1)
 			{
 				if (count > 1)
@@ -46,6 +47,15 @@ public class BatchAreaTest
 				System.out.println("one 1");
 				
 				count = 0;
+			}
+			*/
+			
+			if (sum > 1 && pf[i] != pf[i-1])
+			{	
+				finalOrder.add(count - 1);
+				System.out.println("one 1");
+				
+				count = 1;
 			}
 			
 			if (sum >= planOrder.get(cur))
