@@ -1,4 +1,4 @@
-package mrcube.holistic.mr2materialize.batcharea;
+package tscube.holistic.mr2materialize.batcharea;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,29 +17,32 @@ import datacube.common.BatchArea;
 import datacube.common.BatchAreaGenerator;
 import datacube.common.CubeLattice;
 import datacube.common.StringPair;
+import datacube.common.StringTripple;
 import datacube.common.Tuple;
 import datacube.configuration.DataCubeParameter;
 
-public class HolisticMRCubeMaterializeBatchAreaMapper extends Mapper<Object, Text, StringPair, IntWritable> 
+public class HolisticTSCubeMaterializeBatchAreaMapper extends Mapper<Object, Text, StringTripple, IntWritable> 
 {
 	private CubeLattice cubeLattice;
-	private ArrayList<Tuple<Integer>> regionTupleBag = new ArrayList<Tuple<Integer>>();
+	ArrayList<Tuple<Integer>> regionTupleBag = new ArrayList<Tuple<Integer>>();
 	private IntWritable one = new IntWritable(1);
+	private ArrayList<String> boundary;
 	private ArrayList<BatchArea> batchAreaBag = new ArrayList<BatchArea>();
 	private BatchAreaGenerator batchAreaGenerator = new BatchAreaGenerator();
-	private Configuration conf;
 	
 	@Override
 	public void setup(Context context) throws IOException
 	{
 		cubeLattice = new CubeLattice(DataCubeParameter.testDataInfor.getAttributeSize(), DataCubeParameter.testDataInfor.getGroupAttributeSize());
-		conf = context.getConfiguration();
+		cubeLattice.calculateAllRegion(DataCubeParameter.getTestDataInfor().getAttributeCubeRollUp());
+		
+		Configuration conf = context.getConfiguration();
+		boundary = new ArrayList<String>(Integer.valueOf(conf.get("total.machine.number")));
 
-		String latticePath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("mrcube.mr1.output.path") + conf.get("mrcube.region.partition.file.path");
-		//System.out.println("lattice Path: " + latticePath);
+		String latticePath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("tscube.mr1.output.path") + conf.get("tscube.boundary.file.path");
+		System.out.println("lattice Path: " + latticePath);
 		
 		Path path = new Path(latticePath);
-		
 		FileSystem fs = FileSystem.get(context.getConfiguration());
 		BufferedReader br=new BufferedReader(new InputStreamReader(fs.open(path)));
 		
@@ -48,23 +51,19 @@ public class HolisticMRCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 			String line;
 			line=br.readLine();
 			while (line != null)
-			{				
-				Tuple<Integer> tuple = StringLineToTuple(line);
-				regionTupleBag.add(tuple);
-	
+			{
+				String[] regionSplit = line.split("\t"); 
+				boundary.add(regionSplit[0]);
+				
 				line = br.readLine();
 			}
-
-			cubeLattice.setregionBag(regionTupleBag);
-			cubeLattice.sortRegionTupleBagReverse();
-			cubeLattice.convertRegionBagToString('|');
-			
-			cubeLattice.printLattice();
 			
 			batchAreaBag = batchAreaGenerator.getBatchAreaPlan(conf.get("dataset"), cubeLattice);
-			//printBatchArea();
-
-			//System.out.println("batchArea Bag: " + batchAreaBag.size());
+			
+			for (int i = 0; i < batchAreaBag.size(); i++)
+			{
+				
+			}
 		} 	
 		finally 
 		{
@@ -72,26 +71,59 @@ public class HolisticMRCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 		}
 	}
      
+	/*
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException 
 	{
-		int partitionFactor = 1;
-		
 		String tupleSplit[] = value.toString().split("\t");
-		String firstRegionID = new String();
-		String pfKey = new String();
-		String baSize = new String();
+		String regionNum = new String();
 		String measureString = new String();
-		String baType = new String();
+		int partitionerID = 0;
+		
+		for (int i = 0; i < cubeLattice.getRegionStringSepLineBag().size(); i++)
+		{
+			regionNum = String.valueOf(i);
+			measureString = DataCubeParameter.getTestDataMeasureString(value.toString());
 
+			String groupKey = new String();
+			
+			for (int k = 0; k < cubeLattice.getRegionBag().get(i).getSize(); k++)
+			{
+				if (cubeLattice.getRegionBag().get(i).getField(k) != null)
+				{
+					if (groupKey.length() > 0)
+					{
+						groupKey += " " + tupleSplit[k];
+					}
+					else
+					{
+						groupKey += tupleSplit[k];
+					}
+				}
+			}
+			
+			String boundaryCMPString = regionNum + "|" + groupKey + "|" + measureString + "|"; 
+			partitionerID = binarySearchPartitionerBoundary(boundaryCMPString);
+			
+			StringTripple outputKey = new StringTripple();
+			outputKey.setFirstString(regionNum + "|" + groupKey + "|");
+			outputKey.setSecondString(measureString);
+			outputKey.setThirdString(String.valueOf(partitionerID));
+
+			context.write(outputKey, one);
+		}
+	}
+	*/
+	
+	public void map(Object key, Text value, Context context) throws IOException, InterruptedException 
+	{
+
+		String tupleSplit[] = value.toString().split("\t");
+		String measureString = new String();
+		int partitionerID;
 		IntWritable outputValue = new IntWritable();
 		
 		for (int i = 0; i < batchAreaBag.size(); i++)
 		{
-			//firstRegionID = String.valueOf(batchAreaBag.get(i).getFirstRegionID()); //abandon this method
-			//baSize = String.valueOf(batchAreaBag.get(i).getBatchAreaSize());
-			
-			partitionFactor = cubeLattice.getRegionBag().get(i).getPartitionFactor();
-			pfKey = String.valueOf(DataCubeParameter.getTestDataPartitionFactorKey(value.toString(), partitionFactor));
 			measureString = DataCubeParameter.getTestDataMeasureString(value.toString());
 
 			String groupPublicKey = new String();
@@ -99,7 +131,6 @@ public class HolisticMRCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 			String groupRegionID = new String();
 			
 			int terminal = batchAreaBag.get(i).getlongestRegionAttributeSize() - batchAreaBag.get(i).getallRegionIDSize() + 1;
-			
 			
 			for (int k = 0; k < batchAreaBag.get(i).getlongestRegionAttributeSize(); k++)
 			{
@@ -141,60 +172,54 @@ public class HolisticMRCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 				}
 			}
 			
-			StringPair outputKey = new StringPair();
-
+			String boundaryCMPString = groupRegionID + "|" + groupPublicKey + "|" + measureString + "|"; 
+			partitionerID = binarySearchPartitionerBoundary(boundaryCMPString);
 			
-			outputKey.setFirstString(groupRegionID + "|" +  groupPublicKey + "|" + pfKey + "|");
+			StringTripple outputKey = new StringTripple();
+			outputKey.setFirstString(groupRegionID + "|" + groupPublicKey + "|");
 			outputKey.setSecondString(groupPipeKey);
-
-			//System.out.println("key:" + outputKey.getFirstString() + " " + outputKey.getSecondString());
-			
+			outputKey.setThirdString(String.valueOf(partitionerID));
 			outputValue.set(Integer.valueOf(measureString));
-			
-			context.write(outputKey, outputValue);
-			
-		}
-	}
-	
-	private Tuple<Integer> StringLineToTuple(String line)
-	{
-		String[] regionSplit = line.split("\t"); 
-		String[] pfSplit = regionSplit[1].split(" ");
-		String[] groupSplit = regionSplit[0].split("\\|");
-		
-		Tuple<Integer> tuple = new Tuple<Integer>(DataCubeParameter.testDataInfor.getAttributeSize());
-		for (int i = 0; i < groupSplit.length; i++)
-		{
-			if (groupSplit[i].equals("*"))
-			{
-				tuple.addField(null);
-			}
-			else if (groupSplit[i].length() > 0)
-			{
-				tuple.addField(Integer.valueOf(groupSplit[i]));
-			}
-		}
-		tuple.setPartitionFactor(Integer.valueOf(pfSplit[1]));
-		
-		return tuple;
-	}
-	
-	private void printBatchArea()
-	{
-		for (int i = 0; i < batchAreaBag.size(); i++)
-		{
-			for (int k = 0; k < batchAreaBag.get(i).getLongestRegionAttributeID().size(); k++)
-			{
-				System.out.print(batchAreaBag.get(i).getLongestRegionAttributeID().get(k) + " ");
-			}
-			System.out.println();
 
-			for (int k = 0; k < batchAreaBag.get(i).getallRegionIDSize(); k++)
-			{
-				System.out.print(batchAreaBag.get(i).getRegionID(k) + " ");
-			}
-			System.out.println();
+			context.write(outputKey, outputValue);
 		}
+	}
+	
+	private int binarySearchPartitionerBoundary(String target)
+	{
+		int head = 0;
+		int tail = boundary.size();
+		
+		if (target.compareTo(boundary.get(0)) <= 0)
+		{
+			return 0;
+		}
+		else if (target.compareTo(boundary.get(boundary.size()-1)) > 0)
+		{
+			return boundary.size() - 1;
+		}
+		
+		while (head < tail - 1)
+		{
+			int mid = (head +  tail) / 2;
+			
+			if (target.equals(boundary.get(mid)))
+			{
+				return mid;
+			}
+			
+			if (target.compareTo(boundary.get(mid)) > 0)
+			{
+				head = mid;
+			}
+			else
+			{
+				tail = mid;
+			}
+		}
+		
+		return tail;
 	}
 }
+
 

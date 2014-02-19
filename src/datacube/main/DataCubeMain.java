@@ -17,13 +17,12 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
 import WordCountStringPair.WordCountStringPair;
-
 import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimate;
 import tscube.holistic.mr1estimate.batchregion.HolisticTSCubeEstimateBatchRegion;
+import tscube.holistic.mr2materialize.batcharea.HolisticTSCubeMaterializeBatchArea;
 import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterialize;
 import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterializeNoCombiner;
 import tscube.holistic.mr3postprocess.HolisticTSCubePostProcess;
-
 import datacube.common.*;
 import datacube.configuration.DataCubeParameter;
 import datacube.test.*;
@@ -54,6 +53,7 @@ public class DataCubeMain extends Configured implements Tool
 		dataCubeCMD.add("tscubemr12");
 		dataCubeCMD.add("tscubemr123");
 		dataCubeCMD.add("tscube");
+		dataCubeCMD.add("tscubeba");
 		dataCubeCMD.add("tscubenc");
 		dataCubeCMD.add("tscubemr23");
 		dataCubeCMD.add("mrcubeba");
@@ -180,10 +180,20 @@ public class DataCubeMain extends Configured implements Tool
 			tsCube1.run(conf);
 			tsCube2.run(conf);
 		}
-		else if (otherArgs[0].equals("tscubemr123") || otherArgs[0].equals("tscube"))
+		else if (otherArgs[0].equals("tscube") || otherArgs[0].equals("tscubemr123"))
 		{
 			HolisticTSCubeEstimate tsCube1 = new HolisticTSCubeEstimate();
 			HolisticTSCubeMaterialize tsCube2 = new HolisticTSCubeMaterialize();
+			HolisticTSCubePostProcess tsCube3 = new HolisticTSCubePostProcess();
+			
+			tsCube1.run(conf);
+			tsCube2.run(conf);
+			tsCube3.run(conf);
+		}
+		else if (otherArgs[0].equals("tscubeba"))
+		{
+			HolisticTSCubeEstimateBatchRegion tsCube1 = new HolisticTSCubeEstimateBatchRegion();
+			HolisticTSCubeMaterializeBatchArea tsCube2 = new HolisticTSCubeMaterializeBatchArea();
 			HolisticTSCubePostProcess tsCube3 = new HolisticTSCubePostProcess();
 			
 			tsCube1.run(conf);

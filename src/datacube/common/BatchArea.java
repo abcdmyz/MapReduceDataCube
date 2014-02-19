@@ -7,8 +7,8 @@ import datacube.configuration.DataCubeParameter;
 
 public class BatchArea 
 {
-	private ArrayList<Integer> longestRegionAttributeID;
-	private ArrayList<Integer> allRegionID;
+	private ArrayList<Integer> longestRegionAttributeID; //记录pipesort中最长的region的各个属性
+	private ArrayList<Integer> allRegionID; //pipesort中计算的各个region
 	
 	/*
 	private String type;

@@ -1,5 +1,0 @@
-package tscube.holistic.mr2materialize.batcharea;
-
-public class HolisticMRCubeMaterializeBatchAreaMapper {
-
-}

@@ -14,9 +14,9 @@ public class CubeLatticeTest
 	public static void exec()
 	{
 		//test1();
-		//test2();
+		test2();
 		//test3();
-		test4();
+		//test4();
 	}
 	
 	/*
@@ -67,7 +67,7 @@ public class CubeLatticeTest
 		tuple0.addField(1, 1);
 		tuple0.addField(2, 2);
 		tuple0.addField(3, 3);
-		tuple0.addField(4, 4);
+		//tuple0.addField(4, 4);
 		
 	
 		aCubeRollUp.add(tuple0);

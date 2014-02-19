@@ -2,7 +2,6 @@ package tscube.holistic.mr1estimate.allregion;
 
 import java.io.IOException;
 
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -70,7 +69,11 @@ public class HolisticTSCubeEstimateReducer extends Reducer<StringPair,IntWritabl
 	
 		int count = 0;
 		long totalTupleSize = DataCubeParameter.getMRCubeTotalSampleSize(Long.valueOf(conf.get("total.tuple.size"))) * Integer.valueOf(conf.get("d2.lattice.region.number"));
-		int machineNumber = Integer.valueOf(conf.get("total.machine.number"));
+		int machineNumber = Integer.valueOf(conf.get("mapred.reduce.tasks"));
+		if (machineNumber <= 1)
+		{
+			machineNumber = Integer.valueOf(conf.get("total.machine.number"));
+		}
 		
 		int interval = (int) (totalTupleSize / (machineNumber - 1));
 		int id = 0;

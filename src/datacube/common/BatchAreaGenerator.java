@@ -19,6 +19,7 @@ public class BatchAreaGenerator
 		return order;
 	}
 	
+	
 	public ArrayList<Integer> getTSCubeBatchSampleRegion(String dataset)
 	{
 		ArrayList<Integer> order = new ArrayList(4);
