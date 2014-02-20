@@ -69,15 +69,21 @@ public class HolisticTSCubeEstimateBatchRegionReducer extends Reducer<StringPair
 		Text outputValue = new Text();
 	
 		int count = 0;
-		long totalTupleSize = DataCubeParameter.getMRCubeTotalSampleSize(Long.valueOf(conf.get("total.tuple.size"))) * Integer.valueOf(conf.get("d2.tscubebatch.sample.region.number"));
+		long totalSampleSize = DataCubeParameter.getMRCubeTotalSampleSize(Long.valueOf(conf.get("total.tuple.size")));
+		double sampleBias = Double.valueOf(conf.get("tscube.sample.bias"));
+		int batchRegionNumber = DataCubeParameter.getTSCubeBatchRegionNumber(conf.get("dataset"));
+		
+		long totalTupleSize = (long) (totalSampleSize * sampleBias * batchRegionNumber);
+		
 		int machineNumber = Integer.valueOf(conf.get("mapred.reduce.tasks"));
 		if (machineNumber <= 1)
 		{
 			machineNumber = Integer.valueOf(conf.get("total.machine.number"));
 		}
 		
-		int interval = (int) (totalTupleSize / (machineNumber - 1));
-		int id = 0;
+		int interval = (int) (totalTupleSize / (machineNumber));
+	
+		int id = 1;
 
 		System.out.println("boudary:" + totalTupleSize + " " + machineNumber + " " + interval);
 	

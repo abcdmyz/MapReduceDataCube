@@ -9,6 +9,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
@@ -32,10 +33,10 @@ public class NaiveMRCubeBatchAreaMapper extends Mapper<Object, Text, StringPair,
 	@Override
 	public void setup(Context context) throws IOException
 	{
-		cubeLattice = new CubeLattice(DataCubeParameter.testDataInfor.getAttributeSize(), DataCubeParameter.testDataInfor.getGroupAttributeSize());
 		conf = context.getConfiguration();
+		cubeLattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
 		
-		cubeLattice.calculateAllRegion(DataCubeParameter.getTestDataInfor().getAttributeCubeRollUp());
+		cubeLattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());
 		cubeLattice.printLattice();
 			
 		batchAreaBag = batchAreaGenerator.getBatchAreaPlan(conf.get("dataset"), cubeLattice);
@@ -63,8 +64,8 @@ public class NaiveMRCubeBatchAreaMapper extends Mapper<Object, Text, StringPair,
 			//baSize = String.valueOf(batchAreaBag.get(i).getBatchAreaSize());
 			
 			partitionFactor = cubeLattice.getRegionBag().get(i).getPartitionFactor();
-			pfKey = String.valueOf(DataCubeParameter.getTestDataPartitionFactorKey(value.toString(), partitionFactor));
-			measureString = DataCubeParameter.getTestDataMeasureString(value.toString());
+			pfKey = String.valueOf(DataCubeParameter.getTestDataPartitionFactorKey(value.toString(), partitionFactor, conf.get("dataset")));
+			measureString = DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset"));
 
 			String groupPublicKey = new String();
 			String groupPipeKey = new String();
@@ -134,7 +135,7 @@ public class NaiveMRCubeBatchAreaMapper extends Mapper<Object, Text, StringPair,
 		String[] pfSplit = regionSplit[1].split(" ");
 		String[] groupSplit = regionSplit[0].split("\\|");
 		
-		Tuple<Integer> tuple = new Tuple<Integer>(DataCubeParameter.testDataInfor.getAttributeSize());
+		Tuple<Integer> tuple = new Tuple<Integer>(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize());
 		for (int i = 0; i < groupSplit.length; i++)
 		{
 			if (groupSplit[i].equals("*"))

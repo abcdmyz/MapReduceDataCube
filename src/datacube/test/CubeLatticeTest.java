@@ -16,7 +16,7 @@ public class CubeLatticeTest
 		//test1();
 		test2();
 		//test3();
-		//test4();
+		test4();
 	}
 	
 	/*
@@ -58,17 +58,14 @@ public class CubeLatticeTest
 	 */
 	public static void test2()
 	{
-		CubeLattice lattice = new CubeLattice(5, 5);
+		CubeLattice lattice = new CubeLattice(6, 3);
 		
 		ArrayList<Tuple<Integer>> aCubeRollUp = new ArrayList<Tuple<Integer>>();
 		
 		Tuple<Integer> tuple0 = new Tuple<Integer>(3);
-		tuple0.addField(0, 0);
-		tuple0.addField(1, 1);
-		tuple0.addField(2, 2);
-		tuple0.addField(3, 3);
-		//tuple0.addField(4, 4);
-		
+		tuple0.addField(0, 1);
+		tuple0.addField(1, 2);
+		tuple0.addField(2, 3);
 	
 		aCubeRollUp.add(tuple0);
 		

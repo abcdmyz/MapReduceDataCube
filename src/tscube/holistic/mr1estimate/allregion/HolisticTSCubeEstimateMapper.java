@@ -18,16 +18,18 @@ import datacube.configuration.DataCubeParameter;
 public class HolisticTSCubeEstimateMapper extends Mapper<Object, Text, StringPair, IntWritable> 
 {
 	private IntWritable one = new IntWritable(1);
-	private CubeLattice lattice = new CubeLattice(DataCubeParameter.getTestDataInfor().getAttributeSize(), DataCubeParameter.getTestDataInfor().getGroupAttributeSize());
+	private CubeLattice lattice;
 	private Configuration conf;
 	private String oneString = "1";
      
 	@Override
 	public void setup(Context context)
 	{
-		lattice.calculateAllRegion(DataCubeParameter.getTestDataInfor().getAttributeCubeRollUp());
 		conf = context.getConfiguration();
-		conf.set("d2.lattice.region.number", String.valueOf(lattice.getRegionStringSepLineBag().size()));
+		
+		lattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
+		lattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());
+		
 		//lattice.printLattice();
 	}
 	
@@ -54,7 +56,7 @@ public class HolisticTSCubeEstimateMapper extends Mapper<Object, Text, StringPai
 		StringPair outputKey = new StringPair();
 		
 		String tupleSplit[] = value.toString().split("\t");
-		Tuple<String> region = new Tuple<String>(DataCubeParameter.getTestDataInfor().getAttributeSize() + 1);
+		Tuple<String> region = new Tuple<String>(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize() + 1);
 		
 		for (int i = 0; i < lattice.getRegionBag().size(); i++)
 		{
@@ -76,7 +78,7 @@ public class HolisticTSCubeEstimateMapper extends Mapper<Object, Text, StringPai
 			}
 
 			outputKey.setFirstString(oneString);
-			outputKey.setSecondString(i + "|" + group + "|" + DataCubeParameter.getTestDataMeasureString(value.toString()) + "|");
+			outputKey.setSecondString(i + "|" + group + "|" + DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset")) + "|");
 			
 			context.write(outputKey, one);
 		}
@@ -96,7 +98,7 @@ public class HolisticTSCubeEstimateMapper extends Mapper<Object, Text, StringPai
 	private void justOutputTupleString(Text value, Context context) throws IOException, InterruptedException
 	{
 		Tuple<String> tuple;		
-		tuple = DataCubeParameter.transformTestDataLineStringtoTuple(value.toString());
+		tuple = DataCubeParameter.transformTestDataLineStringtoTuple(value.toString(), conf.get("dataset"));
 		
 		StringPair outputKey = new StringPair();
 		

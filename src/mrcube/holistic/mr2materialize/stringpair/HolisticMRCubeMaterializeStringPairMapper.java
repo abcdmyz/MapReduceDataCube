@@ -10,7 +10,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
@@ -27,13 +27,14 @@ public class HolisticMRCubeMaterializeStringPairMapper extends Mapper<Object, Te
 	private CubeLattice cubeLattice;
 	ArrayList<Tuple<Integer>> regionTupleBag = new ArrayList<Tuple<Integer>>();
 	private IntWritable one = new IntWritable(1);
+	Configuration conf;
 	
 	@Override
 	public void setup(Context context) throws IOException
 	{
-		cubeLattice = new CubeLattice(DataCubeParameter.testDataInfor.getAttributeSize(), DataCubeParameter.testDataInfor.getGroupAttributeSize());
-		Configuration conf = context.getConfiguration();
-
+		conf = context.getConfiguration();
+		cubeLattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
+		
 		String latticePath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("mrcube.mr1.output.path") + conf.get("mrcube.region.partition.file.path");
 		System.out.println("lattice Path: " + latticePath);
 		
@@ -52,7 +53,7 @@ public class HolisticMRCubeMaterializeStringPairMapper extends Mapper<Object, Te
 				String[] pfSplit = regionSplit[1].split(" ");
 				String[] groupSplit = regionSplit[0].split("\\|");
 				
-				Tuple<Integer> tuple = new Tuple<Integer>(DataCubeParameter.testDataInfor.getAttributeSize());
+				Tuple<Integer> tuple = new Tuple<Integer>(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize());
 				for (int i = 0; i < groupSplit.length; i++)
 				{
 					if (groupSplit[i].equals("*"))
@@ -71,6 +72,7 @@ public class HolisticMRCubeMaterializeStringPairMapper extends Mapper<Object, Te
 			}
 
 			cubeLattice.setregionBag(regionTupleBag);
+			cubeLattice.sortRegionTupleBagReverse();
 			cubeLattice.convertRegionBagToString('|');
 		} 	
 		finally 
@@ -92,8 +94,8 @@ public class HolisticMRCubeMaterializeStringPairMapper extends Mapper<Object, Te
 		{
 			partitionFactor = cubeLattice.getRegionBag().get(i).getPartitionFactor();
 			regionNum = String.valueOf(i);
-			pfKey = String.valueOf(DataCubeParameter.getTestDataPartitionFactorKey(value.toString(), partitionFactor));
-			measureString = DataCubeParameter.getTestDataMeasureString(value.toString());
+			pfKey = String.valueOf(DataCubeParameter.getTestDataPartitionFactorKey(value.toString(), partitionFactor, conf.get("dataset")));
+			measureString = DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset"));
 
 			String groupKey = new String();
 			

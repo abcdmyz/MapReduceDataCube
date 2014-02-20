@@ -3,6 +3,7 @@ package mrcube.holistic.mr2materialize.batcharea;
 import java.io.IOException;
 
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 
@@ -18,7 +19,7 @@ public class HolisticMRCubeMaterializeBatchAreaCombiner extends Reducer<StringPa
 		String lastF = null;
 		String lastS = null;
 		int lastV = -1;
-
+		
 		for (IntWritable val : values) 
 	    {
 			if (!key.getSecondString().equals(lastS) || !key.getFirstString().equals(lastF) || val.get() != lastV)

@@ -9,6 +9,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
@@ -29,14 +30,15 @@ public class HolisticTSCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 	private ArrayList<String> boundary;
 	private ArrayList<BatchArea> batchAreaBag = new ArrayList<BatchArea>();
 	private BatchAreaGenerator batchAreaGenerator = new BatchAreaGenerator();
+	private Configuration conf;
 	
 	@Override
 	public void setup(Context context) throws IOException
 	{
-		cubeLattice = new CubeLattice(DataCubeParameter.testDataInfor.getAttributeSize(), DataCubeParameter.testDataInfor.getGroupAttributeSize());
-		cubeLattice.calculateAllRegion(DataCubeParameter.getTestDataInfor().getAttributeCubeRollUp());
+		conf = context.getConfiguration();
+		cubeLattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
+		cubeLattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());
 		
-		Configuration conf = context.getConfiguration();
 		boundary = new ArrayList<String>(Integer.valueOf(conf.get("total.machine.number")));
 
 		String latticePath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("tscube.mr1.output.path") + conf.get("tscube.boundary.file.path");
@@ -58,12 +60,20 @@ public class HolisticTSCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 				line = br.readLine();
 			}
 			
+			System.out.println("size: " + batchAreaBag.size());
 			batchAreaBag = batchAreaGenerator.getBatchAreaPlan(conf.get("dataset"), cubeLattice);
 			
+			/*
 			for (int i = 0; i < batchAreaBag.size(); i++)
 			{
-				
+				System.out.print("Batch Area:");
+				for (int j = 0; j < batchAreaBag.get(i).getallRegionIDSize(); j++)
+				{
+					System.out.print(batchAreaBag.get(i).getRegionID(j) + " ");
+				}
+				System.out.println();
 			}
+			*/
 		} 	
 		finally 
 		{
@@ -124,11 +134,12 @@ public class HolisticTSCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 		
 		for (int i = 0; i < batchAreaBag.size(); i++)
 		{
-			measureString = DataCubeParameter.getTestDataMeasureString(value.toString());
+			measureString = DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset"));
 
 			String groupPublicKey = new String();
 			String groupPipeKey = new String();
 			String groupRegionID = new String();
+			String batchStartRegionID = new String();
 			
 			int terminal = batchAreaBag.get(i).getlongestRegionAttributeSize() - batchAreaBag.get(i).getallRegionIDSize() + 1;
 			
@@ -172,8 +183,11 @@ public class HolisticTSCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 				}
 			}
 			
-			String boundaryCMPString = groupRegionID + "|" + groupPublicKey + "|" + measureString + "|"; 
+			batchStartRegionID = String.valueOf(batchAreaBag.get(i).getRegionID(0));
+			String boundaryCMPString = batchStartRegionID + "|" + groupPublicKey + "|" + measureString + "|"; 
+			//System.out.println(boundaryCMPString);
 			partitionerID = binarySearchPartitionerBoundary(boundaryCMPString);
+			//Long.valueOf(measureString)
 			
 			StringTripple outputKey = new StringTripple();
 			outputKey.setFirstString(groupRegionID + "|" + groupPublicKey + "|");

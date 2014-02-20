@@ -11,6 +11,11 @@
 	</property>
 	
 	<property>
+		<name>tscube.sample.bias</name>
+		<value>1.1</value>
+	</property>
+	
+	<property>
 		<name>total.uid.size</name>
 		<value>100000000</value>
 	</property>

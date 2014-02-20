@@ -18,20 +18,19 @@ public class HolisticTSCubeMaterializeBatchAreaCombiner extends Reducer<StringTr
 	{
 		String lastF = null;
 		String lastS = null;
-		String lastT = null;
+	
 		int lastV = -1;
 
 		for (IntWritable val : values) 
 	    {
-			if (!key.getSecondString().equals(lastS) || !key.getFirstString().equals(lastF) || 
-					!key.getThirdString().equals(lastT) || val.get() != lastV)
+			if (!key.getSecondString().equals(lastS) || !key.getFirstString().equals(lastF) || val.get() != lastV)
 			{
 				context.write(key, val);
 			}
 
 			lastS = key.getSecondString();
 			lastF = key.getFirstString();
-			lastT = key.getThirdString();
+
 			lastV = val.get();
 	    }	
 	}

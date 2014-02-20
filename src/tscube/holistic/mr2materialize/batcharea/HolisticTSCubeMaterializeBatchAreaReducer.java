@@ -24,6 +24,7 @@ public class HolisticTSCubeMaterializeBatchAreaReducer extends Reducer<StringTri
 		//System.out.println(key.getFirstString());
 		//System.out.println(firstRegionID + " " + baSize);
 		
+		
 		if (attributeSplit.length > 1)
 		{
 			//System.out.println("multi");
@@ -35,8 +36,8 @@ public class HolisticTSCubeMaterializeBatchAreaReducer extends Reducer<StringTri
 			oneRegionCalculation(key, values, context, attributeSplit, keyFirstSplit);
 		}
 		
+		
 		//justPrint(key, values, context);
-
 	}
 	
 	private void justPrint(StringTripple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
@@ -44,7 +45,7 @@ public class HolisticTSCubeMaterializeBatchAreaReducer extends Reducer<StringTri
 		Text outputKey = new Text();
 		IntWritable outputValue = new IntWritable();
 		
-		outputKey.set(key.getFirstString() + "*" + key.getSecondString());
+		outputKey.set(key.getFirstString() + "*" + key.getSecondString() + "*" + key.getThirdString());
 		
 		for(IntWritable val : values)
 		{

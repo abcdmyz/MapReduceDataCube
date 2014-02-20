@@ -68,7 +68,10 @@ public class HolisticTSCubeEstimateReducer extends Reducer<StringPair,IntWritabl
 		Text outputValue = new Text();
 	
 		int count = 0;
-		long totalTupleSize = DataCubeParameter.getMRCubeTotalSampleSize(Long.valueOf(conf.get("total.tuple.size"))) * Integer.valueOf(conf.get("d2.lattice.region.number"));
+		long sampleTupleSize = DataCubeParameter.getMRCubeTotalSampleSize(Long.valueOf(conf.get("total.tuple.size")));
+		int regionNumber = DataCubeParameter.getLatticeRegionNumber(conf.get("dataset"));
+		long totalTupleSize = sampleTupleSize *  regionNumber;
+		
 		int machineNumber = Integer.valueOf(conf.get("mapred.reduce.tasks"));
 		if (machineNumber <= 1)
 		{
@@ -76,7 +79,7 @@ public class HolisticTSCubeEstimateReducer extends Reducer<StringPair,IntWritabl
 		}
 		
 		int interval = (int) (totalTupleSize / (machineNumber - 1));
-		int id = 0;
+		int id = 1;
 
 		System.out.println("boudary:" + totalTupleSize + " " + machineNumber + " " + interval);
 	

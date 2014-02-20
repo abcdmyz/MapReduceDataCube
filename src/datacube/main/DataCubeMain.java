@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import naive.holistic.batcharea.NaiveMRCubeBatchArea;
-import naive.holistic.hashuid.NaiveMRCubeHashUid;
 import naive.holistic.stringpair.NaiveMRCubeStringPair;
-import naive.holistic.text.NaiveMRCubeText;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -29,7 +27,6 @@ import datacube.test.*;
 import mrcube.holistic.mr1estimate.HolisticMRCubeEstimate;
 import mrcube.holistic.mr1estimate.HolisticMRCubeEstimatePrintSample;
 import mrcube.holistic.mr2materialize.batcharea.HolisticMRCubeMaterializeBatchArea;
-import mrcube.holistic.mr2materialize.stringmultiple.HolisticMRCubeMaterializeStringMultiple;
 import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPair;
 import mrcube.holistic.mr3postprocess.HolisticMRCubePostProcess;
 
@@ -115,12 +112,6 @@ public class DataCubeMain extends Configured implements Tool
 			mrCube.run(conf);
 			endTime = System.currentTimeMillis(); 
 			System.out.println("mrcube_naive_sp_" + conf.get("total.tuple.size") + " Time: " + ((endTime-startTime)/1000));
-		}
-		else if (otherArgs[0].equals("naivehu"))
-		{
-			NaiveMRCubeHashUid mrCube1 = new NaiveMRCubeHashUid();
-			
-			mrCube1.run(conf);
 		}
 		else if (otherArgs[0].equals("mrcube"))
 		{

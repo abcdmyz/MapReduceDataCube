@@ -21,8 +21,7 @@ import datacube.configuration.DataCubeParameter;
 public class WordCountStringPairMapper extends Mapper<Object, Text, StringPair, IntWritable> 
 {
 	private IntWritable one = new IntWritable(1);
-	private CubeLattice lattice = new CubeLattice(DataCubeParameter.getTestDataInfor().getAttributeSize(), DataCubeParameter.getTestDataInfor().getGroupAttributeSize());
-     
+   
 	@Override
 	public void setup(Context context)
 	{

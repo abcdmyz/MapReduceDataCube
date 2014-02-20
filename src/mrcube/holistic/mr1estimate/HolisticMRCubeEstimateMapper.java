@@ -19,14 +19,16 @@ import datacube.configuration.DataCubeParameter;
 public class HolisticMRCubeEstimateMapper extends Mapper<Object, Text, StringPair, IntWritable> 
 {
 	private IntWritable one = new IntWritable(1);
-	private CubeLattice lattice = new CubeLattice(DataCubeParameter.getTestDataInfor().getAttributeSize(), DataCubeParameter.getTestDataInfor().getGroupAttributeSize());
+	private CubeLattice lattice;
 	private Configuration conf;
      
 	@Override
 	public void setup(Context context)
 	{
-		lattice.calculateAllRegion(DataCubeParameter.getTestDataInfor().getAttributeCubeRollUp());
 		conf = context.getConfiguration();
+		lattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
+		lattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());
+		
 		//lattice.printLattice();
 	}
 	
@@ -53,7 +55,7 @@ public class HolisticMRCubeEstimateMapper extends Mapper<Object, Text, StringPai
 		StringPair regionGroupKey = new StringPair();
 		
 		String tupleSplit[] = value.toString().split("\t");
-		Tuple<String> region = new Tuple<String>(DataCubeParameter.getTestDataInfor().getAttributeSize() + 1);
+		Tuple<String> region = new Tuple<String>(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize() + 1);
 		
 		for (int i = 0; i < lattice.getRegionBag().size(); i++)
 		{
@@ -94,7 +96,7 @@ public class HolisticMRCubeEstimateMapper extends Mapper<Object, Text, StringPai
 	private void justOutputTupleString(Text value, Context context) throws IOException, InterruptedException
 	{
 		Tuple<String> tuple;		
-		tuple = DataCubeParameter.transformTestDataLineStringtoTuple(value.toString());
+		tuple = DataCubeParameter.transformTestDataLineStringtoTuple(value.toString(), conf.get("dataset"));
 		
 		StringPair regionGroupKey = new StringPair();
 		regionGroupKey.setFirstString(tuple.toString('|'));

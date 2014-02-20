@@ -5,9 +5,6 @@ import java.util.StringTokenizer;
 import mrcube.holistic.mr1estimate.StringPairMRCubeMR1GroupComparator;
 import mrcube.holistic.mr1estimate.StringPairMRCubeMR1KeyComparator;
 import mrcube.holistic.mr1estimate.StringPairMRCubeMR1Partitioner;
-import mrcube.holistic.mr2materialize.stringmultiple.StringMultipleMRCubeMR2GroupComparator;
-import mrcube.holistic.mr2materialize.stringmultiple.StringMultipleMRCubeMR2KeyComparator;
-import mrcube.holistic.mr2materialize.stringmultiple.StringMultipleMRCubeMR2Partitioner;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;

@@ -1,13 +1,8 @@
 package mrcube.holistic.mr3postprocess;
 
-
-import mrcube.holistic.mr2materialize.stringmultiple.HolisticMRCubeMaterializeStringMultiple;
-import mrcube.holistic.mr2materialize.stringmultiple.HolisticMRCubeMaterializeStringMultipleMapper;
-import mrcube.holistic.mr2materialize.stringmultiple.HolisticMRCubeMaterializeStringMultipleReducer;
-
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;

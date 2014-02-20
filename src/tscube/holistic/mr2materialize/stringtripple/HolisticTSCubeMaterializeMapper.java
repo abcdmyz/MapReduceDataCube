@@ -24,14 +24,15 @@ public class HolisticTSCubeMaterializeMapper extends Mapper<Object, Text, String
 	ArrayList<Tuple<Integer>> regionTupleBag = new ArrayList<Tuple<Integer>>();
 	private IntWritable one = new IntWritable(1);
 	private ArrayList<String> boundary;
+	private Configuration conf;
 	
 	@Override
 	public void setup(Context context) throws IOException
 	{
-		cubeLattice = new CubeLattice(DataCubeParameter.testDataInfor.getAttributeSize(), DataCubeParameter.testDataInfor.getGroupAttributeSize());
-		cubeLattice.calculateAllRegion(DataCubeParameter.getTestDataInfor().getAttributeCubeRollUp());
+		conf = context.getConfiguration();
+		cubeLattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
+		cubeLattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());		
 		
-		Configuration conf = context.getConfiguration();
 		boundary = new ArrayList<String>(Integer.valueOf(conf.get("total.machine.number")));
 
 		String latticePath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("tscube.mr1.output.path") + conf.get("tscube.boundary.file.path");
@@ -69,7 +70,7 @@ public class HolisticTSCubeMaterializeMapper extends Mapper<Object, Text, String
 		for (int i = 0; i < cubeLattice.getRegionStringSepLineBag().size(); i++)
 		{
 			regionNum = String.valueOf(i);
-			measureString = DataCubeParameter.getTestDataMeasureString(value.toString());
+			measureString = DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset"));
 
 			String groupKey = new String();
 			

@@ -21,14 +21,17 @@ import datacube.configuration.DataCubeParameter;
 public class NaiveMRCubeStringPairMapper extends Mapper<Object, Text, StringPair, IntWritable> 
 {
 	private IntWritable one = new IntWritable(1);
-	private CubeLattice lattice = new CubeLattice(DataCubeParameter.getTestDataInfor().getAttributeSize(), DataCubeParameter.getTestDataInfor().getGroupAttributeSize());
+	private CubeLattice lattice;
+	private Configuration conf;
      
 	@Override
 	public void setup(Context context)
 	{
-		lattice.calculateAllRegion(DataCubeParameter.getTestDataInfor().getAttributeCubeRollUp());
+		conf = context.getConfiguration();
+		lattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
+		lattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());
 		lattice.printLattice();
-		Configuration conf = context.getConfiguration();
+		
 		//System.out.println(conf.get("total.tuple.size"));
 	}
 	
@@ -47,7 +50,7 @@ public class NaiveMRCubeStringPairMapper extends Mapper<Object, Text, StringPair
 		StringPair regionGroupKey = new StringPair();
 		
 		String tupleSplit[] = value.toString().split("\t");
-		Tuple<String> region = new Tuple<String>(DataCubeParameter.getTestDataInfor().getAttributeSize() + 1);
+		Tuple<String> region = new Tuple<String>(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize() + 1);
 		
 		for (int i = 0; i < lattice.getRegionBag().size(); i++)
 		{
@@ -69,7 +72,7 @@ public class NaiveMRCubeStringPairMapper extends Mapper<Object, Text, StringPair
 			}
 			
 			regionGroupKey.setFirstString(i + "|" + group + "|");
-			regionGroupKey.setSecondString(DataCubeParameter.getTestDataMeasureString(value.toString()));
+			regionGroupKey.setSecondString(DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset")));
 			
 			context.write(regionGroupKey, one);
 		}

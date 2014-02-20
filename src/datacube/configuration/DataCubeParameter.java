@@ -4,26 +4,78 @@ import datacube.common.Tuple;
 
 public class DataCubeParameter 
 {
-	public static DataCubeTestDataInformation testDataInfor = DataCubeTestData.getTestData2();
+	//public static DataCubeTestDataInformation testDataInfor = DataCubeTestData.getTestData2();
 	
-	public static DataCubeTestDataInformation getTestDataInfor()
+	public static DataCubeTestDataInformation getTestDataInfor(String dataset)
 	{
-		return DataCubeTestData.getTestData2();
+		if (dataset.startsWith("d2"))
+		{
+			return DataCubeTestData.getTestData2();
+		}
+		else //d3 
+		{
+			return DataCubeTestData.getTestData3();
+		}
 	}
 
-	public static int getTestDataPartitionFactorKey(String tuple, int partitionFactor)
+	public static int getTestDataPartitionFactorKey(String tuple, int partitionFactor, String dataset)
 	{
-		return DataCubeTestData.getPartitionFactorKeyForTestData2(tuple, partitionFactor);
+		if (dataset.startsWith("d2"))
+		{
+			return DataCubeTestData.getPartitionFactorKeyForTestData2(tuple, partitionFactor);
+		}
+		else //d3
+		{
+			return DataCubeTestData.getPartitionFactorKeyForTestData3(tuple, partitionFactor);
+		}
 	}
 
-	public static Tuple<String> transformTestDataLineStringtoTuple(String line)
+	public static Tuple<String> transformTestDataLineStringtoTuple(String line, String dataset)
 	{
-		return DataCubeTestData.transformLineStringtoTupleForTestData2(line);
+		if (dataset.startsWith("d2"))
+		{
+			return DataCubeTestData.transformLineStringtoTupleForTestData2(line);
+		}
+		else //d3
+		{
+			return DataCubeTestData.transformLineStringtoTupleForTestData3(line);
+		}
 	}	
 
-	public static String getTestDataMeasureString(String tuple)
+	public static String getTestDataMeasureString(String tuple, String dataset)
 	{
-		return DataCubeTestData.getMeasureStringForTestData2(tuple);
+		if (dataset.startsWith("d2"))
+		{
+			return DataCubeTestData.getMeasureStringForTestData2(tuple);
+		}
+		else //d3
+		{
+			return DataCubeTestData.getMeasureStringForTestData3(tuple);
+		}
+	}
+	
+	public static int getLatticeRegionNumber(String dataset)
+	{
+		if (dataset.startsWith("d2"))
+		{
+			return 15;
+		}
+		else //d3
+		{
+			return 7; 
+		}
+	}
+	
+	public static int getTSCubeBatchRegionNumber(String dataset)
+	{
+		if (dataset.startsWith("d2"))
+		{
+			return 4;
+		}
+		else //d3
+		{
+			return 4; 
+		}
 	}
 
 	
