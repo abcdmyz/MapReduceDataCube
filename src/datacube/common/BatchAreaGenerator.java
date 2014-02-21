@@ -15,6 +15,13 @@ public class BatchAreaGenerator
 			order.add(4);
 			order.add(3);
 		}
+		if (dataset.startsWith("d3"))
+		{
+			order.add(2);
+			order.add(2);
+			order.add(2);
+			order.add(1);
+		}
 		
 		return order;
 	}
@@ -30,6 +37,13 @@ public class BatchAreaGenerator
 			order.add(7);
 			order.add(11);
 			order.add(14);
+		}
+		if (dataset.startsWith("d3"))
+		{
+			order.add(1);
+			order.add(3);
+			order.add(5);
+			order.add(6);
 		}
 		
 		return order;
@@ -47,19 +61,6 @@ public class BatchAreaGenerator
 		
 		for (int i = 0; i < cubeLattice.getRegionBag().size(); i++)
 		{
-			/*
-			if (cubeLattice.getRegionBag().get(i).getPartitionFactor() > 1)
-			{
-				if (count > 1)
-				{
-					finalOrder.add(count - 1);
-				}
-				
-				finalOrder.add(1);
-				
-				count = 0;
-			}
-			*/
 			
 			if (sum > 1 && cubeLattice.getRegionBag().get(i).getPartitionFactor() != cubeLattice.getRegionBag().get(i-1).getPartitionFactor())
 			{	

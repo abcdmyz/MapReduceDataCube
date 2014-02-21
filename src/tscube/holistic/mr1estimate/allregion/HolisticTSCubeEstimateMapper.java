@@ -21,6 +21,8 @@ public class HolisticTSCubeEstimateMapper extends Mapper<Object, Text, StringPai
 	private CubeLattice lattice;
 	private Configuration conf;
 	private String oneString = "1";
+	private long totalSampleSize;
+	private long curSampleSize;
      
 	@Override
 	public void setup(Context context)
@@ -30,6 +32,8 @@ public class HolisticTSCubeEstimateMapper extends Mapper<Object, Text, StringPai
 		lattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
 		lattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());
 		
+		totalSampleSize = DataCubeParameter.getMRCubeTotalSampleSize(Long.valueOf(conf.get("total.tuple.size")));
+		curSampleSize = 0;
 		//lattice.printLattice();
 	}
 	
@@ -39,9 +43,10 @@ public class HolisticTSCubeEstimateMapper extends Mapper<Object, Text, StringPai
 		Random random = new Random();
 		int randomNum = random.nextInt(DataCubeParameter.getMRCubeSampleTuplePercent(Integer.valueOf(conf.get("total.tuple.size"))) * 10);
 		
-		if (randomNum <= 10)
+		if (randomNum <= 10 && curSampleSize < totalSampleSize)
 		{
 			produceAllRegionFromTule(value, context);
+			curSampleSize++;
 		}
 
 		//justOutputTupleString(value, context);

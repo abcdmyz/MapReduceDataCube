@@ -67,13 +67,15 @@ public class HolisticTSCubeEstimateBatchRegionReducer extends Reducer<StringPair
 	{
 		Text outputKey = new Text();
 		Text outputValue = new Text();
-	
-		int count = 0;
+
+		/*
 		long totalSampleSize = DataCubeParameter.getMRCubeTotalSampleSize(Long.valueOf(conf.get("total.tuple.size")));
 		double sampleBias = Double.valueOf(conf.get("tscube.sample.bias"));
 		int batchRegionNumber = DataCubeParameter.getTSCubeBatchRegionNumber(conf.get("dataset"));
-		
 		long totalTupleSize = (long) (totalSampleSize * sampleBias * batchRegionNumber);
+		*/
+		
+		int totalTupleSize = 0;
 		
 		int machineNumber = Integer.valueOf(conf.get("mapred.reduce.tasks"));
 		if (machineNumber <= 1)
@@ -81,27 +83,29 @@ public class HolisticTSCubeEstimateBatchRegionReducer extends Reducer<StringPair
 			machineNumber = Integer.valueOf(conf.get("total.machine.number"));
 		}
 		
-		int interval = (int) (totalTupleSize / (machineNumber));
-	
-		int id = 1;
-
-		System.out.println("boudary:" + totalTupleSize + " " + machineNumber + " " + interval);
+		String allSample[] = new String[Integer.valueOf(conf.get("tscube.max.sample.size"))];
 	
 		for (IntWritable val : values) 
 	    {
-			count++;
+			allSample[totalTupleSize++] = key.getSecondString();
+	    }
+		
+		int interval = (int) (totalTupleSize / (machineNumber));
+		System.out.println("boudary:" + totalTupleSize + " " + machineNumber + " " + interval);
+		int id = 1;
+		int count = 0;
+		
+		while (id < machineNumber)
+		{
+			count += interval;
 			
-			if (count >= interval)
-			{
-				outputKey.set(key.getSecondString());
-				outputValue.set(String.valueOf(id));
-				
-				context.write(outputKey, outputValue);
-				
-				count = 0;
-				id++;
-			}
-	    }	
+			outputKey.set(allSample[count]);
+			outputValue.set(String.valueOf(id));
+			
+			context.write(outputKey, outputValue);
+			
+			id++;
+		}
 	}
 
 	@Override
