@@ -3,9 +3,6 @@ package tscube.holistic.mr1estimate.allregion;
 import mrcube.holistic.mr1estimate.HolisticMRCubeEstimate;
 import mrcube.holistic.mr1estimate.HolisticMRCubeEstimateMapper;
 import mrcube.holistic.mr1estimate.HolisticMRCubeEstimateReducer;
-import mrcube.holistic.mr1estimate.StringPairMRCubeMR1GroupComparator;
-import mrcube.holistic.mr1estimate.StringPairMRCubeMR1KeyComparator;
-import mrcube.holistic.mr1estimate.StringPairMRCubeMR1Partitioner;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -17,6 +14,9 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import datacube.common.StringPair;
+import datacube.common.StringPairMRCubeGroupComparator;
+import datacube.common.StringPairMRCubeKeyComparator;
+import datacube.common.StringPairMRCubePartitioner;
 
 public class HolisticTSCubeEstimate 
 {
@@ -36,9 +36,9 @@ public class HolisticTSCubeEstimate
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 		
-		job.setPartitionerClass(StringPairMRCubeMR1Partitioner.class);
-		job.setSortComparatorClass(StringPairMRCubeMR1KeyComparator.class);
-		job.setGroupingComparatorClass(StringPairMRCubeMR1GroupComparator.class);
+		job.setPartitionerClass(StringPairMRCubePartitioner.class);
+		job.setSortComparatorClass(StringPairMRCubeKeyComparator.class);
+		job.setGroupingComparatorClass(StringPairMRCubeGroupComparator.class);
     
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setNumReduceTasks(1);

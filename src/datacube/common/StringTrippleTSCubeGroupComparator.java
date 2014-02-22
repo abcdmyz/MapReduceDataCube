@@ -1,20 +1,16 @@
-package tscube.holistic.mr2materialize.stringtripple;
+package datacube.common;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
 
-import datacube.common.StringPair;
-import datacube.common.StringTripple;
-
-public class StringTrippleTSCubeMR2GroupComparator extends WritableComparator 
+public class StringTrippleTSCubeGroupComparator extends WritableComparator 
 {
 
-	protected StringTrippleTSCubeMR2GroupComparator() 
+	protected StringTrippleTSCubeGroupComparator() 
 	{
 		super(StringTripple.class, true);
 	}

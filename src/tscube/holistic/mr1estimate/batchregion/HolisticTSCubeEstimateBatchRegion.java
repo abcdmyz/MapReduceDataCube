@@ -1,9 +1,5 @@
 package tscube.holistic.mr1estimate.batchregion;
 
-import mrcube.holistic.mr1estimate.StringPairMRCubeMR1GroupComparator;
-import mrcube.holistic.mr1estimate.StringPairMRCubeMR1KeyComparator;
-import mrcube.holistic.mr1estimate.StringPairMRCubeMR1Partitioner;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -17,6 +13,9 @@ import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimate;
 import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimateMapper;
 import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimateReducer;
 import datacube.common.StringPair;
+import datacube.common.StringPairMRCubeGroupComparator;
+import datacube.common.StringPairMRCubeKeyComparator;
+import datacube.common.StringPairMRCubePartitioner;
 
 public class HolisticTSCubeEstimateBatchRegion 
 {
@@ -36,9 +35,9 @@ public class HolisticTSCubeEstimateBatchRegion
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 		
-		job.setPartitionerClass(StringPairMRCubeMR1Partitioner.class);
-		job.setSortComparatorClass(StringPairMRCubeMR1KeyComparator.class);
-		job.setGroupingComparatorClass(StringPairMRCubeMR1GroupComparator.class);
+		job.setPartitionerClass(StringPairMRCubePartitioner.class);
+		job.setSortComparatorClass(StringPairMRCubeKeyComparator.class);
+		job.setGroupingComparatorClass(StringPairMRCubeGroupComparator.class);
     
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setNumReduceTasks(1);

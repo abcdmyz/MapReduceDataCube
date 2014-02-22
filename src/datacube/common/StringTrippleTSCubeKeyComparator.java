@@ -1,15 +1,12 @@
-package tscube.holistic.mr2materialize.stringtripple;
+package datacube.common;
 
 
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
 
-import datacube.common.StringPair;
-import datacube.common.StringTripple;
-
-public class StringTrippleTSCubeMR2KeyComparator extends WritableComparator 
+public class StringTrippleTSCubeKeyComparator extends WritableComparator 
 {
-	protected StringTrippleTSCubeMR2KeyComparator()
+	protected StringTrippleTSCubeKeyComparator()
 	{
 		super(StringTripple.class, true);
 	}

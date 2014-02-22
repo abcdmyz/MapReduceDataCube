@@ -1,8 +1,5 @@
 package tscube.holistic.mr2materialize.stringtripple;
 
-import mrcube.holistic.mr1estimate.StringPairMRCubeMR1GroupComparator;
-import mrcube.holistic.mr1estimate.StringPairMRCubeMR1KeyComparator;
-import mrcube.holistic.mr1estimate.StringPairMRCubeMR1Partitioner;
 import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPairCombiner;
 
 import org.apache.hadoop.conf.Configuration;
@@ -18,7 +15,13 @@ import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimate;
 import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimateMapper;
 import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimateReducer;
 import datacube.common.StringPair;
+import datacube.common.StringPairMRCubeGroupComparator;
+import datacube.common.StringPairMRCubeKeyComparator;
+import datacube.common.StringPairMRCubePartitioner;
 import datacube.common.StringTripple;
+import datacube.common.StringTrippleTSCubeGroupComparator;
+import datacube.common.StringTrippleTSCubeKeyComparator;
+import datacube.common.StringTrippleTSCubePartitioner;
 
 public class HolisticTSCubeMaterialize 
 {
@@ -41,9 +44,9 @@ public class HolisticTSCubeMaterialize
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 		
-		job.setPartitionerClass(StringTrippleTSCubeMR2Partitioner.class);
-		job.setSortComparatorClass(StringTrippleTSCubeMR2KeyComparator.class);
-		job.setGroupingComparatorClass(StringTrippleTSCubeMR2GroupComparator.class);
+		job.setPartitionerClass(StringTrippleTSCubePartitioner.class);
+		job.setSortComparatorClass(StringTrippleTSCubeKeyComparator.class);
+		job.setGroupingComparatorClass(StringTrippleTSCubeGroupComparator.class);
     
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setNumReduceTasks(Integer.valueOf(conf.get("mapred.reduce.tasks")));

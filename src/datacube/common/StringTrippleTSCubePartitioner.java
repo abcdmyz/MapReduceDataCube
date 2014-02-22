@@ -1,13 +1,10 @@
-package tscube.holistic.mr2materialize.stringtripple;
+package datacube.common;
 
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Partitioner;
 
-import datacube.common.StringPair;
-import datacube.common.StringTripple;
-
-public class StringTrippleTSCubeMR2Partitioner extends Partitioner<StringTripple, IntWritable> 
+public class StringTrippleTSCubePartitioner extends Partitioner<StringTripple, IntWritable> 
 {
 
 	@Override

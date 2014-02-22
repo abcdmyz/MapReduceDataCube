@@ -14,8 +14,8 @@ import org.apache.hadoop.util.GenericOptionsParser;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-import WordCountStringPair.WordCountStringPair;
 import topdown.holistic.mr1emitsortedcuboid.HolisticTopDownEmitSortedCuboid;
+import topdown.holistic.mr2pipeline.HolisticTopDownPipeline;
 import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimate;
 import tscube.holistic.mr1estimate.batchregion.HolisticTSCubeEstimateBatchRegion;
 import tscube.holistic.mr2materialize.batcharea.HolisticTSCubeMaterializeBatchArea;
@@ -38,41 +38,8 @@ public class DataCubeMain extends Configured implements Tool
 	private static HashSet dataSizeCMD = new HashSet<String>();
 	private Configuration conf;
 	
-	private static void Initialize()
-	{
-		dataCubeCMD.add("naive");
-		dataCubeCMD.add("naivehu");
-		dataCubeCMD.add("mrcube");
-		dataCubeCMD.add("mrcubemr1");
-		dataCubeCMD.add("mrcubemr3");
-		dataCubeCMD.add("mrcubemr1print");
-		dataCubeCMD.add("tscubemr1");
-		dataCubeCMD.add("tscubemr2");
-		dataCubeCMD.add("tscubemr12");
-		dataCubeCMD.add("tscubemr123");
-		dataCubeCMD.add("tscube");
-		dataCubeCMD.add("tscubeba");
-		dataCubeCMD.add("tscubenc");
-		dataCubeCMD.add("tscubemr23");
-		dataCubeCMD.add("mrcubeba");
-		dataCubeCMD.add("naiveba");
-		dataCubeCMD.add("wordcount");
-		dataCubeCMD.add("tscubebamr1");
-		
-		
-		dataSizeCMD.add("100");
-		dataSizeCMD.add("1000");
-		dataSizeCMD.add("1000000");
-		dataSizeCMD.add("10000000");
-		dataSizeCMD.add("100000000");
-		dataSizeCMD.add("1000000000");
-		dataSizeCMD.add("10");
-	}
-	
-	
 	public static void main(String[] args) throws Exception 
 	{
-		Initialize();
 		int res = ToolRunner.run(new DataCubeMain(), args);
 		
 		//CubeLatticeTest.exec();
@@ -88,22 +55,6 @@ public class DataCubeMain extends Configured implements Tool
 		String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
 		long startTime;
 		long endTime;
-
-		/*
-		if (!dataCubeCMD.contains(otherArgs[0]))
-		{
-			System.err.println(otherArgs[0] + " Wrong Data Cube CMD\n" +
-					"Usage:<data cube:mrcube/naive/tera> <data size:100/1000/1000000/10000000/100000000/1000000000>");
-			System.exit(2);
-		}
-		if (!dataSizeCMD.contains(conf.get("total.tuple.size")))
-		{
-			System.err.println(conf.get("total.tuple.size") + " Wrong Data Size\n" +
-					"Usage:<data cube:mrcube/naive/tera> <data size:100/1000/1000000/10000000/100000000/1000000000>");
-			System.exit(2);
-		}
-		*/
-		
 		
 		if (otherArgs[0].equals("naive"))
 		{
@@ -226,11 +177,6 @@ public class DataCubeMain extends Configured implements Tool
 			
 			mrCube1.run(conf);
 		}
-		else if (otherArgs[0].equals("wordcount"))
-		{
-			WordCountStringPair mrCube1 = new WordCountStringPair();
-			mrCube1.run(conf);
-		}
 		else if (otherArgs[0].equals("mrcubemr1print"))
 		{
 			HolisticMRCubeEstimatePrintSample mrCube1Print = new HolisticMRCubeEstimatePrintSample();
@@ -241,6 +187,25 @@ public class DataCubeMain extends Configured implements Tool
 			HolisticTopDownEmitSortedCuboid mr1 = new HolisticTopDownEmitSortedCuboid();
 			mr1.run(conf);
 		}
+		else if (otherArgs[0].equals("topdcubemr2"))
+		{
+			HolisticTopDownPipeline mr2 = new HolisticTopDownPipeline();
+	
+			mr2.run(conf);
+		}
+		else if (otherArgs[0].equals("topdcube"))
+		{
+			HolisticTopDownEmitSortedCuboid mr1 = new HolisticTopDownEmitSortedCuboid();
+			HolisticTopDownPipeline mr2 = new HolisticTopDownPipeline();
+			
+			mr1.run(conf);
+			mr2.run(conf);
+		}
+		else
+		{
+			System.out.println("Wrong CMD");
+		}
+		
 		
 		
 		return 0;

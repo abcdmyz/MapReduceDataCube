@@ -170,11 +170,6 @@ public class HolisticMRCubeEstimatePrintSampleReducer  extends Reducer<StringPai
 		context.write(region, maxNum);
 	}
 
-	@Override
-	public void cleanup(Context context) throws IOException
-	{
-
-	}
 	
 	private int determinePartitionFactor(int maxGroup)
 	{

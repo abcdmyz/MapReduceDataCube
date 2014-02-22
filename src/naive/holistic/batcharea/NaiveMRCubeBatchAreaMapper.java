@@ -34,14 +34,14 @@ public class NaiveMRCubeBatchAreaMapper extends Mapper<Object, Text, StringPair,
 	public void setup(Context context) throws IOException
 	{
 		conf = context.getConfiguration();
-		cubeLattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
 		
+		cubeLattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
 		cubeLattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());
 		cubeLattice.printLattice();
 			
 		batchAreaBag = batchAreaGenerator.getBatchAreaPlan(conf.get("dataset"), cubeLattice);
+		
 		//printBatchArea();
-
 		//System.out.println("batchArea Bag: " + batchAreaBag.size());
 	} 	
      
@@ -50,19 +50,13 @@ public class NaiveMRCubeBatchAreaMapper extends Mapper<Object, Text, StringPair,
 		int partitionFactor = 1;
 		
 		String tupleSplit[] = value.toString().split("\t");
-		String firstRegionID = new String();
 		String pfKey = new String();
-		String baSize = new String();
 		String measureString = new String();
-		String baType = new String();
 
 		IntWritable outputValue = new IntWritable();
 		
 		for (int i = 0; i < batchAreaBag.size(); i++)
 		{
-			//firstRegionID = String.valueOf(batchAreaBag.get(i).getFirstRegionID());
-			//baSize = String.valueOf(batchAreaBag.get(i).getBatchAreaSize());
-			
 			partitionFactor = cubeLattice.getRegionBag().get(i).getPartitionFactor();
 			pfKey = String.valueOf(DataCubeParameter.getTestDataPartitionFactorKey(value.toString(), partitionFactor, conf.get("dataset")));
 			measureString = DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset"));
@@ -119,9 +113,6 @@ public class NaiveMRCubeBatchAreaMapper extends Mapper<Object, Text, StringPair,
 			
 			outputKey.setFirstString(groupRegionID + "|" +  groupPublicKey + "|");
 			outputKey.setSecondString(groupPipeKey);
-
-			//System.out.println("key:" + outputKey.getFirstString() + " " + outputKey.getSecondString());
-			
 			outputValue.set(Integer.valueOf(measureString));
 			
 			context.write(outputKey, outputValue);

@@ -1,8 +1,5 @@
 package naive.holistic.batcharea;
 
-import mrcube.holistic.mr1estimate.StringPairMRCubeMR1GroupComparator;
-import mrcube.holistic.mr1estimate.StringPairMRCubeMR1KeyComparator;
-import mrcube.holistic.mr1estimate.StringPairMRCubeMR1Partitioner;
 import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPair;
 import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPairCombiner;
 import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPairMapper;
@@ -19,6 +16,9 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import datacube.common.StringPair;
+import datacube.common.StringPairMRCubeGroupComparator;
+import datacube.common.StringPairMRCubeKeyComparator;
+import datacube.common.StringPairMRCubePartitioner;
 
 public class NaiveMRCubeBatchArea 
 {
@@ -40,9 +40,9 @@ public class NaiveMRCubeBatchArea
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
 
-		job.setPartitionerClass(StringPairMRCubeMR1Partitioner.class);
-		job.setSortComparatorClass(StringPairMRCubeMR1KeyComparator.class);
-		job.setGroupingComparatorClass(StringPairMRCubeMR1GroupComparator.class);
+		job.setPartitionerClass(StringPairMRCubePartitioner.class);
+		job.setSortComparatorClass(StringPairMRCubeKeyComparator.class);
+		job.setGroupingComparatorClass(StringPairMRCubeGroupComparator.class);
     
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setNumReduceTasks(Integer.valueOf(conf.get("mapred.reduce.tasks")));

@@ -26,6 +26,17 @@ public class BatchAreaGenerator
 		return order;
 	}
 	
+	public int getBatchAreaIDFromRootRegionID(String dataset, int rootRegionID)
+	{
+		if (dataset.startsWith("d2")) 
+		{
+			return rootRegionID / 4;
+		}
+		else 
+		{
+			return rootRegionID / 2;
+		}
+	}
 	
 	public ArrayList<Integer> getTSCubeBatchSampleRegion(String dataset)
 	{

@@ -1,9 +1,8 @@
-package mrcube.holistic.mr2materialize.batcharea;
+package topdown.holistic.mr2pipeline;
 
 import java.io.IOException;
 import java.util.HashSet;
 
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -11,7 +10,7 @@ import org.apache.hadoop.mapreduce.Reducer.Context;
 
 import datacube.common.StringPair;
 
-public class HolisticMRCubeMaterializeBatchAreaReducer extends Reducer<StringPair, IntWritable, Text, IntWritable> 
+public class HolisticTopDownPipelineReducer extends Reducer<StringPair, IntWritable, Text, IntWritable> 
 {
 	private IntWritable one = new IntWritable(1);
 
@@ -19,16 +18,24 @@ public class HolisticMRCubeMaterializeBatchAreaReducer extends Reducer<StringPai
 	public void reduce(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
 		String keyFirstSplit[] = key.getFirstString().split("\\|");
+
 		String attributeSplit[] = keyFirstSplit[0].split(" ");
+		//System.out.println(key.getFirstString());
+		//System.out.println(firstRegionID + " " + baSize);
 		
 		if (attributeSplit.length > 1)
 		{
+			//System.out.println("multi");
 			multiRegionPipelineCalculation(key, values, context, attributeSplit, keyFirstSplit);
 		}
 		else
 		{
+			//System.out.println("one");
 			oneRegionCalculation(key, values, context, attributeSplit, keyFirstSplit);
 		}
+		
+		//justPrint(key, values, context);
+
 	}
 	
 	private void justPrint(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
@@ -94,13 +101,19 @@ public class HolisticMRCubeMaterializeBatchAreaReducer extends Reducer<StringPai
 		{
 			keySecondSplit = key.getSecondString().split(" ");
 			nextPrint = false;
+			
+			//System.out.println("key:" + key.getSecondString());
+			//System.out.println("len:" + keySecondSplit.length);
 
 			String pipePrivate = new String();
 			
 			for (int i = 0; i < keySecondSplit.length; i++)
 			{
+				//System.out.println(keySecondSplit[i] + " " + curValue[i] + " " + nextPrint);
+				
 				if (nextPrint || !keySecondSplit[i].equals(curValue[i]) || curValue[i] == null)
 				{
+					//System.out.println("start: " + start);
 					if (start)
 					{
 						if (nextPrint)
@@ -118,6 +131,8 @@ public class HolisticMRCubeMaterializeBatchAreaReducer extends Reducer<StringPai
 						outputKey.set(pipePublic[i+1] + pipePrivate + "|");	
 						outputValue.set(curSet[i].size());
 
+						//System.out.println("rout:" + pipePublic[i+1] + pipePrivate + "|\t" + curSet[i].size());
+
 						context.write(outputKey, outputValue);
 					}
 					
@@ -129,6 +144,7 @@ public class HolisticMRCubeMaterializeBatchAreaReducer extends Reducer<StringPai
 				}
 				else
 				{
+					//System.out.print("set2 " + keySecondSplit[i] + " " + val.get());
 					curSet[i].add(val.get());
 				}
 			}
@@ -145,6 +161,9 @@ public class HolisticMRCubeMaterializeBatchAreaReducer extends Reducer<StringPai
 			
 			outputKey.set(pipePublic[i+1] + pipePrivate + "|");	
 			outputValue.set(curSet[i].size());
+
+			//System.out.println("rout:" + pipePublic[i+1] + pipePrivate + "|\t" + curSet[i].size());
+
 			context.write(outputKey, outputValue);
 		}
 		

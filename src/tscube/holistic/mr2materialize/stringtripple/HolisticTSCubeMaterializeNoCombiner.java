@@ -10,6 +10,9 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import datacube.common.StringTripple;
+import datacube.common.StringTrippleTSCubeGroupComparator;
+import datacube.common.StringTrippleTSCubeKeyComparator;
+import datacube.common.StringTrippleTSCubePartitioner;
 
 public class HolisticTSCubeMaterializeNoCombiner 
 {
@@ -32,9 +35,9 @@ public class HolisticTSCubeMaterializeNoCombiner
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 		
-		job.setPartitionerClass(StringTrippleTSCubeMR2Partitioner.class);
-		job.setSortComparatorClass(StringTrippleTSCubeMR2KeyComparator.class);
-		job.setGroupingComparatorClass(StringTrippleTSCubeMR2GroupComparator.class);
+		job.setPartitionerClass(StringTrippleTSCubePartitioner.class);
+		job.setSortComparatorClass(StringTrippleTSCubeKeyComparator.class);
+		job.setGroupingComparatorClass(StringTrippleTSCubeGroupComparator.class);
     
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setNumReduceTasks(Integer.valueOf(conf.get("mapred.reduce.tasks")));

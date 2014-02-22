@@ -62,27 +62,12 @@ public class HolisticTSCubeEstimateBatchRegionMapper extends Mapper<Object, Text
 		StringPair outputKey = new StringPair();
 		
 		String tupleSplit[] = value.toString().split("\t");
-		//Tuple<String> region = new Tuple<String>(DataCubeParameter.getTestDataInfor().getAttributeSize() + 1);
-		
+
 		for (int k = 0; k < batchSampleRegion.size(); k++)
 		{
 			String group = new String();
 			String groupRegionID = new String();
-			
-			/*
-			for (int i = 0; i < batchAreaBag.get(k).getallRegionIDSize(); i++)
-			{
-				if (groupRegionID.length() > 0)
-				{
-					groupRegionID += " " + batchAreaBag.get(k).getallRegionID().get(i);
-				}
-				else
-				{
-					groupRegionID += batchAreaBag.get(k).getallRegionID().get(i);
-				}
-			}
-			*/
-			
+
 			int i = batchSampleRegion.get(k); 
 			int batchStartRegionID = batchAreaBag.get(k).getRegionID(0);
 					

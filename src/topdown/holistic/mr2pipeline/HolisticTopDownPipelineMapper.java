@@ -1,4 +1,4 @@
-package mrcube.holistic.mr2materialize.batcharea;
+package topdown.holistic.mr2pipeline;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,7 +20,7 @@ import datacube.common.StringPair;
 import datacube.common.Tuple;
 import datacube.configuration.DataCubeParameter;
 
-public class HolisticMRCubeMaterializeBatchAreaMapper extends Mapper<Object, Text, StringPair, IntWritable> 
+public class HolisticTopDownPipelineMapper extends Mapper<Object, Text, StringPair, IntWritable> 
 {
 	private CubeLattice cubeLattice;
 	private ArrayList<Tuple<Integer>> regionTupleBag = new ArrayList<Tuple<Integer>>();
@@ -34,60 +34,29 @@ public class HolisticMRCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 	{
 		conf = context.getConfiguration();
 		cubeLattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
-		
-		String latticePath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("mrcube.mr1.output.path") + conf.get("mrcube.region.partition.file.path");
-		//System.out.println("lattice Path: " + latticePath);
-		
-		Path path = new Path(latticePath);
-		
-		FileSystem fs = FileSystem.get(context.getConfiguration());
-		BufferedReader br=new BufferedReader(new InputStreamReader(fs.open(path)));
-		
-		try 
-		{
-			String line;
-			line=br.readLine();
-			while (line != null)
-			{				
-				Tuple<Integer> tuple = StringLineToTuple(line);
-				regionTupleBag.add(tuple);
-	
-				line = br.readLine();
-			}
-
-			cubeLattice.setregionBag(regionTupleBag);
-			cubeLattice.sortRegionTupleBagReverse();
-			cubeLattice.convertRegionBagToString('|');
+		cubeLattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());
 			
-			cubeLattice.printLattice();
+		cubeLattice.printLattice();
 			
-			batchAreaBag = batchAreaGenerator.getBatchAreaPlan(conf.get("dataset"), cubeLattice);
-			//printBatchArea();
-
-			//System.out.println("batchArea Bag: " + batchAreaBag.size());
-		} 	
-		finally 
-		{
-			br.close();
-		}
+		batchAreaBag = batchAreaGenerator.getBatchAreaPlan(conf.get("dataset"), cubeLattice);
+		printBatchArea();
 	}
      
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException 
 	{
-		int partitionFactor = 1;
-		
-		String tupleSplit[] = value.toString().split("\t");
-		String pfKey = new String();
-		String measureString = new String();
-
-
+		String lineSplit[] = value.toString().split("\\|");
+		String tupleSplit[] = lineSplit[1].split(" ");
 		IntWritable outputValue = new IntWritable();
 		
-		for (int i = 0; i < batchAreaBag.size(); i++)
-		{	
-			partitionFactor = cubeLattice.getRegionBag().get(i).getPartitionFactor();
-			pfKey = String.valueOf(DataCubeParameter.getTestDataPartitionFactorKey(value.toString(), partitionFactor, conf.get("dataset")));
-			measureString = DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset"));
+		String firstRegionID = new String();
+		String baSize = new String();
+		String measureString = new String();
+		String baType = new String();
+
+		int i = batchAreaGenerator.getBatchAreaIDFromRootRegionID(conf.get("dataset"), Integer.valueOf(lineSplit[0]));
+		//for (int i = 0; i < batchAreaBag.size(); i++)
+		{
+			measureString = lineSplit[2];
 
 			String groupPublicKey = new String();
 			String groupPipeKey = new String();
@@ -95,10 +64,10 @@ public class HolisticMRCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 			
 			int terminal = batchAreaBag.get(i).getlongestRegionAttributeSize() - batchAreaBag.get(i).getallRegionIDSize() + 1;
 			
-			
 			for (int k = 0; k < batchAreaBag.get(i).getlongestRegionAttributeSize(); k++)
 			{
-				int aid = batchAreaBag.get(i).getRegionAttribute(k);
+				//int aid = batchAreaBag.get(i).getRegionAttribute(k);
+				int aid = k;
 				
 				if (k >= terminal)
 				{
@@ -137,11 +106,14 @@ public class HolisticMRCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 			}
 			
 			StringPair outputKey = new StringPair();
-
-			outputKey.setFirstString(groupRegionID + "|" +  groupPublicKey + "|" + pfKey + "|");
-			outputKey.setSecondString(groupPipeKey);		
-			outputValue.set(Integer.valueOf(measureString));
 			
+			
+			outputKey.setFirstString(groupRegionID + "|" +  groupPublicKey + "|");
+			outputKey.setSecondString(groupPipeKey);
+
+			System.out.println("key:" + outputKey.getFirstString() + " " + outputKey.getSecondString());
+			
+			outputValue.set(Integer.valueOf(measureString));
 			context.write(outputKey, outputValue);
 			
 		}

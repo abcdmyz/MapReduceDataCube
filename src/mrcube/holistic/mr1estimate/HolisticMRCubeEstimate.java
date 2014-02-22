@@ -16,6 +16,9 @@ import org.apache.hadoop.mapreduce.lib.partition.*;
 import org.apache.hadoop.util.GenericOptionsParser;
 
 import datacube.common.StringPair;
+import datacube.common.StringPairMRCubeGroupComparator;
+import datacube.common.StringPairMRCubeKeyComparator;
+import datacube.common.StringPairMRCubePartitioner;
 import datacube.configuration.DataCubeParameter;
 
 public class HolisticMRCubeEstimate 
@@ -37,9 +40,9 @@ public class HolisticMRCubeEstimate
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 		
-		job.setPartitionerClass(StringPairMRCubeMR1Partitioner.class);
-		job.setSortComparatorClass(StringPairMRCubeMR1KeyComparator.class);
-		job.setGroupingComparatorClass(StringPairMRCubeMR1GroupComparator.class);
+		job.setPartitionerClass(StringPairMRCubePartitioner.class);
+		job.setSortComparatorClass(StringPairMRCubeKeyComparator.class);
+		job.setGroupingComparatorClass(StringPairMRCubeGroupComparator.class);
     
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setNumReduceTasks(1);
@@ -47,8 +50,8 @@ public class HolisticMRCubeEstimate
 		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
 		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("mrcube.mr1.output.path");  
 		
-		//System.out.println("mr1 input: " + inputPath);
-		//System.out.println("mr1 output: " + outputPath);
+		System.out.println("mr1 input: " + inputPath);
+		System.out.println("mr1 output: " + outputPath);
 		
 		FileInputFormat.addInputPath(job, new Path(inputPath));
 		FileOutputFormat.setOutputPath(job, new Path(outputPath));

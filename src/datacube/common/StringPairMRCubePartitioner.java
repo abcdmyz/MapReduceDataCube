@@ -1,12 +1,10 @@
-package mrcube.holistic.mr1estimate;
+package datacube.common;
 
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Partitioner;
 
-import datacube.common.StringPair;
-
-public class StringPairMRCubeMR1Partitioner extends Partitioner<StringPair, IntWritable> 
+public class StringPairMRCubePartitioner extends Partitioner<StringPair, IntWritable> 
 {
 
 	@Override

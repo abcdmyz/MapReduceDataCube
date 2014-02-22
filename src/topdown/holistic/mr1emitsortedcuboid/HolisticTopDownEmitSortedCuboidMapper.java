@@ -1,26 +1,36 @@
-package mrcube.holistic.mr1estimate;
+package topdown.holistic.mr1emitsortedcuboid;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Random;
 
-
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
+import datacube.common.BatchArea;
+import datacube.common.BatchAreaGenerator;
 import datacube.common.CubeLattice;
 import datacube.common.StringPair;
 import datacube.common.Tuple;
 import datacube.configuration.DataCubeParameter;
 
-public class HolisticMRCubeEstimateMapper extends Mapper<Object, Text, StringPair, IntWritable> 
+public class HolisticTopDownEmitSortedCuboidMapper extends Mapper<Object, Text, Text, IntWritable> 
 {
-	private Configuration conf;
+	private IntWritable one = new IntWritable(1);
+	private String oneString = "1";
 	private CubeLattice lattice;
-	private IntWritable one = new IntWritable(1);	
+	private Configuration conf;
+	
+	private ArrayList<Integer> batchRootRegion = new ArrayList<Integer>();
+	private BatchAreaGenerator batchAreaGenerator = new BatchAreaGenerator();
+	private ArrayList<BatchArea> batchAreaBag = new ArrayList<BatchArea>();
      
 	@Override
 	public void setup(Context context)
@@ -30,37 +40,34 @@ public class HolisticMRCubeEstimateMapper extends Mapper<Object, Text, StringPai
 		lattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());
 		
 		//lattice.printLattice();
+		
+		batchRootRegion = batchAreaGenerator.getTSCubeBatchSampleRegion(conf.get("dataset"));
+		batchAreaBag = batchAreaGenerator.getBatchAreaPlan(conf.get("dataset"), lattice);
 	}
 	
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException 
 	{
-		
-		Random random = new Random();
-		int randomNum = random.nextInt(DataCubeParameter.getMRCubeSampleTuplePercent(Integer.valueOf(conf.get("total.tuple.size"))) * 10);
-		
-		if (randomNum <= 10)
-		{
-			produceAllRegionFromTule(value, context);
-		}
-
-		//justOutputTupleString(value, context);
-		//justOutputValue(value, context);
+		produceAllPipeRootRegionFromTule(value, context);
 	}
 
-	void produceAllRegionFromTule(Text value, Context context) throws IOException, InterruptedException
+	void produceAllPipeRootRegionFromTule(Text value, Context context) throws IOException, InterruptedException
 	{
 		Text groupValue = new Text();
 		Text regionKey = new Text();
 		Tuple<String> tuple;
-		StringPair regionGroupKey = new StringPair();
+		Text outputKey = new Text();
 		
 		String tupleSplit[] = value.toString().split("\t");
-		Tuple<String> region = new Tuple<String>(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize() + 1);
 		
-		for (int i = 0; i < lattice.getRegionBag().size(); i++)
+		for (int k = 0; k < batchRootRegion.size(); k++)
 		{
 			String group = new String();
+			String groupRegionID = new String();
 			
+			
+			int batchStartRegionID = batchAreaBag.get(k).getRegionID(0);
+			int i = batchStartRegionID;
+					
 			for (int j = 0; j < lattice.getRegionBag().get(i).getSize(); j++)
 			{
 				if (lattice.getRegionBag().get(i).getField(j) != null)
@@ -75,20 +82,17 @@ public class HolisticMRCubeEstimateMapper extends Mapper<Object, Text, StringPai
 					}
 				}
 			}
-			
-			regionGroupKey.setFirstString(lattice.getRegionStringSepLineBag().get(i));
-			regionGroupKey.setSecondString(group);
-			
-			context.write(regionGroupKey, one);
+
+			outputKey.set(batchStartRegionID + "|" + group + "|" + DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset")) + "|");
+			context.write(outputKey, one);
 		}
 	}
 
 
 	private void justOutputValue(Text value, Context context) throws IOException, InterruptedException
 	{
-		StringPair regionGroupKey = new StringPair();
-		regionGroupKey.setFirstString(value.toString());
-		regionGroupKey.setSecondString(one.toString());
+		Text regionGroupKey = new Text();
+		regionGroupKey.set(value.toString());
 		
 		context.write(regionGroupKey, one);
 	}
@@ -98,9 +102,8 @@ public class HolisticMRCubeEstimateMapper extends Mapper<Object, Text, StringPai
 		Tuple<String> tuple;		
 		tuple = DataCubeParameter.transformTestDataLineStringtoTuple(value.toString(), conf.get("dataset"));
 		
-		StringPair regionGroupKey = new StringPair();
-		regionGroupKey.setFirstString(tuple.toString('|'));
-		regionGroupKey.setSecondString(one.toString());
+		Text regionGroupKey = new Text();
+		regionGroupKey.set(tuple.toString('|'));
 		
 		context.write(regionGroupKey, one);
 	}

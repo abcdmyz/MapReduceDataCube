@@ -3,9 +3,6 @@ package mrcube.holistic.mr2materialize.stringpair;
 import mrcube.holistic.mr1estimate.HolisticMRCubeEstimate;
 import mrcube.holistic.mr1estimate.HolisticMRCubeEstimateMapper;
 import mrcube.holistic.mr1estimate.HolisticMRCubeEstimateReducer;
-import mrcube.holistic.mr1estimate.StringPairMRCubeMR1GroupComparator;
-import mrcube.holistic.mr1estimate.StringPairMRCubeMR1KeyComparator;
-import mrcube.holistic.mr1estimate.StringPairMRCubeMR1Partitioner;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -20,6 +17,9 @@ import org.apache.hadoop.util.GenericOptionsParser;
 
 import datacube.common.StringMultiple;
 import datacube.common.StringPair;
+import datacube.common.StringPairMRCubeGroupComparator;
+import datacube.common.StringPairMRCubeKeyComparator;
+import datacube.common.StringPairMRCubePartitioner;
 import datacube.common.Tuple;
 import datacube.configuration.DataCubeParameter;
 
@@ -43,9 +43,9 @@ public class HolisticMRCubeMaterializeStringPair
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
 
-		job.setPartitionerClass(StringPairMRCubeMR1Partitioner.class);
-		job.setSortComparatorClass(StringPairMRCubeMR1KeyComparator.class);
-		job.setGroupingComparatorClass(StringPairMRCubeMR1GroupComparator.class);
+		job.setPartitionerClass(StringPairMRCubePartitioner.class);
+		job.setSortComparatorClass(StringPairMRCubeKeyComparator.class);
+		job.setGroupingComparatorClass(StringPairMRCubeGroupComparator.class);
     
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setNumReduceTasks(Integer.valueOf(conf.get("mapred.reduce.tasks")));

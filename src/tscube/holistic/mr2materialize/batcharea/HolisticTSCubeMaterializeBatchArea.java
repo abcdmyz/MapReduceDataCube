@@ -13,10 +13,10 @@ import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterialize;
 import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterializeCombiner;
 import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterializeMapper;
 import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterializeReducer;
-import tscube.holistic.mr2materialize.stringtripple.StringTrippleTSCubeMR2GroupComparator;
-import tscube.holistic.mr2materialize.stringtripple.StringTrippleTSCubeMR2KeyComparator;
-import tscube.holistic.mr2materialize.stringtripple.StringTrippleTSCubeMR2Partitioner;
 import datacube.common.StringTripple;
+import datacube.common.StringTrippleTSCubeGroupComparator;
+import datacube.common.StringTrippleTSCubeKeyComparator;
+import datacube.common.StringTrippleTSCubePartitioner;
 
 public class HolisticTSCubeMaterializeBatchArea 
 {
@@ -39,9 +39,9 @@ public class HolisticTSCubeMaterializeBatchArea
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 		
-		job.setPartitionerClass(StringTrippleTSCubeMR2Partitioner.class);
-		job.setSortComparatorClass(StringTrippleTSCubeMR2KeyComparator.class);
-		job.setGroupingComparatorClass(StringTrippleTSCubeMR2GroupComparator.class);
+		job.setPartitionerClass(StringTrippleTSCubePartitioner.class);
+		job.setSortComparatorClass(StringTrippleTSCubeKeyComparator.class);
+		job.setGroupingComparatorClass(StringTrippleTSCubeGroupComparator.class);
     
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setNumReduceTasks(Integer.valueOf(conf.get("mapred.reduce.tasks")));

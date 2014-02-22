@@ -21,23 +21,15 @@ public class HolisticTSCubeMaterializeBatchAreaReducer extends Reducer<StringTri
 		String keyFirstSplit[] = key.getFirstString().split("\\|");
 
 		String attributeSplit[] = keyFirstSplit[0].split(" ");
-		//System.out.println(key.getFirstString());
-		//System.out.println(firstRegionID + " " + baSize);
-		
 		
 		if (attributeSplit.length > 1)
 		{
-			//System.out.println("multi");
 			multiRegionPipelineCalculation(key, values, context, attributeSplit, keyFirstSplit);
 		}
 		else
 		{
-			//System.out.println("one");
 			oneRegionCalculation(key, values, context, attributeSplit, keyFirstSplit);
 		}
-		
-		
-		//justPrint(key, values, context);
 	}
 	
 	private void justPrint(StringTripple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
@@ -103,19 +95,13 @@ public class HolisticTSCubeMaterializeBatchAreaReducer extends Reducer<StringTri
 		{
 			keySecondSplit = key.getSecondString().split(" ");
 			nextPrint = false;
-			
-			//System.out.println("key:" + key.getSecondString());
-			//System.out.println("len:" + keySecondSplit.length);
 
 			String pipePrivate = new String();
 			
 			for (int i = 0; i < keySecondSplit.length; i++)
-			{
-				//System.out.println(keySecondSplit[i] + " " + curValue[i] + " " + nextPrint);
-				
+			{	
 				if (nextPrint || !keySecondSplit[i].equals(curValue[i]) || curValue[i] == null)
 				{
-					//System.out.println("start: " + start);
 					if (start)
 					{
 						if (nextPrint)
@@ -132,9 +118,6 @@ public class HolisticTSCubeMaterializeBatchAreaReducer extends Reducer<StringTri
 
 						outputKey.set(pipePublic[i+1] + pipePrivate + "|");	
 						outputValue.set(curSet[i].size());
-
-						//System.out.println("rout:" + pipePublic[i+1] + pipePrivate + "|\t" + curSet[i].size());
-
 						context.write(outputKey, outputValue);
 					}
 					
@@ -146,7 +129,6 @@ public class HolisticTSCubeMaterializeBatchAreaReducer extends Reducer<StringTri
 				}
 				else
 				{
-					//System.out.print("set2 " + keySecondSplit[i] + " " + val.get());
 					curSet[i].add(val.get());
 				}
 			}
@@ -163,9 +145,6 @@ public class HolisticTSCubeMaterializeBatchAreaReducer extends Reducer<StringTri
 			
 			outputKey.set(pipePublic[i+1] + pipePrivate + "|");	
 			outputValue.set(curSet[i].size());
-
-			//System.out.println("rout:" + pipePublic[i+1] + pipePrivate + "|\t" + curSet[i].size());
-
 			context.write(outputKey, outputValue);
 		}
 		

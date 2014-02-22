@@ -1,19 +1,16 @@
-package mrcube.holistic.mr1estimate;
+package datacube.common;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
 
-import datacube.common.StringPair;
-
-public class StringPairMRCubeMR1GroupComparator extends WritableComparator 
+public class StringPairMRCubeGroupComparator extends WritableComparator 
 {
 
-	protected StringPairMRCubeMR1GroupComparator() 
+	protected StringPairMRCubeGroupComparator() 
 	{
 		super(StringPair.class, true);
 	}
