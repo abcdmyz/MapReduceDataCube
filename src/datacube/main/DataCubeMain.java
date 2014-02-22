@@ -15,6 +15,7 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
 import WordCountStringPair.WordCountStringPair;
+import topdown.holistic.mr1emitsortedcuboid.HolisticTopDownEmitSortedCuboid;
 import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimate;
 import tscube.holistic.mr1estimate.batchregion.HolisticTSCubeEstimateBatchRegion;
 import tscube.holistic.mr2materialize.batcharea.HolisticTSCubeMaterializeBatchArea;
@@ -234,6 +235,11 @@ public class DataCubeMain extends Configured implements Tool
 		{
 			HolisticMRCubeEstimatePrintSample mrCube1Print = new HolisticMRCubeEstimatePrintSample();
 			mrCube1Print.run(conf);
+		}
+		else if (otherArgs[0].equals("topdcubemr1"))
+		{
+			HolisticTopDownEmitSortedCuboid mr1 = new HolisticTopDownEmitSortedCuboid();
+			mr1.run(conf);
 		}
 		
 		

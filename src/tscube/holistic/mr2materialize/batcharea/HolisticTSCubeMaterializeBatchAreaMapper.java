@@ -80,49 +80,6 @@ public class HolisticTSCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 			br.close();
 		}
 	}
-     
-	/*
-	public void map(Object key, Text value, Context context) throws IOException, InterruptedException 
-	{
-		String tupleSplit[] = value.toString().split("\t");
-		String regionNum = new String();
-		String measureString = new String();
-		int partitionerID = 0;
-		
-		for (int i = 0; i < cubeLattice.getRegionStringSepLineBag().size(); i++)
-		{
-			regionNum = String.valueOf(i);
-			measureString = DataCubeParameter.getTestDataMeasureString(value.toString());
-
-			String groupKey = new String();
-			
-			for (int k = 0; k < cubeLattice.getRegionBag().get(i).getSize(); k++)
-			{
-				if (cubeLattice.getRegionBag().get(i).getField(k) != null)
-				{
-					if (groupKey.length() > 0)
-					{
-						groupKey += " " + tupleSplit[k];
-					}
-					else
-					{
-						groupKey += tupleSplit[k];
-					}
-				}
-			}
-			
-			String boundaryCMPString = regionNum + "|" + groupKey + "|" + measureString + "|"; 
-			partitionerID = binarySearchPartitionerBoundary(boundaryCMPString);
-			
-			StringTripple outputKey = new StringTripple();
-			outputKey.setFirstString(regionNum + "|" + groupKey + "|");
-			outputKey.setSecondString(measureString);
-			outputKey.setThirdString(String.valueOf(partitionerID));
-
-			context.write(outputKey, one);
-		}
-	}
-	*/
 	
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException 
 	{
@@ -210,7 +167,7 @@ public class HolisticTSCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 		}
 		else if (target.compareTo(boundary.get(boundary.size()-1)) > 0)
 		{
-			return boundary.size() - 1;
+			return boundary.size();
 		}
 		
 		while (head < tail - 1)

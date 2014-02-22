@@ -16,25 +16,11 @@ import datacube.configuration.DataCubeParameter;
 
 public class HolisticTSCubeEstimateBatchRegionReducer extends Reducer<StringPair,IntWritable,Text,Text> 
 {
-	private Text one = new Text("1");
-	private Text two = new Text("2");
-	
 	private Configuration config;
-	private FileSystem fs;
-	private Path path;
-	private FSDataOutputStream out;
-	
-	private double heapMemAvail = 0;
-	private double maxTupleByReducer = 0;
 	private double r = 0;
 	
 	private Configuration conf;
-	private long maxReducerLimitByte;
-	private double percentMemUsage;
-	private int oneTupleSizeByByte;
-	private long totalTupleSize;
-	private long totalSampleSize;
-	
+
 	@Override
 	public void setup(Context context) throws IOException
 	{

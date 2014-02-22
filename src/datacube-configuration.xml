@@ -93,6 +93,21 @@
 	</property>
 	
 	<property>
+		<name>topdcube.mr1.output.path</name>
+		<value>_output_topdcube_mr1</value>
+	</property>
+	
+	<property>
+		<name>topdcube.mr2.output.path</name>
+		<value>_output_topdcube_mr2</value>
+	</property>
+	
+	<property>
+		<name>topdcube.mr2.input.path.filter</name>
+		<value>.*part.*</value>
+	</property>
+	
+	<property>
 		<name>naive.output.path</name>
 		<value>_output_naive/</value>
 	</property>

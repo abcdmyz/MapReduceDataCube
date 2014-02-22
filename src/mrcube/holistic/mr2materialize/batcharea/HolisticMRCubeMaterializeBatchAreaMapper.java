@@ -35,7 +35,6 @@ public class HolisticMRCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 		conf = context.getConfiguration();
 		cubeLattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
 		
-
 		String latticePath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("mrcube.mr1.output.path") + conf.get("mrcube.region.partition.file.path");
 		//System.out.println("lattice Path: " + latticePath);
 		

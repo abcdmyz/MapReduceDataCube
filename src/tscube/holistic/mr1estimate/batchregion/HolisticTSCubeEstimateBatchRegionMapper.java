@@ -23,10 +23,7 @@ public class HolisticTSCubeEstimateBatchRegionMapper extends Mapper<Object, Text
 	private CubeLattice lattice;
 	private Configuration conf;
 	private String oneString = "1";
-	private long totalSampleSize;
-	private static long curSampleSize = 0;
 
-	
 	private ArrayList<Integer> batchSampleRegion = new ArrayList<Integer>();
 	private BatchAreaGenerator batchAreaGenerator = new BatchAreaGenerator();
 	private ArrayList<BatchArea> batchAreaBag = new ArrayList<BatchArea>();
@@ -37,27 +34,10 @@ public class HolisticTSCubeEstimateBatchRegionMapper extends Mapper<Object, Text
 		conf = context.getConfiguration();
 		lattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
 		lattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());
-		
-		
-		batchSampleRegion = batchAreaGenerator.getTSCubeBatchSampleRegion(conf.get("dataset"));
 		//lattice.printLattice();
 		
+		batchSampleRegion = batchAreaGenerator.getTSCubeBatchSampleRegion(conf.get("dataset"));
 		batchAreaBag = batchAreaGenerator.getBatchAreaPlan(conf.get("dataset"), lattice);
-		
-		/*
-		for (int i = 0; i < batchAreaBag.size(); i++)
-		{
-			System.out.print("Batch Area:");
-			for (int j = 0; j < batchAreaBag.get(i).getallRegionIDSize(); j++)
-			{
-				System.out.print(batchAreaBag.get(i).getRegionID(j) + " ");
-			}
-			System.out.println();
-		}
-		*/
-		
-		totalSampleSize = DataCubeParameter.getMRCubeTotalSampleSize(Long.valueOf(conf.get("total.tuple.size")));
-		//curSampleSize = 0;
 	}
 	
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException 
@@ -65,18 +45,16 @@ public class HolisticTSCubeEstimateBatchRegionMapper extends Mapper<Object, Text
 		Random random = new Random();
 		int randomNum = random.nextInt(DataCubeParameter.getMRCubeSampleTuplePercent(Integer.valueOf(conf.get("total.tuple.size"))) * 10);
 		
-		if (randomNum <= 10 && curSampleSize < totalSampleSize)
+		if (randomNum <= 10)
 		{
-			produceAllRegionFromTule(value, context);
-			curSampleSize++;
-			System.out.println("curSampleSize:" + curSampleSize);
+			produceAllRegionFromTuple(value, context);
 		}
 
 		//justOutputTupleString(value, context);
 		//justOutputValue(value, context);
 	}
 
-	void produceAllRegionFromTule(Text value, Context context) throws IOException, InterruptedException
+	void produceAllRegionFromTuple(Text value, Context context) throws IOException, InterruptedException
 	{
 		Text groupValue = new Text();
 		Text regionKey = new Text();

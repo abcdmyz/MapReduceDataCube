@@ -112,7 +112,7 @@ public class HolisticTSCubeMaterializeMapper extends Mapper<Object, Text, String
 		}
 		else if (target.compareTo(boundary.get(boundary.size()-1)) > 0)
 		{
-			return boundary.size() - 1;
+			return boundary.size();
 		}
 		
 		while (head < tail - 1)
