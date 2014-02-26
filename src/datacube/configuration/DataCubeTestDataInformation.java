@@ -2,7 +2,7 @@ package datacube.configuration;
 
 import java.util.ArrayList;
 
-import datacube.common.Tuple;
+import datacube.common.datastructure.Tuple;
 
 
 public class DataCubeTestDataInformation 

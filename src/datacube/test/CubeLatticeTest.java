@@ -3,8 +3,8 @@ package datacube.test;
 
 import java.util.ArrayList;
 
-import datacube.common.CubeLattice;
-import datacube.common.Tuple;
+import datacube.common.datastructure.CubeLattice;
+import datacube.common.datastructure.Tuple;
 import datacube.configuration.DataCubeParameter;
 
 

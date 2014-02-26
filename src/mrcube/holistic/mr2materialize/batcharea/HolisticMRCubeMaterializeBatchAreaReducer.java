@@ -9,7 +9,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 
-import datacube.common.StringPair;
+import datacube.common.datastructure.StringPair;
 
 public class HolisticMRCubeMaterializeBatchAreaReducer extends Reducer<StringPair, IntWritable, Text, IntWritable> 
 {

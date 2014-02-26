@@ -5,6 +5,7 @@ import java.net.URI;
 
 
 
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -15,7 +16,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 
-import datacube.common.StringPair;
+import datacube.common.datastructure.StringPair;
 import datacube.configuration.DataCubeParameter;
 
 public class HolisticMRCubeEstimateReducer  extends Reducer<StringPair,IntWritable,Text,Text> 

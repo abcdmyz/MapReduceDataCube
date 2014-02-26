@@ -1,7 +1,5 @@
 package tscube.holistic.mr2materialize.stringtripple;
 
-import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPairCombiner;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -14,14 +12,14 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimate;
 import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimateMapper;
 import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimateReducer;
-import datacube.common.StringPair;
-import datacube.common.StringPairMRCubeGroupComparator;
-import datacube.common.StringPairMRCubeKeyComparator;
-import datacube.common.StringPairMRCubePartitioner;
-import datacube.common.StringTripple;
-import datacube.common.StringTrippleTSCubeGroupComparator;
-import datacube.common.StringTrippleTSCubeKeyComparator;
-import datacube.common.StringTrippleTSCubePartitioner;
+import datacube.common.datastructure.StringPair;
+import datacube.common.datastructure.StringPairMRCubeGroupComparator;
+import datacube.common.datastructure.StringPairMRCubeKeyComparator;
+import datacube.common.datastructure.StringPairMRCubePartitioner;
+import datacube.common.datastructure.StringTripple;
+import datacube.common.datastructure.StringTrippleTSCubeGroupComparator;
+import datacube.common.datastructure.StringTrippleTSCubeKeyComparator;
+import datacube.common.datastructure.StringTrippleTSCubePartitioner;
 
 public class HolisticTSCubeMaterialize 
 {

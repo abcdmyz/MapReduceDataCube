@@ -1,4 +1,4 @@
-package datacube.common;
+package datacube.common.datastructure;
 
 import java.io.DataInput;
 import java.io.DataOutput;

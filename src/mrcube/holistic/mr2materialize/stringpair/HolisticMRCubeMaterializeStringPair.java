@@ -15,12 +15,14 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 
-import datacube.common.StringMultiple;
-import datacube.common.StringPair;
-import datacube.common.StringPairMRCubeGroupComparator;
-import datacube.common.StringPairMRCubeKeyComparator;
-import datacube.common.StringPairMRCubePartitioner;
-import datacube.common.Tuple;
+import datacube.common.datastructure.StringMultiple;
+import datacube.common.datastructure.StringPair;
+import datacube.common.datastructure.StringPairMRCubeGroupComparator;
+import datacube.common.datastructure.StringPairMRCubeKeyComparator;
+import datacube.common.datastructure.StringPairMRCubePartitioner;
+import datacube.common.datastructure.Tuple;
+import datacube.common.reducer.StringPairNoBACombiner;
+import datacube.common.reducer.StringPairNoBAReducer;
 import datacube.configuration.DataCubeParameter;
 
 public class HolisticMRCubeMaterializeStringPair 
@@ -34,8 +36,8 @@ public class HolisticMRCubeMaterializeStringPair
 		job.setJarByClass(HolisticMRCubeMaterializeStringPair.class);
 		
 		job.setMapperClass(HolisticMRCubeMaterializeStringPairMapper.class);
-		job.setCombinerClass(HolisticMRCubeMaterializeStringPairCombiner.class);
-		job.setReducerClass(HolisticMRCubeMaterializeStringPairReducer.class);
+		job.setCombinerClass(StringPairNoBACombiner.class);
+		job.setReducerClass(StringPairNoBAReducer.class);
 		
 		job.setMapOutputKeyClass(StringPair.class);
 		job.setMapOutputValueClass(IntWritable.class);

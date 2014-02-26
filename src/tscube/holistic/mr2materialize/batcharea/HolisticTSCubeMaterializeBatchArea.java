@@ -13,10 +13,10 @@ import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterialize;
 import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterializeCombiner;
 import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterializeMapper;
 import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterializeReducer;
-import datacube.common.StringTripple;
-import datacube.common.StringTrippleTSCubeGroupComparator;
-import datacube.common.StringTrippleTSCubeKeyComparator;
-import datacube.common.StringTrippleTSCubePartitioner;
+import datacube.common.datastructure.StringTripple;
+import datacube.common.datastructure.StringTrippleTSCubeGroupComparator;
+import datacube.common.datastructure.StringTrippleTSCubeKeyComparator;
+import datacube.common.datastructure.StringTrippleTSCubePartitioner;
 
 public class HolisticTSCubeMaterializeBatchArea 
 {

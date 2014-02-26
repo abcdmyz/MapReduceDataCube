@@ -9,10 +9,10 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
-import datacube.common.CubeLattice;
-import datacube.common.StringMultiple;
-import datacube.common.StringPair;
-import datacube.common.Tuple;
+import datacube.common.datastructure.CubeLattice;
+import datacube.common.datastructure.StringMultiple;
+import datacube.common.datastructure.StringPair;
+import datacube.common.datastructure.Tuple;
 import datacube.configuration.DataCubeParameter;
 
 public class HolisticTSCubeEstimateMapper extends Mapper<Object, Text, StringPair, IntWritable> 

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -15,10 +14,10 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
-import datacube.common.CubeLattice;
-import datacube.common.StringMultiple;
-import datacube.common.StringPair;
-import datacube.common.Tuple;
+import datacube.common.datastructure.CubeLattice;
+import datacube.common.datastructure.StringMultiple;
+import datacube.common.datastructure.StringPair;
+import datacube.common.datastructure.Tuple;
 import datacube.configuration.DataCubeParameter;
 
 //StringMultiple
@@ -94,7 +93,7 @@ public class HolisticMRCubeMaterializeStringPairMapper extends Mapper<Object, Te
 		{
 			partitionFactor = cubeLattice.getRegionBag().get(i).getPartitionFactor();
 			regionNum = String.valueOf(i);
-			pfKey = String.valueOf(DataCubeParameter.getTestDataPartitionFactorKey(value.toString(), partitionFactor, conf.get("dataset")));
+			pfKey = String.valueOf(DataCubeParameter.getTestDataPartitionFactorKey(value.toString(), partitionFactor, conf.get("dataset"), conf.get("datacube.measure")));
 			measureString = DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset"));
 
 			String groupKey = new String();

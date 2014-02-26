@@ -1,6 +1,6 @@
 package datacube.configuration;
 
-import datacube.common.Tuple;
+import datacube.common.datastructure.Tuple;
 
 public class DataCubeParameter 
 {
@@ -18,15 +18,15 @@ public class DataCubeParameter
 		}
 	}
 
-	public static int getTestDataPartitionFactorKey(String tuple, int partitionFactor, String dataset)
+	public static int getTestDataPartitionFactorKey(String tuple, int partitionFactor, String dataset, String measure)
 	{
 		if (dataset.startsWith("d2"))
 		{
-			return DataCubeTestData.getPartitionFactorKeyForTestData2(tuple, partitionFactor);
+			return DataCubeTestData.getPartitionFactorKeyForTestData2(tuple, partitionFactor, measure);
 		}
 		else //d3
 		{
-			return DataCubeTestData.getPartitionFactorKeyForTestData3(tuple, partitionFactor);
+			return DataCubeTestData.getPartitionFactorKeyForTestData3(tuple, partitionFactor, measure);
 		}
 	}
 

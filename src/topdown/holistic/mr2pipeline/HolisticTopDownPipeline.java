@@ -1,9 +1,7 @@
 package topdown.holistic.mr2pipeline;
 
 import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPair;
-import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPairCombiner;
 import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPairMapper;
-import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPairReducer;
 import mrcube.holistic.mr3postprocess.HolisticMRCubePostProcessFilePathFilter;
 
 import org.apache.hadoop.conf.Configuration;
@@ -15,10 +13,12 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import datacube.common.StringPair;
-import datacube.common.StringPairMRCubeGroupComparator;
-import datacube.common.StringPairMRCubeKeyComparator;
-import datacube.common.StringPairMRCubePartitioner;
+import datacube.common.datastructure.StringPair;
+import datacube.common.datastructure.StringPairMRCubeGroupComparator;
+import datacube.common.datastructure.StringPairMRCubeKeyComparator;
+import datacube.common.datastructure.StringPairMRCubePartitioner;
+import datacube.common.reducer.StringPairBatchAreaCombiner;
+import datacube.common.reducer.StringPairBatchAreaReducer;
 
 public class HolisticTopDownPipeline 
 {
@@ -31,8 +31,8 @@ public class HolisticTopDownPipeline
 		job.setJarByClass(HolisticTopDownPipeline.class);
 		
 		job.setMapperClass(HolisticTopDownPipelineMapper.class);
-		job.setCombinerClass(HolisticTopDownPipelineCombiner.class);
-		job.setReducerClass(HolisticTopDownPipelineReducer.class);
+		job.setCombinerClass(StringPairBatchAreaCombiner.class);
+		job.setReducerClass(StringPairBatchAreaReducer.class);
 		
 		job.setMapOutputKeyClass(StringPair.class);
 		job.setMapOutputValueClass(IntWritable.class);

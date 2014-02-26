@@ -13,11 +13,11 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
-import datacube.common.BatchArea;
-import datacube.common.BatchAreaGenerator;
-import datacube.common.CubeLattice;
-import datacube.common.StringPair;
-import datacube.common.Tuple;
+import datacube.common.datastructure.BatchArea;
+import datacube.common.datastructure.BatchAreaGenerator;
+import datacube.common.datastructure.CubeLattice;
+import datacube.common.datastructure.StringPair;
+import datacube.common.datastructure.Tuple;
 import datacube.configuration.DataCubeParameter;
 
 public class HolisticTopDownPipelineMapper extends Mapper<Object, Text, StringPair, IntWritable> 

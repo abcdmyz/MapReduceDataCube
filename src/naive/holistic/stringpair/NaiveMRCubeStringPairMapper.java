@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.StringTokenizer;
 
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -13,9 +12,9 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
-import datacube.common.CubeLattice;
-import datacube.common.StringPair;
-import datacube.common.Tuple;
+import datacube.common.datastructure.CubeLattice;
+import datacube.common.datastructure.StringPair;
+import datacube.common.datastructure.Tuple;
 import datacube.configuration.DataCubeParameter;
 
 public class NaiveMRCubeStringPairMapper extends Mapper<Object, Text, StringPair, IntWritable> 

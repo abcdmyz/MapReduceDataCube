@@ -11,7 +11,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 
-import datacube.common.StringPair;
+import datacube.common.datastructure.StringPair;
 import datacube.configuration.DataCubeParameter;
 
 public class HolisticTSCubeEstimateBatchRegionReducer extends Reducer<StringPair,IntWritable,Text,Text> 
@@ -62,12 +62,7 @@ public class HolisticTSCubeEstimateBatchRegionReducer extends Reducer<StringPair
 		*/
 		
 		int totalTupleSize = 0;
-		
-		int machineNumber = Integer.valueOf(conf.get("mapred.reduce.tasks"));
-		if (machineNumber <= 1)
-		{
-			machineNumber = Integer.valueOf(conf.get("total.machine.number"));
-		}
+		int intervalNumber = Integer.valueOf(conf.get("total.interval.number"));
 		
 		String allSample[] = new String[Integer.valueOf(conf.get("tscube.max.sample.size"))];
 	
@@ -76,12 +71,12 @@ public class HolisticTSCubeEstimateBatchRegionReducer extends Reducer<StringPair
 			allSample[totalTupleSize++] = key.getSecondString();
 	    }
 		
-		int interval = (int) (totalTupleSize / (machineNumber));
-		System.out.println("boudary:" + totalTupleSize + " " + machineNumber + " " + interval);
+		int interval = (int) (totalTupleSize / (intervalNumber));
+		System.out.println("boudary:" + totalTupleSize + " " + intervalNumber + " " + interval);
 		int id = 1;
 		int count = 0;
 		
-		while (id < machineNumber)
+		while (id < intervalNumber)
 		{
 			count += interval;
 			

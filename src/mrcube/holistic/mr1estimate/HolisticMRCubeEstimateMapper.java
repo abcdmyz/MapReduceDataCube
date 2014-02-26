@@ -3,7 +3,6 @@ package mrcube.holistic.mr1estimate;
 import java.io.IOException;
 import java.util.Random;
 
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -11,9 +10,9 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
-import datacube.common.CubeLattice;
-import datacube.common.StringPair;
-import datacube.common.Tuple;
+import datacube.common.datastructure.CubeLattice;
+import datacube.common.datastructure.StringPair;
+import datacube.common.datastructure.Tuple;
 import datacube.configuration.DataCubeParameter;
 
 public class HolisticMRCubeEstimateMapper extends Mapper<Object, Text, StringPair, IntWritable> 
@@ -40,14 +39,14 @@ public class HolisticMRCubeEstimateMapper extends Mapper<Object, Text, StringPai
 		
 		if (randomNum <= 10)
 		{
-			produceAllRegionFromTule(value, context);
+			produceAllRegionFromTuple(value, context);
 		}
 
 		//justOutputTupleString(value, context);
 		//justOutputValue(value, context);
 	}
 
-	void produceAllRegionFromTule(Text value, Context context) throws IOException, InterruptedException
+	void produceAllRegionFromTuple(Text value, Context context) throws IOException, InterruptedException
 	{
 		Text groupValue = new Text();
 		Text regionKey = new Text();

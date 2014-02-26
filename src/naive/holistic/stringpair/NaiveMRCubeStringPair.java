@@ -15,10 +15,12 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 import org.apache.hadoop.util.Tool;
 
-import datacube.common.StringPair;
-import datacube.common.StringPairMRCubeGroupComparator;
-import datacube.common.StringPairMRCubeKeyComparator;
-import datacube.common.StringPairMRCubePartitioner;
+import datacube.common.datastructure.StringPair;
+import datacube.common.datastructure.StringPairMRCubeGroupComparator;
+import datacube.common.datastructure.StringPairMRCubeKeyComparator;
+import datacube.common.datastructure.StringPairMRCubePartitioner;
+import datacube.common.reducer.StringPairNoBACombiner;
+import datacube.common.reducer.StringPairNoBAReducer;
 import datacube.configuration.DataCubeParameter;
 
 public class NaiveMRCubeStringPair
@@ -31,8 +33,8 @@ public class NaiveMRCubeStringPair
 		job.setJarByClass(NaiveMRCubeStringPair.class);
 		
 		job.setMapperClass(NaiveMRCubeStringPairMapper.class);
-		job.setCombinerClass(NaiveMRCubeStringPairCombiner.class);
-		job.setReducerClass(NaiveMRCubeStringPairReducer.class);
+		job.setCombinerClass(StringPairNoBACombiner.class);
+		job.setReducerClass(StringPairNoBAReducer.class);
 		
 		job.setMapOutputKeyClass(StringPair.class);
 		job.setMapOutputValueClass(IntWritable.class);

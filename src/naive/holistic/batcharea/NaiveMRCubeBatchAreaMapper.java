@@ -14,11 +14,11 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
-import datacube.common.BatchArea;
-import datacube.common.BatchAreaGenerator;
-import datacube.common.CubeLattice;
-import datacube.common.StringPair;
-import datacube.common.Tuple;
+import datacube.common.datastructure.BatchArea;
+import datacube.common.datastructure.BatchAreaGenerator;
+import datacube.common.datastructure.CubeLattice;
+import datacube.common.datastructure.StringPair;
+import datacube.common.datastructure.Tuple;
 import datacube.configuration.DataCubeParameter;
 
 public class NaiveMRCubeBatchAreaMapper extends Mapper<Object, Text, StringPair, IntWritable> 
@@ -58,7 +58,7 @@ public class NaiveMRCubeBatchAreaMapper extends Mapper<Object, Text, StringPair,
 		for (int i = 0; i < batchAreaBag.size(); i++)
 		{
 			partitionFactor = cubeLattice.getRegionBag().get(i).getPartitionFactor();
-			pfKey = String.valueOf(DataCubeParameter.getTestDataPartitionFactorKey(value.toString(), partitionFactor, conf.get("dataset")));
+			pfKey = String.valueOf(DataCubeParameter.getTestDataPartitionFactorKey(value.toString(), partitionFactor, conf.get("dataset"), conf.get("datacube.measure")));
 			measureString = DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset"));
 
 			String groupPublicKey = new String();
@@ -113,7 +113,15 @@ public class NaiveMRCubeBatchAreaMapper extends Mapper<Object, Text, StringPair,
 			
 			outputKey.setFirstString(groupRegionID + "|" +  groupPublicKey + "|");
 			outputKey.setSecondString(groupPipeKey);
-			outputValue.set(Integer.valueOf(measureString));
+			
+			if (conf.get("datacube.measure").equals("distinct"))
+			{
+				outputValue.set(Integer.valueOf(measureString));
+			}
+			else //count
+			{
+				outputValue.set(1);
+			}
 			
 			context.write(outputKey, outputValue);
 			

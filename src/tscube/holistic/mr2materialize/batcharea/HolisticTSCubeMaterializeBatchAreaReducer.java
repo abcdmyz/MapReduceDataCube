@@ -8,8 +8,8 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 
-import datacube.common.StringPair;
-import datacube.common.StringTripple;
+import datacube.common.datastructure.StringPair;
+import datacube.common.datastructure.StringTripple;
 
 public class HolisticTSCubeMaterializeBatchAreaReducer extends Reducer<StringTripple, IntWritable, Text, IntWritable> 
 {

@@ -9,10 +9,10 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import datacube.common.StringTripple;
-import datacube.common.StringTrippleTSCubeGroupComparator;
-import datacube.common.StringTrippleTSCubeKeyComparator;
-import datacube.common.StringTrippleTSCubePartitioner;
+import datacube.common.datastructure.StringTripple;
+import datacube.common.datastructure.StringTrippleTSCubeGroupComparator;
+import datacube.common.datastructure.StringTrippleTSCubeKeyComparator;
+import datacube.common.datastructure.StringTrippleTSCubePartitioner;
 
 public class HolisticTSCubeMaterializeNoCombiner 
 {

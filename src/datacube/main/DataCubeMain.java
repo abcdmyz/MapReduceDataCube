@@ -22,7 +22,7 @@ import tscube.holistic.mr2materialize.batcharea.HolisticTSCubeMaterializeBatchAr
 import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterialize;
 import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterializeNoCombiner;
 import tscube.holistic.mr3postprocess.HolisticTSCubePostProcess;
-import datacube.common.*;
+import datacube.common.datastructure.*;
 import datacube.configuration.DataCubeParameter;
 import datacube.test.*;
 import mrcube.holistic.mr1estimate.HolisticMRCubeEstimate;
@@ -70,22 +70,28 @@ public class DataCubeMain extends Configured implements Tool
 			HolisticMRCubeEstimate mrCube1 = new HolisticMRCubeEstimate();
 			HolisticMRCubeMaterializeStringPair mrCube2 = new HolisticMRCubeMaterializeStringPair();
 			HolisticMRCubePostProcess mrCube3 = new HolisticMRCubePostProcess();
-			
-			startTime = System.currentTimeMillis();
-			mrCube1.run(conf);
-			endTime = System.currentTimeMillis(); 
-			System.out.println("mrcube_mr1_sp_" + conf.get("total.tuple.size") + " Time: " + ((endTime-startTime)/1000));
 
-			startTime = System.currentTimeMillis();
+			mrCube1.run(conf);
 			mrCube2.run(conf);
-			endTime = System.currentTimeMillis(); 
-			System.out.println("mrcube_mr2_sp_" + conf.get("total.tuple.size") + "  Time: " + ((endTime-startTime)/1000));
-			
-			
-			startTime = System.currentTimeMillis();
 			mrCube3.run(conf);
-			endTime = System.currentTimeMillis(); 
-			System.out.println("mrcube_mr3_sp_" + conf.get("total.tuple.size") + " Time: " + ((endTime-startTime)/1000));
+		}
+		else if (otherArgs[0].equals("mrcubemr23"))
+		{
+			HolisticMRCubeMaterializeStringPair mrCube2 = new HolisticMRCubeMaterializeStringPair();
+			HolisticMRCubePostProcess mrCube3 = new HolisticMRCubePostProcess();
+
+			mrCube2.run(conf);
+			mrCube3.run(conf);
+		}
+		else if (otherArgs[0].equals("mrcubemr2"))
+		{
+			HolisticMRCubeMaterializeStringPair mrCube2 = new HolisticMRCubeMaterializeStringPair();
+			mrCube2.run(conf);
+		}
+		else if (otherArgs[0].equals("mrcubebamr2"))
+		{
+			HolisticMRCubeMaterializeBatchArea mrCube2 = new HolisticMRCubeMaterializeBatchArea();
+			mrCube2.run(conf);
 		}
 		else if (otherArgs[0].equals("mrcubemr1"))
 		{

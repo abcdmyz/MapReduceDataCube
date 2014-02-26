@@ -6,7 +6,7 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 
-import datacube.common.StringPair;
+import datacube.common.datastructure.StringPair;
 
 public class HolisticTopDownPipelineCombiner extends Reducer<StringPair, IntWritable, StringPair, IntWritable> 
 {

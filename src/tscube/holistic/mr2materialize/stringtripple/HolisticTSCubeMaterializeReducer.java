@@ -7,9 +7,9 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 
-import datacube.common.StringMultiple;
-import datacube.common.StringPair;
-import datacube.common.StringTripple;
+import datacube.common.datastructure.StringMultiple;
+import datacube.common.datastructure.StringPair;
+import datacube.common.datastructure.StringTripple;
 
 public class HolisticTSCubeMaterializeReducer extends Reducer<StringTripple, IntWritable, Text, IntWritable> 
 {

@@ -12,10 +12,10 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
-import datacube.common.CubeLattice;
-import datacube.common.StringPair;
-import datacube.common.StringTripple;
-import datacube.common.Tuple;
+import datacube.common.datastructure.CubeLattice;
+import datacube.common.datastructure.StringPair;
+import datacube.common.datastructure.StringTripple;
+import datacube.common.datastructure.Tuple;
 import datacube.configuration.DataCubeParameter;
 
 public class HolisticTSCubeMaterializeMapper extends Mapper<Object, Text, StringTripple, IntWritable> 
@@ -33,7 +33,7 @@ public class HolisticTSCubeMaterializeMapper extends Mapper<Object, Text, String
 		cubeLattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
 		cubeLattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());		
 		
-		boundary = new ArrayList<String>(Integer.valueOf(conf.get("total.machine.number")));
+		boundary = new ArrayList<String>(Integer.valueOf(conf.get("total.interval.number")));
 
 		String latticePath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("tscube.mr1.output.path") + conf.get("tscube.boundary.file.path");
 		System.out.println("lattice Path: " + latticePath);

@@ -2,8 +2,8 @@ package datacube.configuration;
 
 import java.util.ArrayList;
 
-import datacube.common.CubeLattice;
-import datacube.common.Tuple;
+import datacube.common.datastructure.CubeLattice;
+import datacube.common.datastructure.Tuple;
 
 
 public class DataCubeTestData 
@@ -88,11 +88,19 @@ public class DataCubeTestData
 		return tuple;
 	}
 
-	public static int getPartitionFactorKeyForTestData2(String tuple, int partitionFactor)
+	public static int getPartitionFactorKeyForTestData2(String tuple, int partitionFactor, String measure)
 	{
 		String[] tupleSplit = tuple.split("\t");
-		int uid = Integer.valueOf(tupleSplit[1]);
+		int uid;
 		
+		if (measure.equals("distinct"))
+		{
+			uid = Integer.valueOf(tupleSplit[1]);
+		}
+		else //count
+		{
+			uid = Integer.valueOf(tupleSplit[0]);
+		}
 		return uid % partitionFactor;
 	}
 
@@ -137,11 +145,19 @@ public class DataCubeTestData
 		return tuple;
 	}
 
-	public static int getPartitionFactorKeyForTestData3(String tuple, int partitionFactor)
+	public static int getPartitionFactorKeyForTestData3(String tuple, int partitionFactor, String measure)
 	{
 		String[] tupleSplit = tuple.split("\t");
-		int uid = Integer.valueOf(tupleSplit[4]);
+		int uid;
 		
+		if (measure.equals("distinct"))
+		{
+			uid = Integer.valueOf(tupleSplit[4]);
+		}
+		else //count
+		{
+			uid = Integer.valueOf(tupleSplit[0]);
+		}
 		return uid % partitionFactor;
 	}
 
