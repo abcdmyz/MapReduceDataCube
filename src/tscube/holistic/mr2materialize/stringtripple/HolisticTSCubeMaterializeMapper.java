@@ -70,8 +70,6 @@ public class HolisticTSCubeMaterializeMapper extends Mapper<Object, Text, String
 		for (int i = 0; i < cubeLattice.getRegionStringSepLineBag().size(); i++)
 		{
 			regionNum = String.valueOf(i);
-			measureString = DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset"));
-
 			String groupKey = new String();
 			
 			for (int k = 0; k < cubeLattice.getRegionBag().get(i).getSize(); k++)
@@ -87,6 +85,15 @@ public class HolisticTSCubeMaterializeMapper extends Mapper<Object, Text, String
 						groupKey += tupleSplit[k];
 					}
 				}
+			}
+			
+			if (conf.get("datacube.measure").equals("distinct"))
+			{
+				measureString = DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset"));
+			}
+			else if (conf.get("datacube.measure").equals("count"))
+			{
+				measureString = DataCubeParameter.getTestDataTupleID(value.toString(), conf.get("dataset"));
 			}
 			
 			String boundaryCMPString = regionNum + "|" + groupKey + "|" + measureString + "|"; 

@@ -54,6 +54,18 @@ public class DataCubeParameter
 		}
 	}
 	
+	public static String getTestDataTupleID(String tuple, String dataset)
+	{
+		if (dataset.startsWith("d2"))
+		{
+			return DataCubeTestData.getTupleIDForTestData2(tuple);
+		}
+		else //d3
+		{
+			return DataCubeTestData.getTupleIDForTestData3(tuple);
+		}
+	}
+	
 	public static int getLatticeRegionNumber(String dataset)
 	{
 		if (dataset.startsWith("d2"))

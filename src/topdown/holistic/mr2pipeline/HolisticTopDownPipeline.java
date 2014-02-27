@@ -2,7 +2,6 @@ package topdown.holistic.mr2pipeline;
 
 import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPair;
 import mrcube.holistic.mr2materialize.stringpair.HolisticMRCubeMaterializeStringPairMapper;
-import mrcube.holistic.mr3postprocess.HolisticMRCubePostProcessFilePathFilter;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -17,6 +16,7 @@ import datacube.common.datastructure.StringPair;
 import datacube.common.datastructure.StringPairMRCubeGroupComparator;
 import datacube.common.datastructure.StringPairMRCubeKeyComparator;
 import datacube.common.datastructure.StringPairMRCubePartitioner;
+import datacube.common.postprocess.DataCubePostProcessFilePathFilter;
 import datacube.common.reducer.StringPairBatchAreaCombiner;
 import datacube.common.reducer.StringPairBatchAreaReducer;
 
@@ -54,7 +54,7 @@ public class HolisticTopDownPipeline
 		System.out.println("mr2 output: " + outputPath);
 		
 		FileInputFormat.addInputPath(job, new Path(inputPath));
-		FileInputFormat.setInputPathFilter(job, HolisticMRCubePostProcessFilePathFilter.class);
+		FileInputFormat.setInputPathFilter(job, DataCubePostProcessFilePathFilter.class);
 		FileOutputFormat.setOutputPath(job, new Path(outputPath));	
 		job.waitForCompletion(true);
 	}

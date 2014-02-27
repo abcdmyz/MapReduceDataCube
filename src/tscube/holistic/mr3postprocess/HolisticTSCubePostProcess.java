@@ -1,10 +1,5 @@
 package tscube.holistic.mr3postprocess;
 
-import mrcube.holistic.mr3postprocess.HolisticMRCubePostProcess;
-import mrcube.holistic.mr3postprocess.HolisticMRCubePostProcessFilePathFilter;
-import mrcube.holistic.mr3postprocess.HolisticMRCubePostProcessMapper;
-import mrcube.holistic.mr3postprocess.HolisticMRCubePostProcessReducer;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -13,6 +8,10 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+import datacube.common.postprocess.DataCubePostProcessFilePathFilter;
+import datacube.common.postprocess.DataCubePostProcessMapper;
+import datacube.common.postprocess.DataCubePostProcessReducer;
 
 public class HolisticTSCubePostProcess 
 {
@@ -24,9 +23,9 @@ public class HolisticTSCubePostProcess
 
 		job.setJarByClass(HolisticTSCubePostProcess.class);
 		
-		job.setMapperClass(HolisticTSCubePostProcessMapper.class);
-		job.setCombinerClass(HolisticTSCubePostProcessReducer.class);
-		job.setReducerClass(HolisticTSCubePostProcessReducer.class);
+		job.setMapperClass(DataCubePostProcessMapper.class);
+		job.setCombinerClass(DataCubePostProcessReducer.class);
+		job.setReducerClass(DataCubePostProcessReducer.class);
 		
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(IntWritable.class);
@@ -45,10 +44,11 @@ public class HolisticTSCubePostProcess
 		System.out.println("mr3 output: " + outputPath);
 		
 		FileInputFormat.addInputPath(job, new Path(inputPath));
-		FileInputFormat.setInputPathFilter(job, HolisticMRCubePostProcessFilePathFilter.class);
+		FileInputFormat.setInputPathFilter(job, DataCubePostProcessFilePathFilter.class);
 		FileOutputFormat.setOutputPath(job, new Path(outputPath));	
 		
 		job.waitForCompletion(true);
 		
 	}
+
 }

@@ -8,14 +8,14 @@ public class BatchAreaGenerator
 	{
 		ArrayList<Integer> order = new ArrayList(4);
 
-		if (dataset.startsWith("d2"))
+		if (dataset.startsWith("d2")) //in d2 dataset, batch area:{0,1,2,3}{4,5,6,7}{8,9,10,11}{12,13,14}
 		{
 			order.add(4);
 			order.add(4);
 			order.add(4);
 			order.add(3);
 		}
-		if (dataset.startsWith("d3"))
+		if (dataset.startsWith("d3")) //in d3 dataset, batch area:{0,1}{2,3}{4,5}{6}
 		{
 			order.add(2);
 			order.add(2);
@@ -28,7 +28,7 @@ public class BatchAreaGenerator
 	
 	public int getBatchAreaIDFromRootRegionID(String dataset, int rootRegionID)
 	{
-		if (dataset.startsWith("d2")) 
+		if (dataset.startsWith("d2"))
 		{
 			return rootRegionID / 4;
 		}
@@ -60,6 +60,13 @@ public class BatchAreaGenerator
 		return order;
 	}
 
+	/*
+	 * Especially for mrcube
+	 * mrcube has reducer-friendly and reducer-unfriendly region
+	 * these 2 types region can't batch together
+	 * OriginalBatchAreaPlan is the basic batch area, 
+	 * change the plan according to the partition factor in cube lattice
+	 */
 	public ArrayList<BatchArea> getBatchAreaPlan(String dataset, CubeLattice cubeLattice)
 	{
 		ArrayList<BatchArea> batch = new ArrayList<BatchArea>();
@@ -97,12 +104,14 @@ public class BatchAreaGenerator
 			}
 		}
 
+		/*
 		System.out.print("final order:");
 		for (int i = 0; i < finalOrder.size(); i++)
 		{
 			System.out.print(finalOrder.get(i) + " ");
 		}
 		System.out.println();
+		*/
 		
 		int regionID = 0;
 		

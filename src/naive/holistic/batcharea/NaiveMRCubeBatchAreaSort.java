@@ -1,10 +1,5 @@
 package naive.holistic.batcharea;
 
-import mrcube.holistic.mr3postprocess.HolisticMRCubePostProcess;
-import mrcube.holistic.mr3postprocess.HolisticMRCubePostProcessFilePathFilter;
-import mrcube.holistic.mr3postprocess.HolisticMRCubePostProcessMapper;
-import mrcube.holistic.mr3postprocess.HolisticMRCubePostProcessReducer;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -14,6 +9,10 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
+import datacube.common.postprocess.DataCubePostProcessFilePathFilter;
+import datacube.common.postprocess.DataCubePostProcessMapper;
+import datacube.common.postprocess.DataCubePostProcessReducer;
+
 public class NaiveMRCubeBatchAreaSort 
 {
 	public void run(Configuration conf) throws Exception 
@@ -22,11 +21,11 @@ public class NaiveMRCubeBatchAreaSort
 		
 		Job job = new Job(conf, jobName);
 
-		job.setJarByClass(HolisticMRCubePostProcess.class);
+		job.setJarByClass(NaiveMRCubeBatchAreaSort.class);
 		
-		job.setMapperClass(HolisticMRCubePostProcessMapper.class);
-		job.setCombinerClass(HolisticMRCubePostProcessReducer.class);
-		job.setReducerClass(HolisticMRCubePostProcessReducer.class);
+		job.setMapperClass(DataCubePostProcessMapper.class);
+		job.setCombinerClass(DataCubePostProcessReducer.class);
+		job.setReducerClass(DataCubePostProcessReducer.class);
 		
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(IntWritable.class);
@@ -42,7 +41,7 @@ public class NaiveMRCubeBatchAreaSort
 		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("naive.mr2.output.path");  
 		
 		FileInputFormat.addInputPath(job, new Path(inputPath));
-		FileInputFormat.setInputPathFilter(job, HolisticMRCubePostProcessFilePathFilter.class);
+		FileInputFormat.setInputPathFilter(job, DataCubePostProcessFilePathFilter.class);
 		FileOutputFormat.setOutputPath(job, new Path(outputPath));	
 		
 		job.waitForCompletion(true);

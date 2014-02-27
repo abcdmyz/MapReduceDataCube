@@ -15,7 +15,6 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
 import datacube.common.datastructure.CubeLattice;
-import datacube.common.datastructure.StringMultiple;
 import datacube.common.datastructure.StringPair;
 import datacube.common.datastructure.Tuple;
 import datacube.configuration.DataCubeParameter;
@@ -113,23 +112,10 @@ public class HolisticMRCubeMaterializeStringPairMapper extends Mapper<Object, Te
 				}
 			}
 			
-			/*
-			StringTripple outputKey = new StringTripple();
-
-			outputKey.setFirstString(regionNum);
-			outputKey.setSecondString(groupKey);
-			outputKey.setThirdString(pfKey);
-			*/
-			
 			StringPair outputKey = new StringPair();
 			outputKey.setFirstString(regionNum + "|" + groupKey + "|" +  pfKey + "|");
 			outputKey.setSecondString(measureString);
 
-			/*
-			Text outputKey = new Text();
-			outputKey.set(regionNum + "|" + groupKey + "|" + pfKey + "|" + measureString + "|");
-			*/
-			
 			context.write(outputKey, one);
 		}
 	}

@@ -10,13 +10,13 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterialize;
-import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterializeCombiner;
 import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterializeMapper;
-import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterializeReducer;
 import datacube.common.datastructure.StringTripple;
 import datacube.common.datastructure.StringTrippleTSCubeGroupComparator;
 import datacube.common.datastructure.StringTrippleTSCubeKeyComparator;
 import datacube.common.datastructure.StringTrippleTSCubePartitioner;
+import datacube.common.reducer.StringTrippleBatchAreaCombiner;
+import datacube.common.reducer.StringTrippleBatchAreaReducer;
 
 public class HolisticTSCubeMaterializeBatchArea 
 {
@@ -30,8 +30,8 @@ public class HolisticTSCubeMaterializeBatchArea
 		job.setJarByClass(HolisticTSCubeMaterializeBatchArea.class);
 		
 		job.setMapperClass(HolisticTSCubeMaterializeBatchAreaMapper.class);
-		job.setCombinerClass(HolisticTSCubeMaterializeBatchAreaCombiner.class);
-		job.setReducerClass(HolisticTSCubeMaterializeBatchAreaReducer.class);
+		job.setCombinerClass(StringTrippleBatchAreaCombiner.class);
+		job.setReducerClass(StringTrippleBatchAreaReducer.class);
 
 		job.setMapOutputKeyClass(StringTripple.class);
 		job.setMapOutputValueClass(IntWritable.class);

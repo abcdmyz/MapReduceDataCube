@@ -75,7 +75,7 @@ public class StringPairBatchAreaCombiner extends Reducer<StringPair, IntWritable
 	    {
 			if (first || (key.getSecondString().equals(lastS) && key.getFirstString().equals(lastF)))
 			{
-				count++;
+				count += val.get();
 			}
 			else
 			{

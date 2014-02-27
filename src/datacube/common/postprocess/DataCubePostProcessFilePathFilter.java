@@ -1,4 +1,4 @@
-package mrcube.holistic.mr3postprocess;
+package datacube.common.postprocess;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -13,7 +13,7 @@ import org.apache.hadoop.fs.PathFilter;
 
 import datacube.configuration.DataCubeParameter;
 
-public class HolisticMRCubePostProcessFilePathFilter extends Configured implements PathFilter 
+public class DataCubePostProcessFilePathFilter extends Configured implements PathFilter 
 {
 	Pattern pattern;
 	Configuration conf;
@@ -22,9 +22,8 @@ public class HolisticMRCubePostProcessFilePathFilter extends Configured implemen
 	@Override
 	public boolean accept(Path path) 
 	{
-		//System.out.println(path);
-
-		try {
+		try 
+		{
 			if(fs.isDirectory(path))
 			{
 				return true;
@@ -34,7 +33,9 @@ public class HolisticMRCubePostProcessFilePathFilter extends Configured implemen
 				Matcher m = pattern.matcher(path.toString());
 				return m.matches();
 			}
-		} catch (IOException e) {
+		} 
+		catch (IOException e) 
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;

@@ -87,7 +87,19 @@ public class HolisticTSCubeEstimateBatchRegionMapper extends Mapper<Object, Text
 			}
 
 			outputKey.setFirstString(oneString);
-			outputKey.setSecondString(batchStartRegionID + "|" + group + "|" + DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset")) + "|");
+			
+			if (conf.get("datacube.measure").equals("distinct"))
+			{
+				outputKey.setSecondString(batchStartRegionID + "|" + group + "|" + DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset")) + "|");
+			}
+			else if (conf.get("datacube.measure").equals("count"))
+			{
+				outputKey.setSecondString(batchStartRegionID + "|" + group + "|" + DataCubeParameter.getTestDataTupleID(value.toString(), conf.get("dataset")) + "|");
+			}
+			else
+			{
+				//null
+			}
 			
 			context.write(outputKey, one);
 		}

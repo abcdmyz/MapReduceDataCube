@@ -91,8 +91,6 @@ public class HolisticTSCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 		
 		for (int i = 0; i < batchAreaBag.size(); i++)
 		{
-			measureString = DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset"));
-
 			String groupPublicKey = new String();
 			String groupPipeKey = new String();
 			String groupRegionID = new String();
@@ -140,17 +138,34 @@ public class HolisticTSCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 				}
 			}
 			
+			if (conf.get("datacube.measure").equals("distinct"))
+			{
+				measureString = DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset"));
+			}
+			else if (conf.get("datacube.measure").equals("count"))
+			{
+				measureString = DataCubeParameter.getTestDataTupleID(value.toString(), conf.get("dataset"));
+			}
+			
 			batchStartRegionID = String.valueOf(batchAreaBag.get(i).getRegionID(0));
 			String boundaryCMPString = batchStartRegionID + "|" + groupPublicKey + "|" + measureString + "|"; 
-			//System.out.println(boundaryCMPString);
+
 			partitionerID = binarySearchPartitionerBoundary(boundaryCMPString);
-			//Long.valueOf(measureString)
+
 			
 			StringTripple outputKey = new StringTripple();
 			outputKey.setFirstString(groupRegionID + "|" + groupPublicKey + "|");
 			outputKey.setSecondString(groupPipeKey);
 			outputKey.setThirdString(String.valueOf(partitionerID));
-			outputValue.set(Integer.valueOf(measureString));
+			
+			if (conf.get("datacube.measure").equals("distinct"))
+			{
+				outputValue.set(Integer.valueOf(measureString));
+			}
+			else if (conf.get("datacube.measure").equals("count"))
+			{
+				outputValue.set(1);
+			}
 
 			context.write(outputKey, outputValue);
 		}

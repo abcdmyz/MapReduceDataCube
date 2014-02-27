@@ -10,7 +10,6 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
 import datacube.common.datastructure.CubeLattice;
-import datacube.common.datastructure.StringMultiple;
 import datacube.common.datastructure.StringPair;
 import datacube.common.datastructure.Tuple;
 import datacube.configuration.DataCubeParameter;
@@ -79,7 +78,19 @@ public class HolisticTSCubeEstimateMapper extends Mapper<Object, Text, StringPai
 			}
 
 			outputKey.setFirstString(oneString);
-			outputKey.setSecondString(i + "|" + group + "|" + DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset")) + "|");
+	
+			if (conf.get("datacube.measure").equals("distinct"))
+			{
+				outputKey.setSecondString(i + "|" + group + "|" + DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset")) + "|");
+			}
+			else if (conf.get("datacube.measure").equals("count"))
+			{
+				outputKey.setSecondString(i + "|" + group + "|" + DataCubeParameter.getTestDataTupleID(value.toString(), conf.get("dataset")) + "|");
+			}
+			else
+			{
+				//null
+			}
 			
 			context.write(outputKey, one);
 		}

@@ -177,6 +177,14 @@ public class DataCubeMain extends Configured implements Tool
 			mrcube2.run(conf);
 			mrCube3.run(conf);
 		}
+		else if (otherArgs[0].equals("mrcubebamr23"))
+		{
+			HolisticMRCubeMaterializeBatchArea mrcube2 = new HolisticMRCubeMaterializeBatchArea();
+			HolisticMRCubePostProcess mrCube3 = new HolisticMRCubePostProcess();
+
+			mrcube2.run(conf);
+			mrCube3.run(conf);
+		}
 		else if (otherArgs[0].equals("naiveba"))
 		{
 			NaiveMRCubeBatchArea mrCube1 = new NaiveMRCubeBatchArea();

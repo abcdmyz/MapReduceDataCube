@@ -143,10 +143,7 @@ public class HolisticMRCubeEstimateReducer  extends Reducer<StringPair,IntWritab
 	{
 		int partitionFactor = 1;
 		
-		//if (maxGroup >= 0.75 * r  * MRCubeParameter.getTotalSampleSize())
-		{
-			partitionFactor = (int) (maxGroup / (r * totalSampleSize));
-		}
+		partitionFactor = (int) (maxGroup / (r * totalSampleSize));
 		
 		if (partitionFactor <= 0)
 		{

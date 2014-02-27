@@ -1,4 +1,4 @@
-package tscube.holistic.mr3postprocess;
+package datacube.common.postprocess;
 
 import java.io.IOException;
 
@@ -7,7 +7,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 
-public class HolisticTSCubePostProcessReducer extends Reducer<Text, IntWritable, Text, IntWritable> 
+public class DataCubePostProcessReducer extends Reducer<Text, IntWritable, Text, IntWritable> 
 {
 	private IntWritable one = new IntWritable(1);
 	
@@ -21,7 +21,6 @@ public class HolisticTSCubePostProcessReducer extends Reducer<Text, IntWritable,
 		for(IntWritable val : values)
 		{
 			count += val.get();
-			//context.write(key, val);
 		}
 
 		IntWritable outputValue = new IntWritable(count);

@@ -34,22 +34,6 @@ public class BatchAreaTest
 
 		for (int i = 0; i < pf.length; i++)
 		{
-			/*
-			if (pf[i] > 1)
-			{
-				if (count > 1)
-				{
-					finalOrder.add(count - 1);
-					System.out.println("aa1 " +  (count -1));
-				}
-				
-				finalOrder.add(1);
-				System.out.println("one 1");
-				
-				count = 0;
-			}
-			*/
-			
 			if (sum > 1 && pf[i] != pf[i-1])
 			{	
 				finalOrder.add(count - 1);

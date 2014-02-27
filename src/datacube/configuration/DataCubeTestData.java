@@ -110,6 +110,12 @@ public class DataCubeTestData
 		return tupleSplit[1];
 	}
 	
+	public static String getTupleIDForTestData2(String tuple)
+	{
+		String[] tupleSplit = tuple.split("\t");
+		return tupleSplit[0];
+	}
+	
 	public static DataCubeTestDataInformation getTestData3()
 	{	
 		DataCubeTestDataInformation dataInfor = new DataCubeTestDataInformation();
@@ -165,5 +171,11 @@ public class DataCubeTestData
 	{
 		String[] tupleSplit = tuple.split("\t");
 		return tupleSplit[4];
+	}
+	
+	public static String getTupleIDForTestData3(String tuple)
+	{
+		String[] tupleSplit = tuple.split("\t");
+		return tupleSplit[0];
 	}
 }

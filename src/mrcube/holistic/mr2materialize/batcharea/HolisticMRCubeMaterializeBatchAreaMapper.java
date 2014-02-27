@@ -39,7 +39,6 @@ public class HolisticMRCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 		//System.out.println("lattice Path: " + latticePath);
 		
 		Path path = new Path(latticePath);
-		
 		FileSystem fs = FileSystem.get(context.getConfiguration());
 		BufferedReader br=new BufferedReader(new InputStreamReader(fs.open(path)));
 		
@@ -58,12 +57,10 @@ public class HolisticMRCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 			cubeLattice.setregionBag(regionTupleBag);
 			cubeLattice.sortRegionTupleBagReverse();
 			cubeLattice.convertRegionBagToString('|');
-			
-			cubeLattice.printLattice();
-			
 			batchAreaBag = batchAreaGenerator.getBatchAreaPlan(conf.get("dataset"), cubeLattice);
+			
+			//cubeLattice.printLattice();
 			//printBatchArea();
-
 			//System.out.println("batchArea Bag: " + batchAreaBag.size());
 		} 	
 		finally 

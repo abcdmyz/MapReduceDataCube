@@ -15,7 +15,6 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 
-import datacube.common.datastructure.StringMultiple;
 import datacube.common.datastructure.StringPair;
 import datacube.common.datastructure.StringPairMRCubeGroupComparator;
 import datacube.common.datastructure.StringPairMRCubeKeyComparator;

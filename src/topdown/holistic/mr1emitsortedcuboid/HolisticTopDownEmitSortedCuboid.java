@@ -11,7 +11,6 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimate;
 import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimateMapper;
-import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimateReducer;
 import datacube.common.datastructure.StringPair;
 import datacube.common.datastructure.StringPairMRCubeGroupComparator;
 import datacube.common.datastructure.StringPairMRCubeKeyComparator;
@@ -27,13 +26,14 @@ public class HolisticTopDownEmitSortedCuboid
 		job.setJarByClass(HolisticTopDownEmitSortedCuboid.class);
 		
 		job.setMapperClass(HolisticTopDownEmitSortedCuboidMapper.class);
+		job.setCombinerClass(HolisticTopDownEmitSortedCuboidCombiner.class);
 		job.setReducerClass(HolisticTopDownEmitSortedCuboidReducer.class);
 
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(IntWritable.class);
 		
 		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(Text.class);
+		job.setOutputValueClass(IntWritable.class);
 
 		job.setInputFormatClass(TextInputFormat.class);
 

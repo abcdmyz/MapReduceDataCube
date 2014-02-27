@@ -44,7 +44,8 @@ public class HolisticTopDownPipelineMapper extends Mapper<Object, Text, StringPa
      
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException 
 	{
-		String lineSplit[] = value.toString().split("\\|");
+		String kvSplit[] = value.toString().split("\t");
+		String lineSplit[] = kvSplit[0].split("\\|");
 		String tupleSplit[] = lineSplit[1].split(" ");
 		IntWritable outputValue = new IntWritable();
 		
@@ -54,69 +55,76 @@ public class HolisticTopDownPipelineMapper extends Mapper<Object, Text, StringPa
 		String baType = new String();
 
 		int i = batchAreaGenerator.getBatchAreaIDFromRootRegionID(conf.get("dataset"), Integer.valueOf(lineSplit[0]));
-		//for (int i = 0; i < batchAreaBag.size(); i++)
-		{
-			measureString = lineSplit[2];
 
-			String groupPublicKey = new String();
-			String groupPipeKey = new String();
-			String groupRegionID = new String();
+		String groupPublicKey = new String();
+		String groupPipeKey = new String();
+		String groupRegionID = new String();
+		
+		int terminal = batchAreaBag.get(i).getlongestRegionAttributeSize() - batchAreaBag.get(i).getallRegionIDSize() + 1;
 			
-			int terminal = batchAreaBag.get(i).getlongestRegionAttributeSize() - batchAreaBag.get(i).getallRegionIDSize() + 1;
+		for (int k = 0; k < batchAreaBag.get(i).getlongestRegionAttributeSize(); k++)
+		{
+			int aid = k;
 			
-			for (int k = 0; k < batchAreaBag.get(i).getlongestRegionAttributeSize(); k++)
+			if (k >= terminal)
 			{
-				//int aid = batchAreaBag.get(i).getRegionAttribute(k);
-				int aid = k;
-				
-				if (k >= terminal)
+				if (groupPipeKey.length() > 0)
 				{
-					if (groupPipeKey.length() > 0)
-					{
-						groupPipeKey += " " + tupleSplit[aid];
-					}
-					else
-					{
-						groupPipeKey += tupleSplit[aid];
-					}
-				}
-				else  //public
-				{
-					if (groupPublicKey.length() > 0)
-					{
-						groupPublicKey += " " + tupleSplit[aid];
-					}
-					else
-					{
-						groupPublicKey += tupleSplit[aid];
-					}
-				}
-			}
-			
-			for (int k = 0; k < batchAreaBag.get(i).getallRegionIDSize(); k++)
-			{
-				if (groupRegionID.length() > 0)
-				{
-					groupRegionID += " " + batchAreaBag.get(i).getallRegionID().get(k);
+					groupPipeKey += " " + tupleSplit[aid];
 				}
 				else
 				{
-					groupRegionID += batchAreaBag.get(i).getallRegionID().get(k);
+					groupPipeKey += tupleSplit[aid];
 				}
 			}
-			
-			StringPair outputKey = new StringPair();
-			
-			
-			outputKey.setFirstString(groupRegionID + "|" +  groupPublicKey + "|");
-			outputKey.setSecondString(groupPipeKey);
-
-			System.out.println("key:" + outputKey.getFirstString() + " " + outputKey.getSecondString());
-			
-			outputValue.set(Integer.valueOf(measureString));
-			context.write(outputKey, outputValue);
-			
+			else  //public
+			{
+				if (groupPublicKey.length() > 0)
+				{
+					groupPublicKey += " " + tupleSplit[aid];
+				}
+				else
+				{
+					groupPublicKey += tupleSplit[aid];
+				}
+			}
 		}
+			
+		for (int k = 0; k < batchAreaBag.get(i).getallRegionIDSize(); k++)
+		{
+			if (groupRegionID.length() > 0)
+			{
+				groupRegionID += " " + batchAreaBag.get(i).getallRegionID().get(k);
+			}
+			else
+			{
+				groupRegionID += batchAreaBag.get(i).getallRegionID().get(k);
+			}
+		}
+			
+		StringPair outputKey = new StringPair();
+			
+			
+		outputKey.setFirstString(groupRegionID + "|" +  groupPublicKey + "|");
+		outputKey.setSecondString(groupPipeKey);
+		
+		System.out.println("key:" + outputKey.getFirstString() + " " + outputKey.getSecondString());
+			
+		if (conf.get("datacube.measure").equals("distinct"))
+		{
+			measureString = lineSplit[2];
+		}
+		else if (conf.get("datacube.measure").equals("count"))
+		{
+			measureString = kvSplit[1];
+		}
+		else
+		{
+			//null
+		}
+		
+		outputValue.set(Integer.valueOf(measureString));
+		context.write(outputKey, outputValue);
 	}
 	
 	private Tuple<Integer> StringLineToTuple(String line)

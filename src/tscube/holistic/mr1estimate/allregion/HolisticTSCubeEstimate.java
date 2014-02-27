@@ -17,6 +17,7 @@ import datacube.common.datastructure.StringPair;
 import datacube.common.datastructure.StringPairMRCubeGroupComparator;
 import datacube.common.datastructure.StringPairMRCubeKeyComparator;
 import datacube.common.datastructure.StringPairMRCubePartitioner;
+import datacube.common.reducer.TSCubeMR1EstimateReducer;
 
 public class HolisticTSCubeEstimate 
 {
@@ -28,7 +29,7 @@ public class HolisticTSCubeEstimate
 		job.setJarByClass(HolisticTSCubeEstimate.class);
 		
 		job.setMapperClass(HolisticTSCubeEstimateMapper.class);
-		job.setReducerClass(HolisticTSCubeEstimateReducer.class);
+		job.setReducerClass(TSCubeMR1EstimateReducer.class);
 
 		job.setMapOutputKeyClass(StringPair.class);
 		job.setMapOutputValueClass(IntWritable.class);

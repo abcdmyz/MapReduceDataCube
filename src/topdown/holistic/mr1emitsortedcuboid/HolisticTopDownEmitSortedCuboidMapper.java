@@ -83,8 +83,20 @@ public class HolisticTopDownEmitSortedCuboidMapper extends Mapper<Object, Text, 
 				}
 			}
 
-			outputKey.set(batchStartRegionID + "|" + group + "|" + DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset")) + "|");
-			context.write(outputKey, one);
+			if (conf.get("datacube.measure").equals("distinct"))
+			{
+				outputKey.set(batchStartRegionID + "|" + group + "|" + DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset")) + "|");
+				context.write(outputKey, one);
+			}
+			else if (conf.get("datacube.measure").equals("count"))
+			{
+				outputKey.set(batchStartRegionID + "|" + group + "|");
+				context.write(outputKey, one);
+			}
+			else
+			{
+				//null
+			}
 		}
 	}
 

@@ -8,7 +8,9 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 
-public class HolisticTopDownEmitSortedCuboidCombiner extends Reducer<Text,IntWritable,Text,Text> 
+import datacube.common.datastructure.StringPair;
+
+public class HolisticTopDownEmitSortedCuboidCombiner extends Reducer<Text,IntWritable,Text,IntWritable> 
 {
 	private Configuration conf;
 
@@ -21,12 +23,37 @@ public class HolisticTopDownEmitSortedCuboidCombiner extends Reducer<Text,IntWri
 	@Override
 	public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
-		justPrintKeyOnce(key, values, context);
+		if (conf.get("datacube.measure").equals("distinct"))
+		{
+			calculationDistinctGroupBy(key, values, context);
+		}
+		else if (conf.get("datacube.measure").equals("count"))
+		{
+			calculationCountGroupBy(key, values, context);
+		}
+		else
+		{
+			
+		}
 	}
 	
-	private void justPrintKeyOnce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+	private void calculationDistinctGroupBy(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
-		Text outputValue = new Text();
+		IntWritable outputValue = new IntWritable(1);
 		context.write(key, outputValue);
+	}
+	
+	
+	private void calculationCountGroupBy(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+	{
+		int count = 0;
+	
+		for (IntWritable val : values) 
+	    {
+			count++;
+	    }	
+		
+		IntWritable countW = new IntWritable(count);
+		context.write(key, countW);
 	}
 }
