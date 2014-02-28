@@ -79,7 +79,7 @@ public class StringTrippleBatchAreaCombiner extends Reducer<StringTripple, IntWr
 			else
 			{
 				outputValue.set(count);
-				count = 0;
+				count = val.get();
 				context.write(key, outputValue);
 			}
 

@@ -37,8 +37,8 @@ public class HolisticMRCubePostProcess
 		
 		job.setNumReduceTasks(Integer.valueOf(conf.get("mapred.reduce.tasks")));
 		
-		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("tscube.mr2.output.path");
-		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("tscube.mr3.output.path");  
+		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("mrcube.mr2.output.path");
+		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("mrcube.mr3.output.path");  
 
 		System.out.println("mr3 input: " + inputPath);
 		System.out.println("mr3 output: " + outputPath);

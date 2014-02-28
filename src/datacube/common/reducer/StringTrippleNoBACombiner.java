@@ -61,7 +61,7 @@ public class StringTrippleNoBACombiner extends Reducer<StringTripple, IntWritabl
 	
 		for (IntWritable val : values) 
 	    {
-			count++;
+			count += val.get();
 	    }	
 		
 		IntWritable countW = new IntWritable(count);

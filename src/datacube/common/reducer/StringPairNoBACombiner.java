@@ -61,7 +61,7 @@ public class StringPairNoBACombiner extends Reducer<StringPair, IntWritable, Str
 	
 		for (IntWritable val : values) 
 	    {
-			count++;
+			count += val.get();
 	    }	
 		
 		IntWritable countW = new IntWritable(count);

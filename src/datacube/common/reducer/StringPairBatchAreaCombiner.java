@@ -80,7 +80,7 @@ public class StringPairBatchAreaCombiner extends Reducer<StringPair, IntWritable
 			else
 			{
 				outputValue.set(count);
-				count = 0;
+				count = val.get();
 				context.write(key, outputValue);
 			}
 

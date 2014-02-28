@@ -65,6 +65,12 @@ public class DataCubeMain extends Configured implements Tool
 			endTime = System.currentTimeMillis(); 
 			System.out.println("mrcube_naive_sp_" + conf.get("total.tuple.size") + " Time: " + ((endTime-startTime)/1000));
 		}
+		else if (otherArgs[0].equals("naiveba"))
+		{
+			NaiveMRCubeBatchArea mrCube1 = new NaiveMRCubeBatchArea();
+			
+			mrCube1.run(conf);
+		}
 		else if (otherArgs[0].equals("mrcube"))
 		{
 			HolisticMRCubeEstimate mrCube1 = new HolisticMRCubeEstimate();
@@ -75,6 +81,33 @@ public class DataCubeMain extends Configured implements Tool
 			mrCube2.run(conf);
 			mrCube3.run(conf);
 		}
+		else if (otherArgs[0].equals("mrcubemr1"))
+		{
+			HolisticMRCubeEstimate mrCube1 = new HolisticMRCubeEstimate();
+
+			mrCube1.run(conf);	
+		}
+		else if (otherArgs[0].equals("mrcubemr1print"))
+		{
+			HolisticMRCubeEstimatePrintSample mrCube1Print = new HolisticMRCubeEstimatePrintSample();
+			mrCube1Print.run(conf);
+		}
+		else if (otherArgs[0].equals("mrcubemr2"))
+		{
+			HolisticMRCubeMaterializeStringPair mrCube2 = new HolisticMRCubeMaterializeStringPair();
+			mrCube2.run(conf);
+		}
+		else if (otherArgs[0].equals("mrcubemr3"))
+		{
+			HolisticMRCubePostProcess mrCube3 = new HolisticMRCubePostProcess();
+			
+			mrCube3.run(conf);
+		}
+		else if (otherArgs[0].equals("mrcubebamr2"))
+		{
+			HolisticMRCubeMaterializeBatchArea mrCube2 = new HolisticMRCubeMaterializeBatchArea();
+			mrCube2.run(conf);
+		}
 		else if (otherArgs[0].equals("mrcubemr23"))
 		{
 			HolisticMRCubeMaterializeStringPair mrCube2 = new HolisticMRCubeMaterializeStringPair();
@@ -83,27 +116,43 @@ public class DataCubeMain extends Configured implements Tool
 			mrCube2.run(conf);
 			mrCube3.run(conf);
 		}
-		else if (otherArgs[0].equals("mrcubemr2"))
-		{
-			HolisticMRCubeMaterializeStringPair mrCube2 = new HolisticMRCubeMaterializeStringPair();
-			mrCube2.run(conf);
-		}
-		else if (otherArgs[0].equals("mrcubebamr2"))
-		{
-			HolisticMRCubeMaterializeBatchArea mrCube2 = new HolisticMRCubeMaterializeBatchArea();
-			mrCube2.run(conf);
-		}
-		else if (otherArgs[0].equals("mrcubemr1"))
+		else if (otherArgs[0].equals("mrcubeba"))
 		{
 			HolisticMRCubeEstimate mrCube1 = new HolisticMRCubeEstimate();
-
-			mrCube1.run(conf);	
-		}
-		else if (otherArgs[0].equals("mrcubemr3"))
-		{
+			HolisticMRCubeMaterializeBatchArea mrcube2 = new HolisticMRCubeMaterializeBatchArea();
 			HolisticMRCubePostProcess mrCube3 = new HolisticMRCubePostProcess();
 			
+			mrCube1.run(conf);
+			mrcube2.run(conf);
 			mrCube3.run(conf);
+		}
+		else if (otherArgs[0].equals("mrcubebamr23"))
+		{
+			HolisticMRCubeMaterializeBatchArea mrcube2 = new HolisticMRCubeMaterializeBatchArea();
+			HolisticMRCubePostProcess mrCube3 = new HolisticMRCubePostProcess();
+
+			mrcube2.run(conf);
+			mrCube3.run(conf);
+		}
+		else if (otherArgs[0].equals("tscube") || otherArgs[0].equals("tscubemr123"))
+		{
+			HolisticTSCubeEstimate tsCube1 = new HolisticTSCubeEstimate();
+			HolisticTSCubeMaterialize tsCube2 = new HolisticTSCubeMaterialize();
+			HolisticTSCubePostProcess tsCube3 = new HolisticTSCubePostProcess();
+			
+			tsCube1.run(conf);
+			tsCube2.run(conf);
+			tsCube3.run(conf);
+		}
+		else if (otherArgs[0].equals("tscubeba"))
+		{
+			HolisticTSCubeEstimateBatchRegion tsCube1 = new HolisticTSCubeEstimateBatchRegion();
+			HolisticTSCubeMaterializeBatchArea tsCube2 = new HolisticTSCubeMaterializeBatchArea();
+			HolisticTSCubePostProcess tsCube3 = new HolisticTSCubePostProcess();
+			
+			tsCube1.run(conf);
+			tsCube2.run(conf);
+			tsCube3.run(conf);
 		}
 		else if (otherArgs[0].equals("tscubemr1"))
 		{
@@ -129,26 +178,6 @@ public class DataCubeMain extends Configured implements Tool
 			tsCube1.run(conf);
 			tsCube2.run(conf);
 		}
-		else if (otherArgs[0].equals("tscube") || otherArgs[0].equals("tscubemr123"))
-		{
-			HolisticTSCubeEstimate tsCube1 = new HolisticTSCubeEstimate();
-			HolisticTSCubeMaterialize tsCube2 = new HolisticTSCubeMaterialize();
-			HolisticTSCubePostProcess tsCube3 = new HolisticTSCubePostProcess();
-			
-			tsCube1.run(conf);
-			tsCube2.run(conf);
-			tsCube3.run(conf);
-		}
-		else if (otherArgs[0].equals("tscubeba"))
-		{
-			HolisticTSCubeEstimateBatchRegion tsCube1 = new HolisticTSCubeEstimateBatchRegion();
-			HolisticTSCubeMaterializeBatchArea tsCube2 = new HolisticTSCubeMaterializeBatchArea();
-			HolisticTSCubePostProcess tsCube3 = new HolisticTSCubePostProcess();
-			
-			tsCube1.run(conf);
-			tsCube2.run(conf);
-			tsCube3.run(conf);
-		}
 		else if (otherArgs[0].equals("tscubenc"))
 		{
 			HolisticTSCubeEstimate tsCube1 = new HolisticTSCubeEstimate();
@@ -166,35 +195,6 @@ public class DataCubeMain extends Configured implements Tool
 			
 			tsCube2.run(conf);
 			tsCube3.run(conf);
-		}
-		else if (otherArgs[0].equals("mrcubeba"))
-		{
-			HolisticMRCubeEstimate mrCube1 = new HolisticMRCubeEstimate();
-			HolisticMRCubeMaterializeBatchArea mrcube2 = new HolisticMRCubeMaterializeBatchArea();
-			HolisticMRCubePostProcess mrCube3 = new HolisticMRCubePostProcess();
-			
-			mrCube1.run(conf);
-			mrcube2.run(conf);
-			mrCube3.run(conf);
-		}
-		else if (otherArgs[0].equals("mrcubebamr23"))
-		{
-			HolisticMRCubeMaterializeBatchArea mrcube2 = new HolisticMRCubeMaterializeBatchArea();
-			HolisticMRCubePostProcess mrCube3 = new HolisticMRCubePostProcess();
-
-			mrcube2.run(conf);
-			mrCube3.run(conf);
-		}
-		else if (otherArgs[0].equals("naiveba"))
-		{
-			NaiveMRCubeBatchArea mrCube1 = new NaiveMRCubeBatchArea();
-			
-			mrCube1.run(conf);
-		}
-		else if (otherArgs[0].equals("mrcubemr1print"))
-		{
-			HolisticMRCubeEstimatePrintSample mrCube1Print = new HolisticMRCubeEstimatePrintSample();
-			mrCube1Print.run(conf);
 		}
 		else if (otherArgs[0].equals("topdcubemr1"))
 		{
@@ -219,8 +219,6 @@ public class DataCubeMain extends Configured implements Tool
 		{
 			System.out.println("Wrong CMD");
 		}
-		
-		
 		
 		return 0;
 	}

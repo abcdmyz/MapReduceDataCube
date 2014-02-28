@@ -50,7 +50,7 @@ public class HolisticTopDownEmitSortedCuboidCombiner extends Reducer<Text,IntWri
 	
 		for (IntWritable val : values) 
 	    {
-			count++;
+			count += val.get();
 	    }	
 		
 		IntWritable countW = new IntWritable(count);
