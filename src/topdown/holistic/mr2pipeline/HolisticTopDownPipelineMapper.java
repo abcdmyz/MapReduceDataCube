@@ -103,12 +103,8 @@ public class HolisticTopDownPipelineMapper extends Mapper<Object, Text, StringPa
 		}
 			
 		StringPair outputKey = new StringPair();
-			
-			
 		outputKey.setFirstString(groupRegionID + "|" +  groupPublicKey + "|");
 		outputKey.setSecondString(groupPipeKey);
-		
-		System.out.println("key:" + outputKey.getFirstString() + " " + outputKey.getSecondString());
 			
 		if (conf.get("datacube.measure").equals("distinct"))
 		{

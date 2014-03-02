@@ -15,6 +15,8 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
 import topdown.holistic.mr1emitsortedcuboid.HolisticTopDownEmitSortedCuboid;
+import topdown.holistic.mr1emitsortedcuboid.HolisticTopDownEmitSortedCuboidNoCombiner;
+import topdown.holistic.mr1emitsortedcuboid.HolisticTopDownEmitSortedCuboidNoReducer;
 import topdown.holistic.mr2pipeline.HolisticTopDownPipeline;
 import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimate;
 import tscube.holistic.mr1estimate.batchregion.HolisticTSCubeEstimateBatchRegion;
@@ -201,6 +203,11 @@ public class DataCubeMain extends Configured implements Tool
 			HolisticTopDownEmitSortedCuboid mr1 = new HolisticTopDownEmitSortedCuboid();
 			mr1.run(conf);
 		}
+		else if (otherArgs[0].equals("topdcubencmr1"))
+		{
+			HolisticTopDownEmitSortedCuboidNoCombiner mr1 = new HolisticTopDownEmitSortedCuboidNoCombiner();
+			mr1.run(conf);
+		}
 		else if (otherArgs[0].equals("topdcubemr2"))
 		{
 			HolisticTopDownPipeline mr2 = new HolisticTopDownPipeline();
@@ -210,6 +217,22 @@ public class DataCubeMain extends Configured implements Tool
 		else if (otherArgs[0].equals("topdcube"))
 		{
 			HolisticTopDownEmitSortedCuboid mr1 = new HolisticTopDownEmitSortedCuboid();
+			HolisticTopDownPipeline mr2 = new HolisticTopDownPipeline();
+			
+			mr1.run(conf);
+			mr2.run(conf);
+		}
+		else if (otherArgs[0].equals("topdcubenc"))
+		{
+			HolisticTopDownEmitSortedCuboidNoCombiner mr1 = new HolisticTopDownEmitSortedCuboidNoCombiner();
+			HolisticTopDownPipeline mr2 = new HolisticTopDownPipeline();
+			
+			mr1.run(conf);
+			mr2.run(conf);
+		}
+		else if (otherArgs[0].equals("topdcubenr"))
+		{
+			HolisticTopDownEmitSortedCuboidNoReducer mr1 = new HolisticTopDownEmitSortedCuboidNoReducer();
 			HolisticTopDownPipeline mr2 = new HolisticTopDownPipeline();
 			
 			mr1.run(conf);

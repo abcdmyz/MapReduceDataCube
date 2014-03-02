@@ -20,8 +20,8 @@ public class HolisticTSCubeMaterialize
 {
 	public void run(Configuration conf) throws Exception 
 	{
-		String jobName = "tscube_mr2_" + conf.get("dataset") + "_"  + conf.get("total.tuple.size");
-		
+		String jobName = "tscube_mr2_" + conf.get("total.interval.number") + "_" + conf.get("dataset") + "_"  + conf.get("total.tuple.size");
+
 		System.out.println("reducer number:" + Integer.valueOf(conf.get("mapred.reduce.tasks")));
 		
  		Job job = new Job(conf, jobName);
