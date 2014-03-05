@@ -9,14 +9,14 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 
-import datacube.common.datastructure.StringTripple;
+import datacube.common.datastructure.StringTriple;
 
-public class StringTrippleBatchAreaReducer extends Reducer<StringTripple, IntWritable, Text, IntWritable> 
+public class StringTrippleBatchAreaReducer extends Reducer<StringTriple, IntWritable, Text, IntWritable> 
 {
 	private IntWritable one = new IntWritable(1);
 
 	@Override
-	public void reduce(StringTripple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+	public void reduce(StringTriple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
 		Configuration conf = context.getConfiguration();
 		
@@ -50,7 +50,7 @@ public class StringTrippleBatchAreaReducer extends Reducer<StringTripple, IntWri
 
 	}
 	
-	private void justPrint(StringTripple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+	private void justPrint(StringTriple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
 		Text outputKey = new Text();
 		IntWritable outputValue = new IntWritable();
@@ -63,7 +63,7 @@ public class StringTrippleBatchAreaReducer extends Reducer<StringTripple, IntWri
 		}
 	}
 	
-	private void oneRegionDistinctCalculation(StringTripple key, Iterable<IntWritable> values, Context context, 
+	private void oneRegionDistinctCalculation(StringTriple key, Iterable<IntWritable> values, Context context, 
 			String[] attributeSplit, String[] keyFirstSplit) throws IOException, InterruptedException
 	{
 		Text outputKey = new Text();
@@ -82,7 +82,7 @@ public class StringTrippleBatchAreaReducer extends Reducer<StringTripple, IntWri
 		
 	}
 	
-	private void multiRegionPipelineDistinctCalculation(StringTripple key, Iterable<IntWritable> values, Context context, 
+	private void multiRegionPipelineDistinctCalculation(StringTriple key, Iterable<IntWritable> values, Context context, 
 			String[] attributeSplit, String[] keyFirstSplit) throws IOException, InterruptedException
 	{
 		Text outputKey = new Text();
@@ -173,7 +173,7 @@ public class StringTrippleBatchAreaReducer extends Reducer<StringTripple, IntWri
 	}
 	
 	
-	private void oneRegionCountCalculation(StringTripple key, Iterable<IntWritable> values, Context context, 
+	private void oneRegionCountCalculation(StringTriple key, Iterable<IntWritable> values, Context context, 
 			String[] attributeSplit, String[] keyFirstSplit) throws IOException, InterruptedException
 	{
 		Text outputKey = new Text();
@@ -192,7 +192,7 @@ public class StringTrippleBatchAreaReducer extends Reducer<StringTripple, IntWri
 		
 	}
 	
-	private void multiRegionPipelineCountCalculation(StringTripple key, Iterable<IntWritable> values, Context context, 
+	private void multiRegionPipelineCountCalculation(StringTriple key, Iterable<IntWritable> values, Context context, 
 			String[] attributeSplit, String[] keyFirstSplit) throws IOException, InterruptedException
 	{
 		Text outputKey = new Text();

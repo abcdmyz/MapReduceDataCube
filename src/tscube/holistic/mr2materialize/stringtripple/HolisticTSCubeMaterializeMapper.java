@@ -14,11 +14,11 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 import datacube.common.datastructure.CubeLattice;
 import datacube.common.datastructure.StringPair;
-import datacube.common.datastructure.StringTripple;
+import datacube.common.datastructure.StringTriple;
 import datacube.common.datastructure.Tuple;
 import datacube.configuration.DataCubeParameter;
 
-public class HolisticTSCubeMaterializeMapper extends Mapper<Object, Text, StringTripple, IntWritable> 
+public class HolisticTSCubeMaterializeMapper extends Mapper<Object, Text, StringTriple, IntWritable> 
 {
 	private CubeLattice cubeLattice;
 	ArrayList<Tuple<Integer>> regionTupleBag = new ArrayList<Tuple<Integer>>();
@@ -99,7 +99,7 @@ public class HolisticTSCubeMaterializeMapper extends Mapper<Object, Text, String
 			String boundaryCMPString = regionNum + "|" + groupKey + "|" + measureString + "|"; 
 			partitionerID = binarySearchPartitionerBoundary(boundaryCMPString);
 			
-			StringTripple outputKey = new StringTripple();
+			StringTriple outputKey = new StringTriple();
 			outputKey.setFirstString(regionNum + "|" + groupKey + "|");
 			outputKey.setSecondString(measureString);
 			outputKey.setThirdString(String.valueOf(partitionerID));

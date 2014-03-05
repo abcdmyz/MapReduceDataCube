@@ -4,17 +4,17 @@ package datacube.common.datastructure;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
 
-public class StringTrippleTSCubeKeyComparator extends WritableComparator 
+public class StringTripleTSCubeKeyComparator extends WritableComparator 
 {
-	protected StringTrippleTSCubeKeyComparator()
+	protected StringTripleTSCubeKeyComparator()
 	{
-		super(StringTripple.class, true);
+		super(StringTriple.class, true);
 	}
 
 	public int compare(WritableComparable w1, WritableComparable w2)
 	{
-		StringTripple p1 = (StringTripple)w1;
-		StringTripple p2 = (StringTripple)w2;
+		StringTriple p1 = (StringTriple)w1;
+		StringTriple p2 = (StringTriple)w2;
 		
 		 if (!p1.getFirstString().equals(p2.getFirstString()))
 		{

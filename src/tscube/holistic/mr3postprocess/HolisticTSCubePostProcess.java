@@ -17,7 +17,7 @@ public class HolisticTSCubePostProcess
 {
 	public void run(Configuration conf) throws Exception 
 	{
-		String jobName = "tscube_mr3_" + conf.get("dataset") + "_" + conf.get("total.tuple.size");
+		String jobName = "tscube_mr3_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
 		
 		Job job = new Job(conf, jobName);
 

@@ -7,12 +7,12 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 
-import datacube.common.datastructure.StringTripple;
+import datacube.common.datastructure.StringTriple;
 
-public class StringTrippleNoBACombiner extends Reducer<StringTripple, IntWritable, StringTripple, IntWritable> 
+public class StringTrippleNoBACombiner extends Reducer<StringTriple, IntWritable, StringTriple, IntWritable> 
 {
 	@Override
-	public void reduce(StringTripple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+	public void reduce(StringTriple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
 		Configuration conf = context.getConfiguration();
 		
@@ -32,7 +32,7 @@ public class StringTrippleNoBACombiner extends Reducer<StringTripple, IntWritabl
 		//justPrintKeyValue(key, values, context);
 	}
 	
-	private void justPrintKeyValue(StringTripple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+	private void justPrintKeyValue(StringTriple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
 		for (IntWritable val : values) 
 	    {
@@ -40,7 +40,7 @@ public class StringTrippleNoBACombiner extends Reducer<StringTripple, IntWritabl
 	    }
 	}
 
-	private void calculationDistinctGroupBy(StringTripple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+	private void calculationDistinctGroupBy(StringTriple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
 		String last = null;
 	
@@ -55,7 +55,7 @@ public class StringTrippleNoBACombiner extends Reducer<StringTripple, IntWritabl
 	    }	
 	}
 	
-	private void calculationCountGroupBy(StringTripple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+	private void calculationCountGroupBy(StringTriple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
 		int count = 0;
 	

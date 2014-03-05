@@ -25,7 +25,7 @@ public class HolisticMRCubeEstimate
 {
 	public void run(Configuration conf) throws Exception 
 	{
-		String jobName = "mrcube_mr1_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("percent.mem.usage");
+		String jobName = "mrcube_mr1_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("percent.mem.usage") + "_" + conf.get("datacube.measure");
 		
 		Job job = new Job(conf, jobName);
 		

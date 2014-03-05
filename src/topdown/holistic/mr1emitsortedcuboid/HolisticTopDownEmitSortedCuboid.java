@@ -20,7 +20,7 @@ public class HolisticTopDownEmitSortedCuboid
 {
 	public void run(Configuration conf) throws Exception 
 	{
-		String jobName = "topdcube_mr1_" + conf.get("dataset") + "_" + conf.get("total.tuple.size");
+		String jobName = "topdcube_mr1_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
 		
 		Job job = new Job(conf, jobName);
 		job.setJarByClass(HolisticTopDownEmitSortedCuboid.class);

@@ -9,10 +9,10 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import datacube.common.datastructure.StringTripple;
-import datacube.common.datastructure.StringTrippleTSCubeGroupComparator;
-import datacube.common.datastructure.StringTrippleTSCubeKeyComparator;
-import datacube.common.datastructure.StringTrippleTSCubePartitioner;
+import datacube.common.datastructure.StringTriple;
+import datacube.common.datastructure.StringTripleTSCubeGroupComparator;
+import datacube.common.datastructure.StringTripleTSCubeKeyComparator;
+import datacube.common.datastructure.StringTripleTSCubePartitioner;
 import datacube.common.reducer.StringTrippleNoBACombiner;
 import datacube.common.reducer.StringTrippleNoBAReducer;
 
@@ -20,7 +20,7 @@ public class HolisticTSCubeMaterialize
 {
 	public void run(Configuration conf) throws Exception 
 	{
-		String jobName = "tscube_mr2_" + conf.get("total.interval.number") + "_" + conf.get("dataset") + "_"  + conf.get("total.tuple.size");
+		String jobName = "tscube_mr2_" + conf.get("total.interval.number") + "_" + conf.get("dataset") + "_"  + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
 
 		System.out.println("reducer number:" + Integer.valueOf(conf.get("mapred.reduce.tasks")));
 		
@@ -31,15 +31,15 @@ public class HolisticTSCubeMaterialize
 		job.setCombinerClass(StringTrippleNoBACombiner.class);
 		job.setReducerClass(StringTrippleNoBAReducer.class);
 
-		job.setMapOutputKeyClass(StringTripple.class);
+		job.setMapOutputKeyClass(StringTriple.class);
 		job.setMapOutputValueClass(IntWritable.class);
 		
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 		
-		job.setPartitionerClass(StringTrippleTSCubePartitioner.class);
-		job.setSortComparatorClass(StringTrippleTSCubeKeyComparator.class);
-		job.setGroupingComparatorClass(StringTrippleTSCubeGroupComparator.class);
+		job.setPartitionerClass(StringTripleTSCubePartitioner.class);
+		job.setSortComparatorClass(StringTripleTSCubeKeyComparator.class);
+		job.setGroupingComparatorClass(StringTripleTSCubeGroupComparator.class);
     
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setNumReduceTasks(Integer.valueOf(conf.get("mapred.reduce.tasks")));

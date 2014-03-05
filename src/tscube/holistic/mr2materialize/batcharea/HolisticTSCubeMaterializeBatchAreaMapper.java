@@ -18,11 +18,11 @@ import datacube.common.datastructure.BatchArea;
 import datacube.common.datastructure.BatchAreaGenerator;
 import datacube.common.datastructure.CubeLattice;
 import datacube.common.datastructure.StringPair;
-import datacube.common.datastructure.StringTripple;
+import datacube.common.datastructure.StringTriple;
 import datacube.common.datastructure.Tuple;
 import datacube.configuration.DataCubeParameter;
 
-public class HolisticTSCubeMaterializeBatchAreaMapper extends Mapper<Object, Text, StringTripple, IntWritable> 
+public class HolisticTSCubeMaterializeBatchAreaMapper extends Mapper<Object, Text, StringTriple, IntWritable> 
 {
 	private CubeLattice cubeLattice;
 	ArrayList<Tuple<Integer>> regionTupleBag = new ArrayList<Tuple<Integer>>();
@@ -153,7 +153,7 @@ public class HolisticTSCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 			partitionerID = binarySearchPartitionerBoundary(boundaryCMPString);
 
 			
-			StringTripple outputKey = new StringTripple();
+			StringTriple outputKey = new StringTriple();
 			outputKey.setFirstString(groupRegionID + "|" + groupPublicKey + "|");
 			outputKey.setSecondString(groupPipeKey);
 			outputKey.setThirdString(String.valueOf(partitionerID));

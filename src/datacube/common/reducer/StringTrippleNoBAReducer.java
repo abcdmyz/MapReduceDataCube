@@ -8,12 +8,12 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 
-import datacube.common.datastructure.StringTripple;
+import datacube.common.datastructure.StringTriple;
 
-public class StringTrippleNoBAReducer extends Reducer<StringTripple, IntWritable, Text, IntWritable> 
+public class StringTrippleNoBAReducer extends Reducer<StringTriple, IntWritable, Text, IntWritable> 
 {
 	@Override
-	public void reduce(StringTripple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+	public void reduce(StringTriple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
 		
 		Configuration conf = context.getConfiguration();
@@ -35,7 +35,7 @@ public class StringTrippleNoBAReducer extends Reducer<StringTripple, IntWritable
 		//justPrintKeyValue(key, values, context);
 	}
 	
-	private void justPrintKeyValue(StringTripple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+	private void justPrintKeyValue(StringTriple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
 		Text outputKey = new Text();
 	
@@ -51,7 +51,7 @@ public class StringTrippleNoBAReducer extends Reducer<StringTripple, IntWritable
 		context.write(outputKey, outputValue);
 	}
 
-	private void calculationDistinctGroupBy(StringTripple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+	private void calculationDistinctGroupBy(StringTriple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
 		String last = null;
 		int count = 0;
@@ -74,7 +74,7 @@ public class StringTrippleNoBAReducer extends Reducer<StringTripple, IntWritable
 		context.write(outputKey, outputValue);
 	}
 	
-	private void calculationCountGroupBy(StringTripple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+	private void calculationCountGroupBy(StringTriple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
 		IntWritable countW = new IntWritable(10);
 		int count = 0;	

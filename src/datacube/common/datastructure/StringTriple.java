@@ -6,20 +6,20 @@ import java.io.IOException;
 
 import org.apache.hadoop.io.WritableComparable;
 
-public class StringTripple implements WritableComparable<StringTripple>
+public class StringTriple implements WritableComparable<StringTriple>
 {
 	private String first;
 	private String second;
 	private String third;
 
-	public StringTripple()
+	public StringTriple()
 	{
 		first = new String();
 		second = new String();
 		third = new String();
 	}
 	
-	public StringTripple(String first, String second, String third)
+	public StringTriple(String first, String second, String third)
 	{
 		this.first = first;
 		this.second = second;
@@ -45,7 +45,7 @@ public class StringTripple implements WritableComparable<StringTripple>
 	}
 
 	@Override
-	public int compareTo(StringTripple o) 
+	public int compareTo(StringTriple o) 
 	{
 		// TODO Auto-generated method stub
 		if (!first.equals(o.first))
