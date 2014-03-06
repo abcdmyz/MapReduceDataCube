@@ -9,8 +9,6 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterialize;
-import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterializeMapper;
 import datacube.common.datastructure.StringTriple;
 import datacube.common.datastructure.StringTripleTSCubeGroupComparator;
 import datacube.common.datastructure.StringTripleTSCubeKeyComparator;
@@ -18,11 +16,11 @@ import datacube.common.datastructure.StringTripleTSCubePartitioner;
 import datacube.common.reducer.StringTrippleBatchAreaCombiner;
 import datacube.common.reducer.StringTrippleBatchAreaReducer;
 
-public class HolisticTSCubeMaterializeBatchArea 
+public class HolisticTSCubeMaterializeBatchAreaNoCombiner 
 {
 	public void run(Configuration conf) throws Exception 
 	{
-		String jobName = "tscube_mr2_batch_" + conf.get("total.interval.number") + "_" + conf.get("dataset") + "_"  + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
+		String jobName = "tscube_mr2_batch_nocombiner_" + conf.get("total.interval.number") + "_" + conf.get("dataset") + "_"  + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
 		
 		System.out.println("reducer number:" + Integer.valueOf(conf.get("mapred.reduce.tasks")));
 		
@@ -30,14 +28,13 @@ public class HolisticTSCubeMaterializeBatchArea
 		job.setJarByClass(HolisticTSCubeMaterializeBatchArea.class);
 		
 		job.setMapperClass(HolisticTSCubeMaterializeBatchAreaMapper.class);
-		job.setCombinerClass(StringTrippleBatchAreaCombiner.class);
 		job.setReducerClass(StringTrippleBatchAreaReducer.class);
 
 		job.setMapOutputKeyClass(StringTriple.class);
 		job.setMapOutputValueClass(IntWritable.class);
 		
 		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(IntWritable.class);
+		job.setOutputValueClass(Text.class);
 		
 		job.setPartitionerClass(StringTripleTSCubePartitioner.class);
 		job.setSortComparatorClass(StringTripleTSCubeKeyComparator.class);

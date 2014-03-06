@@ -1,4 +1,4 @@
-package topdown.holistic.mr1emitsortedcuboid;
+package topdown.holistic.mr1emitsortedcuboid.text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,7 +21,7 @@ import datacube.common.datastructure.StringPair;
 import datacube.common.datastructure.Tuple;
 import datacube.configuration.DataCubeParameter;
 
-public class HolisticTopDownEmitSortedCuboidMapper extends Mapper<Object, Text, Text, IntWritable> 
+public class HolisticTopDownEmitSortedCuboidTextMapper extends Mapper<Object, Text, Text, IntWritable> 
 {
 	private IntWritable one = new IntWritable(1);
 	private String oneString = "1";

@@ -11,6 +11,7 @@ public class StringPairMRCubeKeyComparator extends WritableComparator
 		super(StringPair.class, true);
 	}
 
+	@Override
 	public int compare(WritableComparable w1, WritableComparable w2)
 	{
 		StringPair p1 = (StringPair)w1;

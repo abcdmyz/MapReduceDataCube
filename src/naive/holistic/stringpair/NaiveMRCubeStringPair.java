@@ -27,7 +27,7 @@ public class NaiveMRCubeStringPair
 {
 	public void run(Configuration conf) throws Exception 
 	{
-		String jobName = "naive_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
+		String jobName = "naive_sp_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
 		
 		Job job = new Job(conf, jobName);
 		job.setJarByClass(NaiveMRCubeStringPair.class);

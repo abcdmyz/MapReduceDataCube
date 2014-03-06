@@ -46,17 +46,19 @@ public class StringTrippleBatchAreaCombiner extends Reducer<StringTriple, IntWri
 	{
 		String lastF = null;
 		String lastS = null;
+		String lastT = null;
 		int lastV = -1;
 		
 		for (IntWritable val : values) 
 	    {
-			if (!key.getSecondString().equals(lastS) || !key.getFirstString().equals(lastF) || val.get() != lastV)
+			if (!key.getThirdString().equals(lastT) || !key.getSecondString().equals(lastS) || !key.getFirstString().equals(lastF) || val.get() != lastV)
 			{
 				context.write(key, val);
 			}
 
 			lastS = key.getSecondString();
 			lastF = key.getFirstString();
+			lastT = key.getThirdString();
 			lastV = val.get();
 	    }		
 	}

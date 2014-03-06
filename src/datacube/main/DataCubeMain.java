@@ -2,9 +2,15 @@ package datacube.main;
 
 
 
+import groupby.base.algebraic.BaseGroupBy;
+import groupby.terasort.algebraic.mr1estimate.TeraSortGroupByEstimate;
+import groupby.terasort.algebraic.mr2materialize.stringpair.TeraSortGroupByMaterializeStringPair;
+import groupby.terasort.algebraic.mr3postprocess.TeraSortGroupByPostProcess;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import naive.algebraic.text.NaiveMRCubeText;
 import naive.holistic.batcharea.NaiveMRCubeBatchArea;
 import naive.holistic.stringpair.NaiveMRCubeStringPair;
 
@@ -14,13 +20,15 @@ import org.apache.hadoop.util.GenericOptionsParser;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-import topdown.holistic.mr1emitsortedcuboid.HolisticTopDownEmitSortedCuboid;
-import topdown.holistic.mr1emitsortedcuboid.HolisticTopDownEmitSortedCuboidNoCombiner;
-import topdown.holistic.mr1emitsortedcuboid.HolisticTopDownEmitSortedCuboidNoReducer;
+import topdown.holistic.mr1emitsortedcuboid.text.HolisticTopDownEmitSortedCuboidText;
+import topdown.holistic.mr1emitsortedcuboid.text.HolisticTopDownEmitSortedCuboidTextNoCombiner;
+import topdown.holistic.mr1emitsortedcuboid.text.HolisticTopDownEmitSortedCuboidTextNoReducer;
+import topdown.holistic.mr1estimatesortedcuboid.stringpair.HolisticTopDownEmitSortedCuboidStringPair;
 import topdown.holistic.mr2pipeline.HolisticTopDownPipeline;
 import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimate;
 import tscube.holistic.mr1estimate.batchregion.HolisticTSCubeEstimateBatchRegion;
 import tscube.holistic.mr2materialize.batcharea.HolisticTSCubeMaterializeBatchArea;
+import tscube.holistic.mr2materialize.batcharea.HolisticTSCubeMaterializeBatchAreaNoCombiner;
 import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterialize;
 import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterializeNoCombiner;
 import tscube.holistic.mr3postprocess.HolisticTSCubePostProcess;
@@ -70,6 +78,12 @@ public class DataCubeMain extends Configured implements Tool
 		else if (otherArgs[0].equals("naiveba"))
 		{
 			NaiveMRCubeBatchArea mrCube1 = new NaiveMRCubeBatchArea();
+			
+			mrCube1.run(conf);
+		}
+		else if (otherArgs[0].equals("naivetext"))
+		{
+			NaiveMRCubeText mrCube1 = new NaiveMRCubeText();
 			
 			mrCube1.run(conf);
 		}
@@ -156,6 +170,24 @@ public class DataCubeMain extends Configured implements Tool
 			tsCube2.run(conf);
 			tsCube3.run(conf);
 		}
+		else if (otherArgs[0].equals("tscubebamr23"))
+		{
+			HolisticTSCubeMaterializeBatchArea tsCube2 = new HolisticTSCubeMaterializeBatchArea();
+			HolisticTSCubePostProcess tsCube3 = new HolisticTSCubePostProcess();
+			
+			tsCube2.run(conf);
+			tsCube3.run(conf);
+		}
+		else if (otherArgs[0].equals("tscubebanc"))
+		{
+			HolisticTSCubeEstimateBatchRegion tsCube1 = new HolisticTSCubeEstimateBatchRegion();
+			HolisticTSCubeMaterializeBatchAreaNoCombiner tsCube2 = new HolisticTSCubeMaterializeBatchAreaNoCombiner();
+			HolisticTSCubePostProcess tsCube3 = new HolisticTSCubePostProcess();
+			
+			tsCube1.run(conf);
+			tsCube2.run(conf);
+			tsCube3.run(conf);
+		}
 		else if (otherArgs[0].equals("tscubemr1"))
 		{
 			HolisticTSCubeEstimate tsCube1 = new HolisticTSCubeEstimate();
@@ -200,12 +232,12 @@ public class DataCubeMain extends Configured implements Tool
 		}
 		else if (otherArgs[0].equals("topdcubemr1"))
 		{
-			HolisticTopDownEmitSortedCuboid mr1 = new HolisticTopDownEmitSortedCuboid();
+			HolisticTopDownEmitSortedCuboidText mr1 = new HolisticTopDownEmitSortedCuboidText();
 			mr1.run(conf);
 		}
 		else if (otherArgs[0].equals("topdcubencmr1"))
 		{
-			HolisticTopDownEmitSortedCuboidNoCombiner mr1 = new HolisticTopDownEmitSortedCuboidNoCombiner();
+			HolisticTopDownEmitSortedCuboidTextNoCombiner mr1 = new HolisticTopDownEmitSortedCuboidTextNoCombiner();
 			mr1.run(conf);
 		}
 		else if (otherArgs[0].equals("topdcubemr2"))
@@ -216,7 +248,7 @@ public class DataCubeMain extends Configured implements Tool
 		}
 		else if (otherArgs[0].equals("topdcube"))
 		{
-			HolisticTopDownEmitSortedCuboid mr1 = new HolisticTopDownEmitSortedCuboid();
+			HolisticTopDownEmitSortedCuboidText mr1 = new HolisticTopDownEmitSortedCuboidText();
 			HolisticTopDownPipeline mr2 = new HolisticTopDownPipeline();
 			
 			mr1.run(conf);
@@ -224,7 +256,7 @@ public class DataCubeMain extends Configured implements Tool
 		}
 		else if (otherArgs[0].equals("topdcubenc"))
 		{
-			HolisticTopDownEmitSortedCuboidNoCombiner mr1 = new HolisticTopDownEmitSortedCuboidNoCombiner();
+			HolisticTopDownEmitSortedCuboidTextNoCombiner mr1 = new HolisticTopDownEmitSortedCuboidTextNoCombiner();
 			HolisticTopDownPipeline mr2 = new HolisticTopDownPipeline();
 			
 			mr1.run(conf);
@@ -232,16 +264,57 @@ public class DataCubeMain extends Configured implements Tool
 		}
 		else if (otherArgs[0].equals("topdcubenr"))
 		{
-			HolisticTopDownEmitSortedCuboidNoReducer mr1 = new HolisticTopDownEmitSortedCuboidNoReducer();
+			HolisticTopDownEmitSortedCuboidTextNoReducer mr1 = new HolisticTopDownEmitSortedCuboidTextNoReducer();
 			HolisticTopDownPipeline mr2 = new HolisticTopDownPipeline();
 			
 			mr1.run(conf);
 			mr2.run(conf);
 		}
+		else if (otherArgs[0].equals("topdcubesp"))
+		{
+			HolisticTopDownEmitSortedCuboidStringPair mr1 = new HolisticTopDownEmitSortedCuboidStringPair();
+			HolisticTopDownPipeline mr2 = new HolisticTopDownPipeline();
+			
+			mr1.run(conf);
+			mr2.run(conf);
+		}
+		else if (otherArgs[0].equals("topdcubespmr1"))
+		{
+			HolisticTopDownEmitSortedCuboidStringPair mr1 = new HolisticTopDownEmitSortedCuboidStringPair();
+			mr1.run(conf);
+		}
+		else if (otherArgs[0].equals("gbbase"))
+		{
+			BaseGroupBy mr1 = new BaseGroupBy();
+			mr1.run(conf);
+		}
+		else if (otherArgs[0].equals("gbtsmr1"))
+		{
+			TeraSortGroupByEstimate mr1 = new TeraSortGroupByEstimate();
+			mr1.run(conf);
+		}
+		else if (otherArgs[0].equals("gbtsmr12"))
+		{
+			TeraSortGroupByEstimate mr1 = new TeraSortGroupByEstimate();
+			TeraSortGroupByMaterializeStringPair mr2 = new TeraSortGroupByMaterializeStringPair();
+			mr1.run(conf);
+			mr2.run(conf);
+		}
+		else if (otherArgs[0].equals("gbts"))
+		{
+			TeraSortGroupByEstimate mr1 = new TeraSortGroupByEstimate();
+			TeraSortGroupByMaterializeStringPair mr2 = new TeraSortGroupByMaterializeStringPair();
+			TeraSortGroupByPostProcess mr3 = new TeraSortGroupByPostProcess();
+			
+			mr1.run(conf);
+			mr2.run(conf);
+			mr3.run(conf);
+		}
 		else
 		{
 			System.out.println("Wrong CMD");
 		}
+		
 		
 		return 0;
 	}

@@ -4,6 +4,24 @@ import java.util.ArrayList;
 
 public class BatchAreaGenerator 
 {
+	public int getBatchAreaNumber(String dataset)
+	{
+		ArrayList<Integer> order = new ArrayList(4);
+
+		if (dataset.startsWith("d2")) 
+		{
+			return 4;
+		}
+		if (dataset.startsWith("d3")) 
+		{
+			return 4;
+		}
+		else
+		{
+			return 4;
+		}
+	}
+	
 	private ArrayList<Integer> getOriginalBatchAreaPlan(String dataset)
 	{
 		ArrayList<Integer> order = new ArrayList(4);

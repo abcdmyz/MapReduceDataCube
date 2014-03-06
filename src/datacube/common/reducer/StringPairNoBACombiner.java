@@ -42,16 +42,18 @@ public class StringPairNoBACombiner extends Reducer<StringPair, IntWritable, Str
 
 	private void calculationDistinctGroupBy(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
-		String last = null;
+		String lastS = null;
+		String lastF = null;
 	
 		for (IntWritable val : values) 
 	    {
-			if (!key.getSecondString().equals(last))
+			if (!key.getSecondString().equals(lastS) || !key.getFirstString().equals(lastF))
 			{
 				context.write(key, val);
 			}
 
-			last = key.getSecondString();
+			lastS = key.getSecondString();
+			lastF = key.getFirstString();
 	    }	
 	}
 	

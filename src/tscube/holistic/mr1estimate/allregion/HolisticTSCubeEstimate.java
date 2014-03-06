@@ -24,19 +24,19 @@ public class HolisticTSCubeEstimate
 	public void run(Configuration conf) throws Exception 
 	{
 		String jobName = "tscube_mr1_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
-		
+
 		Job job = new Job(conf, jobName);
 		job.setJarByClass(HolisticTSCubeEstimate.class);
-		
+
 		job.setMapperClass(HolisticTSCubeEstimateMapper.class);
 		job.setReducerClass(TSCubeMR1EstimateReducer.class);
 
 		job.setMapOutputKeyClass(StringPair.class);
 		job.setMapOutputValueClass(IntWritable.class);
-		
+
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
-		
+
 		job.setPartitionerClass(StringPairMRCubePartitioner.class);
 		job.setSortComparatorClass(StringPairMRCubeKeyComparator.class);
 		job.setGroupingComparatorClass(StringPairMRCubeGroupComparator.class);
@@ -46,10 +46,10 @@ public class HolisticTSCubeEstimate
 
 		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
 		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("tscube.mr1.output.path");  
-		
+
 		System.out.println("mr1 input: " + inputPath);
 		System.out.println("mr1 output: " + outputPath);
-		
+
 		FileInputFormat.addInputPath(job, new Path(inputPath));
 		FileOutputFormat.setOutputPath(job, new Path(outputPath));
 		job.waitForCompletion(true);

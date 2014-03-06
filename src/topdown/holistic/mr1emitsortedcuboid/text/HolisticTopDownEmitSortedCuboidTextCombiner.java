@@ -1,4 +1,4 @@
-package topdown.holistic.mr1emitsortedcuboid;
+package topdown.holistic.mr1emitsortedcuboid.text;
 
 import java.io.IOException;
 
@@ -10,7 +10,7 @@ import org.apache.hadoop.mapreduce.Reducer.Context;
 
 import datacube.common.datastructure.StringPair;
 
-public class HolisticTopDownEmitSortedCuboidCombiner extends Reducer<Text,IntWritable,Text,IntWritable> 
+public class HolisticTopDownEmitSortedCuboidTextCombiner extends Reducer<Text,IntWritable,Text,IntWritable> 
 {
 	private Configuration conf;
 

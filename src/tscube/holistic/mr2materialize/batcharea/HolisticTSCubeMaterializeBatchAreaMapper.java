@@ -145,6 +145,10 @@ public class HolisticTSCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 			else if (conf.get("datacube.measure").equals("count"))
 			{
 				measureString = DataCubeParameter.getTestDataTupleID(value.toString(), conf.get("dataset"));
+				
+				//String tupleID = DataCubeParameter.getTestDataTupleID(value.toString(), conf.get("dataset"));
+				//long tupleIDNum = Long.valueOf(measureString) * batchAreaGenerator.getBatchAreaNumber(conf.get("dataset"));
+				//measureString = String.valueOf(tupleIDNum);
 			}
 			
 			batchStartRegionID = String.valueOf(batchAreaBag.get(i).getRegionID(0));

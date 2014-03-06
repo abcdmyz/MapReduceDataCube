@@ -4,7 +4,12 @@
 		<name>datacube.measure</name>
 		<value>distinct</value>
 	</property>
-
+	
+	<property>
+		<name>groupby.region.id</name>
+		<value>3</value>
+	</property>
+	
 	<property>
 		<name>mapred.reduce.tasks</name>
 		<value>12</value>
@@ -145,11 +150,31 @@
 	<property>
 		<name>tscube.mr3.output.path</name>
 		<value>_output_tscube_mr3/</value>
-	</property>d
+	</property>
 	
 	<property>
 		<name>tscube.boundary.file.path</name>
 		<value>part-r-00000</value>
 	</property>	
+	
+	<property>
+		<name>groupby.output.path</name>
+		<value>_output_groupby_base/</value>
+	</property>
+	
+		<property>
+		<name>groupby.mr1.output.path</name>
+		<value>_output_groupby_ts_mr1/</value>
+	</property>
+	
+	<property>
+		<name>groupby.mr2.output.path</name>
+		<value>_output_groupby_ts_mr2/</value>
+	</property>
+	
+	<property>
+		<name>groupby.mr3.output.path</name>
+		<value>_output_groupby_ts_mr3/</value>
+	</property>
 	
 </configuration>

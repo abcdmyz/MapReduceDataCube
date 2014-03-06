@@ -14,7 +14,7 @@ public class TSCubeMR1EstimateReducer extends Reducer<StringPair,IntWritable,Tex
 {
 	private Configuration config;
 	private double r = 0;
-	
+
 	private Configuration conf;
 
 	@Override
@@ -22,25 +22,25 @@ public class TSCubeMR1EstimateReducer extends Reducer<StringPair,IntWritable,Tex
 	{
 		conf = context.getConfiguration();
 	}
-	
+
 	@Override
 	public void reduce(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
 		chooseBoundaryKey(key, values, context);
-		
+
 		//justPrintKeyValue(key, values, context);
 	}
-	
+
 	private void justPrintKeyValue(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
 		Text outputKey = new Text();
 		Text outputValue = new Text();
-	
+
 		for (IntWritable val : values) 
 	    {
 			outputKey.set(key.getFirstString().toString());
 			outputValue.set(key.getSecondString().toString());
-			
+
 			context.write(outputKey, outputValue);
 	    }
 	}
@@ -52,28 +52,28 @@ public class TSCubeMR1EstimateReducer extends Reducer<StringPair,IntWritable,Tex
 
 		int totalTupleSize = 0;
 		int intervalNumber = Integer.valueOf(conf.get("total.interval.number"));
-		
+
 		String allSample[] = new String[Integer.valueOf(conf.get("tscube.max.sample.size"))];
-	
+
 		for (IntWritable val : values) 
 	    {
 			allSample[totalTupleSize++] = key.getSecondString();
 	    }
-		
+
 		int interval = (int) (totalTupleSize / (intervalNumber));
 		System.out.println("boudary:" + totalTupleSize + " " + intervalNumber + " " + interval);
 		int id = 1;
 		int count = 0;
-		
+
 		while (id < intervalNumber)
 		{
 			count += interval;
-			
+
 			outputKey.set(allSample[count]);
 			outputValue.set(String.valueOf(id));
-			
+
 			context.write(outputKey, outputValue);
-			
+
 			id++;
 		}
 	}

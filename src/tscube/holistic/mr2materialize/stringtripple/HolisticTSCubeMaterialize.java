@@ -35,7 +35,7 @@ public class HolisticTSCubeMaterialize
 		job.setMapOutputValueClass(IntWritable.class);
 		
 		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(Text.class);
+		job.setOutputValueClass(IntWritable.class);
 		
 		job.setPartitionerClass(StringTripleTSCubePartitioner.class);
 		job.setSortComparatorClass(StringTripleTSCubeKeyComparator.class);

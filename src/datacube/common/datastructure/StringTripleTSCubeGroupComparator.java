@@ -15,11 +15,16 @@ public class StringTripleTSCubeGroupComparator extends WritableComparator
 		super(StringTriple.class, true);
 	}
 
+	@Override
 	public int compare(WritableComparable w1, WritableComparable w2)
 	{
 		StringTriple p1 = (StringTriple)w1;
 		StringTriple p2 = (StringTriple)w2;
-				
-		return p1.getFirstString().compareTo(p2.getFirstString());
+			
+		if (!p1.getThirdString().equals(p2.getThirdString()))
+		{
+			return p1.getFirstString().compareTo(p2.getFirstString());
+		}
+		return p1.getThirdString().compareTo(p2.getThirdString());
 	}
 }

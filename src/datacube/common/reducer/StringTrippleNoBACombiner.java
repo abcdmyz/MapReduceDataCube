@@ -42,17 +42,23 @@ public class StringTrippleNoBACombiner extends Reducer<StringTriple, IntWritable
 
 	private void calculationDistinctGroupBy(StringTriple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
-		String last = null;
-	
+		String lastF = null;
+		String lastS = null;
+		String lastT = null;
+		int lastV = -1;
+		
 		for (IntWritable val : values) 
 	    {
-			if (!key.getSecondString().equals(last))
+			if (!key.getThirdString().equals(lastT) || !key.getSecondString().equals(lastS) || !key.getFirstString().equals(lastF) || val.get() != lastV)
 			{
 				context.write(key, val);
 			}
 
-			last = key.getSecondString();
-	    }	
+			lastS = key.getSecondString();
+			lastF = key.getFirstString();
+			lastT = key.getThirdString();
+			lastV = val.get();
+	    }
 	}
 	
 	private void calculationCountGroupBy(StringTriple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException

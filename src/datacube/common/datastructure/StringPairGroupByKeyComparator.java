@@ -1,16 +1,11 @@
 package datacube.common.datastructure;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
 
-public class StringPairMRCubeGroupComparator extends WritableComparator 
+public class StringPairGroupByKeyComparator extends WritableComparator 
 {
-
-	protected StringPairMRCubeGroupComparator() 
+	protected StringPairGroupByKeyComparator()
 	{
 		super(StringPair.class, true);
 	}
@@ -24,6 +19,13 @@ public class StringPairMRCubeGroupComparator extends WritableComparator
 		String sp1 = p1.getFirstString();
 		String sp2 = p2.getFirstString();
 		
-		return sp1.compareTo(sp2);
+		if (!p1.getSecondString().equals(p2.getSecondString()))
+		{
+			return sp1.compareTo(sp2);
+		}
+		else
+		{
+			return p1.getFirstString().compareTo(p2.getFirstString());
+		}
 	}
 }
