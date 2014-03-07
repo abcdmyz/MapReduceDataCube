@@ -23,6 +23,7 @@ public class StringPairBatchAreaReducer extends Reducer<StringPair, IntWritable,
 		String keyFirstSplit[] = key.getFirstString().split("\\|");
 		String attributeSplit[] = keyFirstSplit[0].split(" ");
 		
+		
 		if (conf.get("datacube.measure").equals("distinct"))
 		{
 			if (attributeSplit.length > 1)
@@ -46,6 +47,7 @@ public class StringPairBatchAreaReducer extends Reducer<StringPair, IntWritable,
 			}
 		}
 		
+		
 		//justPrint(key, values, context);
 
 	}
@@ -61,6 +63,10 @@ public class StringPairBatchAreaReducer extends Reducer<StringPair, IntWritable,
 		{
 			context.write(outputKey, val);
 		}
+		
+		outputKey.set("----------------------------------");
+		outputValue.set(1);
+		context.write(outputKey, outputValue);
 	}
 	
 	private void oneRegionDistinctCalculation(StringPair key, Iterable<IntWritable> values, Context context, 

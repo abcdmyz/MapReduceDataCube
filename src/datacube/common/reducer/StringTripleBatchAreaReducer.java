@@ -10,8 +10,9 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 
 import datacube.common.datastructure.StringTriple;
+import datacube.common.datastructure.StringTriple;
 
-public class StringTrippleBatchAreaReducer extends Reducer<StringTriple, IntWritable, Text, IntWritable> 
+public class StringTripleBatchAreaReducer extends Reducer<StringTriple, IntWritable, Text, IntWritable> 
 {
 	private IntWritable one = new IntWritable(1);
 
@@ -46,6 +47,7 @@ public class StringTrippleBatchAreaReducer extends Reducer<StringTriple, IntWrit
 			}
 		}
 		
+		
 		//justPrint(key, values, context);
 
 	}
@@ -61,6 +63,10 @@ public class StringTrippleBatchAreaReducer extends Reducer<StringTriple, IntWrit
 		{
 			context.write(outputKey, val);
 		}
+		
+		outputKey.set("----------------------------------");
+		outputValue.set(1);
+		context.write(outputKey, outputValue);
 	}
 	
 	private void oneRegionDistinctCalculation(StringTriple key, Iterable<IntWritable> values, Context context, 

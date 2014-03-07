@@ -77,6 +77,28 @@ public class BatchAreaGenerator
 		
 		return order;
 	}
+	
+	public ArrayList<Integer> getTSCubeBatchRootRegion(String dataset)
+	{
+		ArrayList<Integer> order = new ArrayList(4);
+		
+		if (dataset.startsWith("d2"))
+		{
+			order.add(0);
+			order.add(4);
+			order.add(8);
+			order.add(12);
+		}
+		if (dataset.startsWith("d3"))
+		{
+			order.add(0);
+			order.add(2);
+			order.add(4);
+			order.add(6);
+		}
+		
+		return order;
+	}
 
 	/*
 	 * Especially for mrcube

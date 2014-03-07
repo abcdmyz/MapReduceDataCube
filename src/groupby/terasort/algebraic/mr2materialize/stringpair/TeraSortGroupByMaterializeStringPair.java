@@ -18,8 +18,8 @@ import datacube.common.datastructure.StringTriple;
 import datacube.common.datastructure.StringTripleTSCubeGroupComparator;
 import datacube.common.datastructure.StringTripleTSCubeKeyComparator;
 import datacube.common.datastructure.StringTripleTSCubePartitioner;
-import datacube.common.reducer.StringTrippleNoBACombiner;
-import datacube.common.reducer.StringTrippleNoBAReducer;
+import datacube.common.reducer.StringTripleNoBACombiner;
+import datacube.common.reducer.StringTripleNoBAReducer;
 
 public class TeraSortGroupByMaterializeStringPair 
 {

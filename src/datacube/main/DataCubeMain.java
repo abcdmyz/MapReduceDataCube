@@ -150,6 +150,20 @@ public class DataCubeMain extends Configured implements Tool
 			mrcube2.run(conf);
 			mrCube3.run(conf);
 		}
+		else if (otherArgs[0].equals("mrcubebamr12"))
+		{
+			HolisticMRCubeEstimate mrCube1 = new HolisticMRCubeEstimate();
+			HolisticMRCubeMaterializeBatchArea mrcube2 = new HolisticMRCubeMaterializeBatchArea();
+			
+			mrCube1.run(conf);
+			mrcube2.run(conf);
+		}
+		else if (otherArgs[0].equals("mrcubebamr2"))
+		{
+			HolisticMRCubeMaterializeBatchArea mrcube2 = new HolisticMRCubeMaterializeBatchArea();
+			
+			mrcube2.run(conf);
+		}
 		else if (otherArgs[0].equals("tscube") || otherArgs[0].equals("tscubemr123"))
 		{
 			HolisticTSCubeEstimate tsCube1 = new HolisticTSCubeEstimate();
@@ -170,6 +184,14 @@ public class DataCubeMain extends Configured implements Tool
 			tsCube2.run(conf);
 			tsCube3.run(conf);
 		}
+		else if (otherArgs[0].equals("tscubebamr12"))
+		{
+			HolisticTSCubeEstimateBatchRegion tsCube1 = new HolisticTSCubeEstimateBatchRegion();
+			HolisticTSCubeMaterializeBatchArea tsCube2 = new HolisticTSCubeMaterializeBatchArea();
+				
+			tsCube1.run(conf);
+			tsCube2.run(conf);
+		}
 		else if (otherArgs[0].equals("tscubebamr23"))
 		{
 			HolisticTSCubeMaterializeBatchArea tsCube2 = new HolisticTSCubeMaterializeBatchArea();
@@ -177,6 +199,12 @@ public class DataCubeMain extends Configured implements Tool
 			
 			tsCube2.run(conf);
 			tsCube3.run(conf);
+		}
+		else if (otherArgs[0].equals("tscubebamr2"))
+		{
+			HolisticTSCubeMaterializeBatchArea tsCube2 = new HolisticTSCubeMaterializeBatchArea();
+
+			tsCube2.run(conf);
 		}
 		else if (otherArgs[0].equals("tscubebanc"))
 		{

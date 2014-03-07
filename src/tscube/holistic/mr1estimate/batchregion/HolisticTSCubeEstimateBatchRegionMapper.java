@@ -27,7 +27,8 @@ public class HolisticTSCubeEstimateBatchRegionMapper extends Mapper<Object, Text
 	private ArrayList<Integer> batchSampleRegion = new ArrayList<Integer>();
 	private BatchAreaGenerator batchAreaGenerator = new BatchAreaGenerator();
 	private ArrayList<BatchArea> batchAreaBag = new ArrayList<BatchArea>();
-     
+	private ArrayList<Integer> batchRootRegion = new ArrayList<Integer>();
+      
 	@Override
 	public void setup(Context context)
 	{
@@ -38,6 +39,7 @@ public class HolisticTSCubeEstimateBatchRegionMapper extends Mapper<Object, Text
 		
 		batchSampleRegion = batchAreaGenerator.getTSCubeBatchSampleRegion(conf.get("dataset"));
 		batchAreaBag = batchAreaGenerator.getBatchAreaPlan(conf.get("dataset"), lattice);
+		batchRootRegion = batchAreaGenerator.getTSCubeBatchRootRegion(conf.get("dataset"));
 	}
 	
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException 
@@ -60,6 +62,7 @@ public class HolisticTSCubeEstimateBatchRegionMapper extends Mapper<Object, Text
 		Text regionKey = new Text();
 		Tuple<String> tuple;
 		StringPair outputKey = new StringPair();
+		int i;
 		
 		String tupleSplit[] = value.toString().split("\t");
 
@@ -68,7 +71,15 @@ public class HolisticTSCubeEstimateBatchRegionMapper extends Mapper<Object, Text
 			String group = new String();
 			String groupRegionID = new String();
 
-			int i = batchSampleRegion.get(k); 
+			if (conf.get("datacube.measure").equals("distinct"))
+			{
+				i = batchSampleRegion.get(k);
+			}
+			else //count
+			{
+				i = batchRootRegion.get(k);
+			}
+			
 			int batchStartRegionID = batchAreaBag.get(k).getRegionID(0);
 					
 			for (int j = 0; j < lattice.getRegionBag().get(i).getSize(); j++)

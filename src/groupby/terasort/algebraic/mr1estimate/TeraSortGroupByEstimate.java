@@ -11,6 +11,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimate;
 import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimateMapper;
+import datacube.common.datastructure.StringPair;
 import datacube.common.datastructure.StringPairMRCubeGroupComparator;
 import datacube.common.datastructure.StringPairMRCubeKeyComparator;
 import datacube.common.datastructure.StringPairMRCubePartitioner;
@@ -28,11 +29,15 @@ public class TeraSortGroupByEstimate
 		job.setMapperClass(TeraSortGroupByEstimateMapper.class);
 		job.setReducerClass(TSCubeMR1EstimateReducer.class);
 
-		job.setMapOutputKeyClass(Text.class);
+		job.setMapOutputKeyClass(StringPair.class);
 		job.setMapOutputValueClass(IntWritable.class);
 		
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
+		
+		job.setPartitionerClass(StringPairMRCubePartitioner.class);
+		job.setSortComparatorClass(StringPairMRCubeKeyComparator.class);
+		job.setGroupingComparatorClass(StringPairMRCubeGroupComparator.class);
     
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setNumReduceTasks(1);

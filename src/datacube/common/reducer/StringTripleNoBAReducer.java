@@ -4,18 +4,20 @@ import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 
 import datacube.common.datastructure.StringTriple;
 
-public class StringTrippleNoBACombiner extends Reducer<StringTriple, IntWritable, StringTriple, IntWritable> 
+public class StringTripleNoBAReducer extends Reducer<StringTriple, IntWritable, Text, IntWritable> 
 {
 	@Override
 	public void reduce(StringTriple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
-		Configuration conf = context.getConfiguration();
 		
+		Configuration conf = context.getConfiguration();
+
 		if (conf.get("datacube.measure").equals("distinct"))
 		{
 			calculationDistinctGroupBy(key, values, context);
@@ -29,48 +31,64 @@ public class StringTrippleNoBACombiner extends Reducer<StringTriple, IntWritable
 			//null
 		}
 		
+		
 		//justPrintKeyValue(key, values, context);
 	}
 	
 	private void justPrintKeyValue(StringTriple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
+		Text outputKey = new Text();
+	
 		for (IntWritable val : values) 
 	    {
-			context.write(key, val);
+			outputKey.set(key.getFirstString().toString());
+			
+			context.write(outputKey, val);
 	    }
+		
+		outputKey.set("********************");
+		IntWritable outputValue = new IntWritable(1);
+		context.write(outputKey, outputValue);
 	}
 
 	private void calculationDistinctGroupBy(StringTriple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
-		String lastF = null;
-		String lastS = null;
-		String lastT = null;
-		int lastV = -1;
-		
+		String last = null;
+		int count = 0;
+
 		for (IntWritable val : values) 
 	    {
-			if (!key.getThirdString().equals(lastT) || !key.getSecondString().equals(lastS) || !key.getFirstString().equals(lastF) || val.get() != lastV)
+			if (!key.getSecondString().equals(last))
 			{
-				context.write(key, val);
+				count++;
 			}
 
-			lastS = key.getSecondString();
-			lastF = key.getFirstString();
-			lastT = key.getThirdString();
-			lastV = val.get();
-	    }
+			last = key.getSecondString();
+	    }	
+		
+		Text outputKey = new Text();
+		String splitString[] = key.getFirstString().split("\\|");
+		outputKey.set(splitString[0] + "|" + splitString[1] + "|");
+		
+		IntWritable outputValue = new IntWritable(count);
+		context.write(outputKey, outputValue);
 	}
 	
 	private void calculationCountGroupBy(StringTriple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 	{
-		int count = 0;
+		IntWritable countW = new IntWritable(10);
+		int count = 0;	
 	
 		for (IntWritable val : values) 
 	    {
 			count += val.get();
 	    }	
 		
-		IntWritable countW = new IntWritable(count);
-		context.write(key, countW);
+		Text outputKey = new Text();
+		String splitString[] = key.getFirstString().split("\\|");
+		outputKey.set(splitString[0] + "|" + splitString[1] + "|");
+		
+		countW.set(count);
+		context.write(outputKey, countW);
 	}
 }

@@ -88,6 +88,7 @@ public class HolisticTSCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 		String measureString = new String();
 		int partitionerID;
 		IntWritable outputValue = new IntWritable();
+		String boundaryCMPString = null;
 		
 		for (int i = 0; i < batchAreaBag.size(); i++)
 		{
@@ -138,29 +139,29 @@ public class HolisticTSCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 				}
 			}
 			
+			batchStartRegionID = String.valueOf(batchAreaBag.get(i).getRegionID(0));
+			
 			if (conf.get("datacube.measure").equals("distinct"))
 			{
 				measureString = DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset"));
+				boundaryCMPString = batchStartRegionID + "|" + groupPublicKey + "|" + measureString + "|"; 
 			}
 			else if (conf.get("datacube.measure").equals("count"))
 			{
 				measureString = DataCubeParameter.getTestDataTupleID(value.toString(), conf.get("dataset"));
-				
-				//String tupleID = DataCubeParameter.getTestDataTupleID(value.toString(), conf.get("dataset"));
-				//long tupleIDNum = Long.valueOf(measureString) * batchAreaGenerator.getBatchAreaNumber(conf.get("dataset"));
-				//measureString = String.valueOf(tupleIDNum);
+				boundaryCMPString = batchStartRegionID + "|" + groupPublicKey + " " + groupPipeKey + "|" + measureString + "|"; 
 			}
 			
-			batchStartRegionID = String.valueOf(batchAreaBag.get(i).getRegionID(0));
-			String boundaryCMPString = batchStartRegionID + "|" + groupPublicKey + "|" + measureString + "|"; 
-
 			partitionerID = binarySearchPartitionerBoundary(boundaryCMPString);
-
+			
+			//System.out.println(boundaryCMPString + "*" + partitionerID);
 			
 			StringTriple outputKey = new StringTriple();
 			outputKey.setFirstString(groupRegionID + "|" + groupPublicKey + "|");
 			outputKey.setSecondString(groupPipeKey);
 			outputKey.setThirdString(String.valueOf(partitionerID));
+			
+			//System.out.println(outputKey.getFirstString() + " " + outputKey.getSecondString() + " " + outputKey.getThirdString());
 			
 			if (conf.get("datacube.measure").equals("distinct"))
 			{

@@ -13,8 +13,8 @@ import datacube.common.datastructure.StringTriple;
 import datacube.common.datastructure.StringTripleTSCubeGroupComparator;
 import datacube.common.datastructure.StringTripleTSCubeKeyComparator;
 import datacube.common.datastructure.StringTripleTSCubePartitioner;
-import datacube.common.reducer.StringTrippleBatchAreaCombiner;
-import datacube.common.reducer.StringTrippleBatchAreaReducer;
+import datacube.common.reducer.StringTripleBatchAreaCombiner;
+import datacube.common.reducer.StringTripleBatchAreaReducer;
 
 public class HolisticTSCubeMaterializeBatchAreaNoCombiner 
 {
@@ -28,7 +28,7 @@ public class HolisticTSCubeMaterializeBatchAreaNoCombiner
 		job.setJarByClass(HolisticTSCubeMaterializeBatchArea.class);
 		
 		job.setMapperClass(HolisticTSCubeMaterializeBatchAreaMapper.class);
-		job.setReducerClass(StringTrippleBatchAreaReducer.class);
+		job.setReducerClass(StringTripleBatchAreaReducer.class);
 
 		job.setMapOutputKeyClass(StringTriple.class);
 		job.setMapOutputValueClass(IntWritable.class);

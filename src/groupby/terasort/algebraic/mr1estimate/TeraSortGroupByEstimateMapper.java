@@ -10,9 +10,10 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
 import datacube.common.datastructure.CubeLattice;
+import datacube.common.datastructure.StringPair;
 import datacube.configuration.DataCubeParameter;
 
-public class TeraSortGroupByEstimateMapper extends Mapper<Object, Text, Text, IntWritable> 
+public class TeraSortGroupByEstimateMapper extends Mapper<Object, Text, StringPair, IntWritable> 
 {
 	private IntWritable one = new IntWritable(1);
 	private CubeLattice lattice;
@@ -47,6 +48,7 @@ public class TeraSortGroupByEstimateMapper extends Mapper<Object, Text, Text, In
 	{
 		Text regionGroupKey = new Text();
 		String tupleSplit[] = value.toString().split("\t");
+		String oneString = "1";
 
 		int i = Integer.valueOf(conf.get("groupby.region.id"));
 		
@@ -67,7 +69,11 @@ public class TeraSortGroupByEstimateMapper extends Mapper<Object, Text, Text, In
 			}
 		}
 		
-		regionGroupKey.set(group);
-		context.write(regionGroupKey, one);
+		StringPair outputKey = new StringPair();
+		outputKey.setFirstString(oneString);
+
+		outputKey.setSecondString(group + "|" + DataCubeParameter.getTestDataTupleID(value.toString(), conf.get("dataset")) + "|");
+
+		context.write(outputKey, one);
 	}
 }

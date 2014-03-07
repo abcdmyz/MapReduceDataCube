@@ -1,0 +1,2792 @@
+diff --git a/src/datacube-configuration.xml b/src/datacube-configuration.xml
+index 92e3d8a..418e5f9 100644
+--- a/src/datacube-configuration.xml
++++ b/src/datacube-configuration.xml
+@@ -4,12 +4,7 @@
+ 		<name>datacube.measure</name>
+ 		<value>distinct</value>
+ 	</property>
+-	
+-	<property>
+-		<name>groupby.region.id</name>
+-		<value>3</value>
+-	</property>
+-	
++
+ 	<property>
+ 		<name>mapred.reduce.tasks</name>
+ 		<value>12</value>
+@@ -150,31 +145,11 @@
+ 	<property>
+ 		<name>tscube.mr3.output.path</name>
+ 		<value>_output_tscube_mr3/</value>
+-	</property>
++	</property>d
+ 	
+ 	<property>
+ 		<name>tscube.boundary.file.path</name>
+ 		<value>part-r-00000</value>
+ 	</property>	
+ 	
+-	<property>
+-		<name>groupby.output.path</name>
+-		<value>_output_groupby_base/</value>
+-	</property>
+-	
+-		<property>
+-		<name>groupby.mr1.output.path</name>
+-		<value>_output_groupby_ts_mr1/</value>
+-	</property>
+-	
+-	<property>
+-		<name>groupby.mr2.output.path</name>
+-		<value>_output_groupby_ts_mr2/</value>
+-	</property>
+-	
+-	<property>
+-		<name>groupby.mr3.output.path</name>
+-		<value>_output_groupby_ts_mr3/</value>
+-	</property>
+-	
+ </configuration>
+diff --git a/src/datacube/common/datastructure/BatchAreaGenerator.java b/src/datacube/common/datastructure/BatchAreaGenerator.java
+index 4f87b4f..0859093 100644
+--- a/src/datacube/common/datastructure/BatchAreaGenerator.java
++++ b/src/datacube/common/datastructure/BatchAreaGenerator.java
+@@ -4,24 +4,6 @@ import java.util.ArrayList;
+ 
+ public class BatchAreaGenerator 
+ {
+-	public int getBatchAreaNumber(String dataset)
+-	{
+-		ArrayList<Integer> order = new ArrayList(4);
+-
+-		if (dataset.startsWith("d2")) 
+-		{
+-			return 4;
+-		}
+-		if (dataset.startsWith("d3")) 
+-		{
+-			return 4;
+-		}
+-		else
+-		{
+-			return 4;
+-		}
+-	}
+-	
+ 	private ArrayList<Integer> getOriginalBatchAreaPlan(String dataset)
+ 	{
+ 		ArrayList<Integer> order = new ArrayList(4);
+diff --git a/src/datacube/common/datastructure/StringPairGroupByKeyComparator.java b/src/datacube/common/datastructure/StringPairGroupByKeyComparator.java
+deleted file mode 100644
+index 0ac9347..0000000
+--- a/src/datacube/common/datastructure/StringPairGroupByKeyComparator.java
++++ /dev/null
+@@ -1,31 +0,0 @@
+-package datacube.common.datastructure;
+-
+-import org.apache.hadoop.io.WritableComparable;
+-import org.apache.hadoop.io.WritableComparator;
+-
+-public class StringPairGroupByKeyComparator extends WritableComparator 
+-{
+-	protected StringPairGroupByKeyComparator()
+-	{
+-		super(StringPair.class, true);
+-	}
+-
+-	@Override
+-	public int compare(WritableComparable w1, WritableComparable w2)
+-	{
+-		StringPair p1 = (StringPair)w1;
+-		StringPair p2 = (StringPair)w2;
+-		
+-		String sp1 = p1.getFirstString();
+-		String sp2 = p2.getFirstString();
+-		
+-		if (!p1.getSecondString().equals(p2.getSecondString()))
+-		{
+-			return sp1.compareTo(sp2);
+-		}
+-		else
+-		{
+-			return p1.getFirstString().compareTo(p2.getFirstString());
+-		}
+-	}
+-}
+\ No newline at end of file
+diff --git a/src/datacube/common/datastructure/StringPairGroupByPartitioner.java b/src/datacube/common/datastructure/StringPairGroupByPartitioner.java
+deleted file mode 100644
+index 1ae9e18..0000000
+--- a/src/datacube/common/datastructure/StringPairGroupByPartitioner.java
++++ /dev/null
+@@ -1,15 +0,0 @@
+-package datacube.common.datastructure;
+-
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.mapreduce.Partitioner;
+-
+-public class StringPairGroupByPartitioner extends Partitioner<StringPair, IntWritable> 
+-{
+-
+-	@Override
+-	public int getPartition(StringPair key, IntWritable value, int numPartitions) 
+-	{
+-		// TODO Auto-generated method stub
+-		return Math.abs(Integer.valueOf(key.getSecondString())) % numPartitions;
+-	}
+-}
+diff --git a/src/datacube/common/datastructure/StringPairMRCubeGroupComparator.java b/src/datacube/common/datastructure/StringPairMRCubeGroupComparator.java
+index 7898c91..5f9e2a1 100644
+--- a/src/datacube/common/datastructure/StringPairMRCubeGroupComparator.java
++++ b/src/datacube/common/datastructure/StringPairMRCubeGroupComparator.java
+@@ -15,7 +15,6 @@ public class StringPairMRCubeGroupComparator extends WritableComparator
+ 		super(StringPair.class, true);
+ 	}
+ 
+-	@Override
+ 	public int compare(WritableComparable w1, WritableComparable w2)
+ 	{
+ 		StringPair p1 = (StringPair)w1;
+diff --git a/src/datacube/common/datastructure/StringPairMRCubeKeyComparator.java b/src/datacube/common/datastructure/StringPairMRCubeKeyComparator.java
+index 628a099..115a541 100644
+--- a/src/datacube/common/datastructure/StringPairMRCubeKeyComparator.java
++++ b/src/datacube/common/datastructure/StringPairMRCubeKeyComparator.java
+@@ -11,7 +11,6 @@ public class StringPairMRCubeKeyComparator extends WritableComparator
+ 		super(StringPair.class, true);
+ 	}
+ 
+-	@Override
+ 	public int compare(WritableComparable w1, WritableComparable w2)
+ 	{
+ 		StringPair p1 = (StringPair)w1;
+diff --git a/src/datacube/common/datastructure/StringTripleTSCubeGroupComparator.java b/src/datacube/common/datastructure/StringTripleTSCubeGroupComparator.java
+index 6803260..45f14b0 100644
+--- a/src/datacube/common/datastructure/StringTripleTSCubeGroupComparator.java
++++ b/src/datacube/common/datastructure/StringTripleTSCubeGroupComparator.java
+@@ -15,16 +15,11 @@ public class StringTripleTSCubeGroupComparator extends WritableComparator
+ 		super(StringTriple.class, true);
+ 	}
+ 
+-	@Override
+ 	public int compare(WritableComparable w1, WritableComparable w2)
+ 	{
+ 		StringTriple p1 = (StringTriple)w1;
+ 		StringTriple p2 = (StringTriple)w2;
+-			
+-		if (!p1.getThirdString().equals(p2.getThirdString()))
+-		{
+-			return p1.getFirstString().compareTo(p2.getFirstString());
+-		}
+-		return p1.getThirdString().compareTo(p2.getThirdString());
++				
++		return p1.getFirstString().compareTo(p2.getFirstString());
+ 	}
+ }
+diff --git a/src/datacube/common/datastructure/StringTripleTSCubeKeyComparator.java b/src/datacube/common/datastructure/StringTripleTSCubeKeyComparator.java
+index 57cfe66..1529994 100644
+--- a/src/datacube/common/datastructure/StringTripleTSCubeKeyComparator.java
++++ b/src/datacube/common/datastructure/StringTripleTSCubeKeyComparator.java
+@@ -11,17 +11,12 @@ public class StringTripleTSCubeKeyComparator extends WritableComparator
+ 		super(StringTriple.class, true);
+ 	}
+ 
+-	@Override
+ 	public int compare(WritableComparable w1, WritableComparable w2)
+ 	{
+ 		StringTriple p1 = (StringTriple)w1;
+ 		StringTriple p2 = (StringTriple)w2;
+ 		
+-		if (!p1.getThirdString().equals(p2.getThirdString()))
+-		{
+-			return p1.getThirdString().compareTo(p2.getThirdString());
+-		}
+-		else if (!p1.getFirstString().equals(p2.getFirstString()))
++		 if (!p1.getFirstString().equals(p2.getFirstString()))
+ 		{
+ 			return p1.getFirstString().compareTo(p2.getFirstString());
+ 		}
+diff --git a/src/datacube/common/reducer/StringPairNoBACombiner.java b/src/datacube/common/reducer/StringPairNoBACombiner.java
+index d3717c4..3bcf89b 100644
+--- a/src/datacube/common/reducer/StringPairNoBACombiner.java
++++ b/src/datacube/common/reducer/StringPairNoBACombiner.java
+@@ -42,18 +42,16 @@ public class StringPairNoBACombiner extends Reducer<StringPair, IntWritable, Str
+ 
+ 	private void calculationDistinctGroupBy(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+ 	{
+-		String lastS = null;
+-		String lastF = null;
++		String last = null;
+ 	
+ 		for (IntWritable val : values) 
+ 	    {
+-			if (!key.getSecondString().equals(lastS) || !key.getFirstString().equals(lastF))
++			if (!key.getSecondString().equals(last))
+ 			{
+ 				context.write(key, val);
+ 			}
+ 
+-			lastS = key.getSecondString();
+-			lastF = key.getFirstString();
++			last = key.getSecondString();
+ 	    }	
+ 	}
+ 	
+diff --git a/src/datacube/common/reducer/StringTrippleBatchAreaCombiner.java b/src/datacube/common/reducer/StringTrippleBatchAreaCombiner.java
+index fdddf7b..0a9874e 100644
+--- a/src/datacube/common/reducer/StringTrippleBatchAreaCombiner.java
++++ b/src/datacube/common/reducer/StringTrippleBatchAreaCombiner.java
+@@ -46,19 +46,17 @@ public class StringTrippleBatchAreaCombiner extends Reducer<StringTriple, IntWri
+ 	{
+ 		String lastF = null;
+ 		String lastS = null;
+-		String lastT = null;
+ 		int lastV = -1;
+ 		
+ 		for (IntWritable val : values) 
+ 	    {
+-			if (!key.getThirdString().equals(lastT) || !key.getSecondString().equals(lastS) || !key.getFirstString().equals(lastF) || val.get() != lastV)
++			if (!key.getSecondString().equals(lastS) || !key.getFirstString().equals(lastF) || val.get() != lastV)
+ 			{
+ 				context.write(key, val);
+ 			}
+ 
+ 			lastS = key.getSecondString();
+ 			lastF = key.getFirstString();
+-			lastT = key.getThirdString();
+ 			lastV = val.get();
+ 	    }		
+ 	}
+diff --git a/src/datacube/common/reducer/StringTrippleNoBACombiner.java b/src/datacube/common/reducer/StringTrippleNoBACombiner.java
+index 1182735..81a27c1 100644
+--- a/src/datacube/common/reducer/StringTrippleNoBACombiner.java
++++ b/src/datacube/common/reducer/StringTrippleNoBACombiner.java
+@@ -42,23 +42,17 @@ public class StringTrippleNoBACombiner extends Reducer<StringTriple, IntWritable
+ 
+ 	private void calculationDistinctGroupBy(StringTriple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+ 	{
+-		String lastF = null;
+-		String lastS = null;
+-		String lastT = null;
+-		int lastV = -1;
+-		
++		String last = null;
++	
+ 		for (IntWritable val : values) 
+ 	    {
+-			if (!key.getThirdString().equals(lastT) || !key.getSecondString().equals(lastS) || !key.getFirstString().equals(lastF) || val.get() != lastV)
++			if (!key.getSecondString().equals(last))
+ 			{
+ 				context.write(key, val);
+ 			}
+ 
+-			lastS = key.getSecondString();
+-			lastF = key.getFirstString();
+-			lastT = key.getThirdString();
+-			lastV = val.get();
+-	    }
++			last = key.getSecondString();
++	    }	
+ 	}
+ 	
+ 	private void calculationCountGroupBy(StringTriple key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+diff --git a/src/datacube/common/reducer/TSCubeMR1EstimateReducer.java b/src/datacube/common/reducer/TSCubeMR1EstimateReducer.java
+index 34dbb8b..8a5286b 100644
+--- a/src/datacube/common/reducer/TSCubeMR1EstimateReducer.java
++++ b/src/datacube/common/reducer/TSCubeMR1EstimateReducer.java
+@@ -14,7 +14,7 @@ public class TSCubeMR1EstimateReducer extends Reducer<StringPair,IntWritable,Tex
+ {
+ 	private Configuration config;
+ 	private double r = 0;
+-
++	
+ 	private Configuration conf;
+ 
+ 	@Override
+@@ -22,25 +22,25 @@ public class TSCubeMR1EstimateReducer extends Reducer<StringPair,IntWritable,Tex
+ 	{
+ 		conf = context.getConfiguration();
+ 	}
+-
++	
+ 	@Override
+ 	public void reduce(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+ 	{
+ 		chooseBoundaryKey(key, values, context);
+-
++		
+ 		//justPrintKeyValue(key, values, context);
+ 	}
+-
++	
+ 	private void justPrintKeyValue(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+ 	{
+ 		Text outputKey = new Text();
+ 		Text outputValue = new Text();
+-
++	
+ 		for (IntWritable val : values) 
+ 	    {
+ 			outputKey.set(key.getFirstString().toString());
+ 			outputValue.set(key.getSecondString().toString());
+-
++			
+ 			context.write(outputKey, outputValue);
+ 	    }
+ 	}
+@@ -52,28 +52,28 @@ public class TSCubeMR1EstimateReducer extends Reducer<StringPair,IntWritable,Tex
+ 
+ 		int totalTupleSize = 0;
+ 		int intervalNumber = Integer.valueOf(conf.get("total.interval.number"));
+-
++		
+ 		String allSample[] = new String[Integer.valueOf(conf.get("tscube.max.sample.size"))];
+-
++	
+ 		for (IntWritable val : values) 
+ 	    {
+ 			allSample[totalTupleSize++] = key.getSecondString();
+ 	    }
+-
++		
+ 		int interval = (int) (totalTupleSize / (intervalNumber));
+ 		System.out.println("boudary:" + totalTupleSize + " " + intervalNumber + " " + interval);
+ 		int id = 1;
+ 		int count = 0;
+-
++		
+ 		while (id < intervalNumber)
+ 		{
+ 			count += interval;
+-
++			
+ 			outputKey.set(allSample[count]);
+ 			outputValue.set(String.valueOf(id));
+-
++			
+ 			context.write(outputKey, outputValue);
+-
++			
+ 			id++;
+ 		}
+ 	}
+diff --git a/src/datacube/main/DataCubeMain.java b/src/datacube/main/DataCubeMain.java
+index 4eb7166..475e687 100644
+--- a/src/datacube/main/DataCubeMain.java
++++ b/src/datacube/main/DataCubeMain.java
+@@ -2,15 +2,9 @@ package datacube.main;
+ 
+ 
+ 
+-import groupby.base.algebraic.BaseGroupBy;
+-import groupby.terasort.algebraic.mr1estimate.TeraSortGroupByEstimate;
+-import groupby.terasort.algebraic.mr2materialize.stringpair.TeraSortGroupByMaterializeStringPair;
+-import groupby.terasort.algebraic.mr3postprocess.TeraSortGroupByPostProcess;
+-
+ import java.util.ArrayList;
+ import java.util.HashSet;
+ 
+-import naive.algebraic.text.NaiveMRCubeText;
+ import naive.holistic.batcharea.NaiveMRCubeBatchArea;
+ import naive.holistic.stringpair.NaiveMRCubeStringPair;
+ 
+@@ -20,15 +14,13 @@ import org.apache.hadoop.util.GenericOptionsParser;
+ import org.apache.hadoop.util.Tool;
+ import org.apache.hadoop.util.ToolRunner;
+ 
+-import topdown.holistic.mr1emitsortedcuboid.text.HolisticTopDownEmitSortedCuboidText;
+-import topdown.holistic.mr1emitsortedcuboid.text.HolisticTopDownEmitSortedCuboidTextNoCombiner;
+-import topdown.holistic.mr1emitsortedcuboid.text.HolisticTopDownEmitSortedCuboidTextNoReducer;
+-import topdown.holistic.mr1estimatesortedcuboid.stringpair.HolisticTopDownEmitSortedCuboidStringPair;
++import topdown.holistic.mr1emitsortedcuboid.HolisticTopDownEmitSortedCuboid;
++import topdown.holistic.mr1emitsortedcuboid.HolisticTopDownEmitSortedCuboidNoCombiner;
++import topdown.holistic.mr1emitsortedcuboid.HolisticTopDownEmitSortedCuboidNoReducer;
+ import topdown.holistic.mr2pipeline.HolisticTopDownPipeline;
+ import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimate;
+ import tscube.holistic.mr1estimate.batchregion.HolisticTSCubeEstimateBatchRegion;
+ import tscube.holistic.mr2materialize.batcharea.HolisticTSCubeMaterializeBatchArea;
+-import tscube.holistic.mr2materialize.batcharea.HolisticTSCubeMaterializeBatchAreaNoCombiner;
+ import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterialize;
+ import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterializeNoCombiner;
+ import tscube.holistic.mr3postprocess.HolisticTSCubePostProcess;
+@@ -81,12 +73,6 @@ public class DataCubeMain extends Configured implements Tool
+ 			
+ 			mrCube1.run(conf);
+ 		}
+-		else if (otherArgs[0].equals("naivetext"))
+-		{
+-			NaiveMRCubeText mrCube1 = new NaiveMRCubeText();
+-			
+-			mrCube1.run(conf);
+-		}
+ 		else if (otherArgs[0].equals("mrcube"))
+ 		{
+ 			HolisticMRCubeEstimate mrCube1 = new HolisticMRCubeEstimate();
+@@ -170,24 +156,6 @@ public class DataCubeMain extends Configured implements Tool
+ 			tsCube2.run(conf);
+ 			tsCube3.run(conf);
+ 		}
+-		else if (otherArgs[0].equals("tscubebamr23"))
+-		{
+-			HolisticTSCubeMaterializeBatchArea tsCube2 = new HolisticTSCubeMaterializeBatchArea();
+-			HolisticTSCubePostProcess tsCube3 = new HolisticTSCubePostProcess();
+-			
+-			tsCube2.run(conf);
+-			tsCube3.run(conf);
+-		}
+-		else if (otherArgs[0].equals("tscubebanc"))
+-		{
+-			HolisticTSCubeEstimateBatchRegion tsCube1 = new HolisticTSCubeEstimateBatchRegion();
+-			HolisticTSCubeMaterializeBatchAreaNoCombiner tsCube2 = new HolisticTSCubeMaterializeBatchAreaNoCombiner();
+-			HolisticTSCubePostProcess tsCube3 = new HolisticTSCubePostProcess();
+-			
+-			tsCube1.run(conf);
+-			tsCube2.run(conf);
+-			tsCube3.run(conf);
+-		}
+ 		else if (otherArgs[0].equals("tscubemr1"))
+ 		{
+ 			HolisticTSCubeEstimate tsCube1 = new HolisticTSCubeEstimate();
+@@ -232,12 +200,12 @@ public class DataCubeMain extends Configured implements Tool
+ 		}
+ 		else if (otherArgs[0].equals("topdcubemr1"))
+ 		{
+-			HolisticTopDownEmitSortedCuboidText mr1 = new HolisticTopDownEmitSortedCuboidText();
++			HolisticTopDownEmitSortedCuboid mr1 = new HolisticTopDownEmitSortedCuboid();
+ 			mr1.run(conf);
+ 		}
+ 		else if (otherArgs[0].equals("topdcubencmr1"))
+ 		{
+-			HolisticTopDownEmitSortedCuboidTextNoCombiner mr1 = new HolisticTopDownEmitSortedCuboidTextNoCombiner();
++			HolisticTopDownEmitSortedCuboidNoCombiner mr1 = new HolisticTopDownEmitSortedCuboidNoCombiner();
+ 			mr1.run(conf);
+ 		}
+ 		else if (otherArgs[0].equals("topdcubemr2"))
+@@ -248,7 +216,7 @@ public class DataCubeMain extends Configured implements Tool
+ 		}
+ 		else if (otherArgs[0].equals("topdcube"))
+ 		{
+-			HolisticTopDownEmitSortedCuboidText mr1 = new HolisticTopDownEmitSortedCuboidText();
++			HolisticTopDownEmitSortedCuboid mr1 = new HolisticTopDownEmitSortedCuboid();
+ 			HolisticTopDownPipeline mr2 = new HolisticTopDownPipeline();
+ 			
+ 			mr1.run(conf);
+@@ -256,7 +224,7 @@ public class DataCubeMain extends Configured implements Tool
+ 		}
+ 		else if (otherArgs[0].equals("topdcubenc"))
+ 		{
+-			HolisticTopDownEmitSortedCuboidTextNoCombiner mr1 = new HolisticTopDownEmitSortedCuboidTextNoCombiner();
++			HolisticTopDownEmitSortedCuboidNoCombiner mr1 = new HolisticTopDownEmitSortedCuboidNoCombiner();
+ 			HolisticTopDownPipeline mr2 = new HolisticTopDownPipeline();
+ 			
+ 			mr1.run(conf);
+@@ -264,58 +232,17 @@ public class DataCubeMain extends Configured implements Tool
+ 		}
+ 		else if (otherArgs[0].equals("topdcubenr"))
+ 		{
+-			HolisticTopDownEmitSortedCuboidTextNoReducer mr1 = new HolisticTopDownEmitSortedCuboidTextNoReducer();
++			HolisticTopDownEmitSortedCuboidNoReducer mr1 = new HolisticTopDownEmitSortedCuboidNoReducer();
+ 			HolisticTopDownPipeline mr2 = new HolisticTopDownPipeline();
+ 			
+ 			mr1.run(conf);
+ 			mr2.run(conf);
+ 		}
+-		else if (otherArgs[0].equals("topdcubesp"))
+-		{
+-			HolisticTopDownEmitSortedCuboidStringPair mr1 = new HolisticTopDownEmitSortedCuboidStringPair();
+-			HolisticTopDownPipeline mr2 = new HolisticTopDownPipeline();
+-			
+-			mr1.run(conf);
+-			mr2.run(conf);
+-		}
+-		else if (otherArgs[0].equals("topdcubespmr1"))
+-		{
+-			HolisticTopDownEmitSortedCuboidStringPair mr1 = new HolisticTopDownEmitSortedCuboidStringPair();
+-			mr1.run(conf);
+-		}
+-		else if (otherArgs[0].equals("gbbase"))
+-		{
+-			BaseGroupBy mr1 = new BaseGroupBy();
+-			mr1.run(conf);
+-		}
+-		else if (otherArgs[0].equals("gbtsmr1"))
+-		{
+-			TeraSortGroupByEstimate mr1 = new TeraSortGroupByEstimate();
+-			mr1.run(conf);
+-		}
+-		else if (otherArgs[0].equals("gbtsmr12"))
+-		{
+-			TeraSortGroupByEstimate mr1 = new TeraSortGroupByEstimate();
+-			TeraSortGroupByMaterializeStringPair mr2 = new TeraSortGroupByMaterializeStringPair();
+-			mr1.run(conf);
+-			mr2.run(conf);
+-		}
+-		else if (otherArgs[0].equals("gbts"))
+-		{
+-			TeraSortGroupByEstimate mr1 = new TeraSortGroupByEstimate();
+-			TeraSortGroupByMaterializeStringPair mr2 = new TeraSortGroupByMaterializeStringPair();
+-			TeraSortGroupByPostProcess mr3 = new TeraSortGroupByPostProcess();
+-			
+-			mr1.run(conf);
+-			mr2.run(conf);
+-			mr3.run(conf);
+-		}
+ 		else
+ 		{
+ 			System.out.println("Wrong CMD");
+ 		}
+ 		
+-		
+ 		return 0;
+ 	}
+ }
+diff --git a/src/groupby/base/algebraic/BaseGroupBy.java b/src/groupby/base/algebraic/BaseGroupBy.java
+deleted file mode 100644
+index e62eadc..0000000
+--- a/src/groupby/base/algebraic/BaseGroupBy.java
++++ /dev/null
+@@ -1,56 +0,0 @@
+-package groupby.base.algebraic;
+-
+-import java.io.IOException;
+-
+-import naive.algebraic.text.NaiveMRCubeText;
+-import naive.algebraic.text.NaiveMRCubeTextMapper;
+-import naive.algebraic.text.NaiveMRCubeTextReducer;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.fs.Path;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Job;
+-import org.apache.hadoop.mapreduce.Mapper;
+-import org.apache.hadoop.mapreduce.Mapper.Context;
+-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+-
+-import datacube.common.datastructure.CubeLattice;
+-import datacube.common.datastructure.StringPair;
+-import datacube.common.datastructure.Tuple;
+-import datacube.configuration.DataCubeParameter;
+-
+-public class BaseGroupBy 
+-{
+-	public void run(Configuration conf) throws Exception 
+-	{
+-		String jobName = "gbbase_text_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
+-		
+-		Job job = new Job(conf, jobName);
+-		job.setJarByClass(BaseGroupBy.class);
+-		
+-		job.setMapperClass(BaseGroupByMapper.class);
+-		job.setCombinerClass(NaiveMRCubeTextReducer.class);
+-		job.setReducerClass(NaiveMRCubeTextReducer.class);
+-		
+-		job.setMapOutputKeyClass(Text.class);
+-		job.setMapOutputValueClass(IntWritable.class);
+-		
+-		job.setOutputKeyClass(Text.class);
+-		job.setOutputValueClass(IntWritable.class);
+-		
+-		job.setInputFormatClass(TextInputFormat.class);
+-		job.setNumReduceTasks(Integer.valueOf(conf.get("mapred.reduce.tasks")));
+-		
+-		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
+-		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("groupby.output.path");  
+-
+-		FileInputFormat.addInputPath(job, new Path(inputPath));
+-		FileOutputFormat.setOutputPath(job, new Path(outputPath));
+-		
+-		job.waitForCompletion(true);
+-	}
+-
+-}
+\ No newline at end of file
+diff --git a/src/groupby/base/algebraic/BaseGroupByMapper.java b/src/groupby/base/algebraic/BaseGroupByMapper.java
+deleted file mode 100644
+index 9606bf2..0000000
+--- a/src/groupby/base/algebraic/BaseGroupByMapper.java
++++ /dev/null
+@@ -1,67 +0,0 @@
+-package groupby.base.algebraic;
+-
+-import java.io.IOException;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Mapper;
+-import org.apache.hadoop.mapreduce.Mapper.Context;
+-
+-import datacube.common.datastructure.CubeLattice;
+-import datacube.common.datastructure.StringPair;
+-import datacube.common.datastructure.Tuple;
+-import datacube.configuration.DataCubeParameter;
+-
+-public class BaseGroupByMapper extends Mapper<Object, Text, Text, IntWritable> 
+-{
+-	private IntWritable one = new IntWritable(1);
+-	private CubeLattice lattice;
+-	private Configuration conf;
+-     
+-	@Override
+-	public void setup(Context context)
+-	{
+-		conf = context.getConfiguration();
+-		lattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
+-		lattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());
+-		lattice.printLattice();
+-		
+-		//System.out.println(conf.get("total.tuple.size"));
+-	}
+-	
+-	public void map(Object key, Text value, Context context) throws IOException, InterruptedException 
+-	{
+-		produceAllRegionFromTule(value, context);
+-		//justOutputTupleString(value, context);
+-		//justOutputValue(value, context);
+-	}
+-
+-	void produceAllRegionFromTule(Text value, Context context) throws IOException, InterruptedException
+-	{
+-		Text regionGroupKey = new Text();
+-		String tupleSplit[] = value.toString().split("\t");
+-
+-		int i = Integer.valueOf(conf.get("groupby.region.id"));
+-		
+-		String group = new String();
+-			
+-		for (int j = 0; j < lattice.getRegionBag().get(i).getSize(); j++)
+-		{
+-			if (lattice.getRegionBag().get(i).getField(j) != null)
+-			{
+-				if (group.length() > 0)
+-				{
+-					group += " " + tupleSplit[j];
+-				}
+-				else
+-				{
+-					group += tupleSplit[j];
+-				}
+-			}
+-		}
+-		
+-		regionGroupKey.set(group);
+-		context.write(regionGroupKey, one);
+-	}
+-}
+diff --git a/src/groupby/terasort/algebraic/mr1estimate/TeraSortGroupByEstimate.java b/src/groupby/terasort/algebraic/mr1estimate/TeraSortGroupByEstimate.java
+deleted file mode 100644
+index a5d141f..0000000
+--- a/src/groupby/terasort/algebraic/mr1estimate/TeraSortGroupByEstimate.java
++++ /dev/null
+@@ -1,51 +0,0 @@
+-package groupby.terasort.algebraic.mr1estimate;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.fs.Path;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Job;
+-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+-
+-import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimate;
+-import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimateMapper;
+-import datacube.common.datastructure.StringPairMRCubeGroupComparator;
+-import datacube.common.datastructure.StringPairMRCubeKeyComparator;
+-import datacube.common.datastructure.StringPairMRCubePartitioner;
+-import datacube.common.reducer.TSCubeMR1EstimateReducer;
+-
+-public class TeraSortGroupByEstimate 
+-{
+-	public void run(Configuration conf) throws Exception 
+-	{
+-		String jobName = "gbts_sp_mr1_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
+-		
+-		Job job = new Job(conf, jobName);
+-		job.setJarByClass(TeraSortGroupByEstimate.class);
+-		
+-		job.setMapperClass(TeraSortGroupByEstimateMapper.class);
+-		job.setReducerClass(TSCubeMR1EstimateReducer.class);
+-
+-		job.setMapOutputKeyClass(Text.class);
+-		job.setMapOutputValueClass(IntWritable.class);
+-		
+-		job.setOutputKeyClass(Text.class);
+-		job.setOutputValueClass(Text.class);
+-    
+-		job.setInputFormatClass(TextInputFormat.class);
+-		job.setNumReduceTasks(1);
+-
+-		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
+-		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("groupby.mr1.output.path");  
+-		
+-		System.out.println("mr1 input: " + inputPath);
+-		System.out.println("mr1 output: " + outputPath);
+-		
+-		FileInputFormat.addInputPath(job, new Path(inputPath));
+-		FileOutputFormat.setOutputPath(job, new Path(outputPath));
+-		job.waitForCompletion(true);
+-	}
+-
+-}
+diff --git a/src/groupby/terasort/algebraic/mr1estimate/TeraSortGroupByEstimateMapper.java b/src/groupby/terasort/algebraic/mr1estimate/TeraSortGroupByEstimateMapper.java
+deleted file mode 100644
+index 0980c09..0000000
+--- a/src/groupby/terasort/algebraic/mr1estimate/TeraSortGroupByEstimateMapper.java
++++ /dev/null
+@@ -1,73 +0,0 @@
+-package groupby.terasort.algebraic.mr1estimate;
+-
+-import java.io.IOException;
+-import java.util.Random;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Mapper;
+-import org.apache.hadoop.mapreduce.Mapper.Context;
+-
+-import datacube.common.datastructure.CubeLattice;
+-import datacube.configuration.DataCubeParameter;
+-
+-public class TeraSortGroupByEstimateMapper extends Mapper<Object, Text, Text, IntWritable> 
+-{
+-	private IntWritable one = new IntWritable(1);
+-	private CubeLattice lattice;
+-	private Configuration conf;
+-     
+-	@Override
+-	public void setup(Context context)
+-	{
+-		conf = context.getConfiguration();
+-		lattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
+-		lattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());
+-		lattice.printLattice();
+-		
+-		//System.out.println(conf.get("total.tuple.size"));
+-	}
+-	
+-	public void map(Object key, Text value, Context context) throws IOException, InterruptedException 
+-	{
+-		Random random = new Random();
+-		int randomNum = random.nextInt(DataCubeParameter.getMRCubeSampleTuplePercent(Integer.valueOf(conf.get("total.tuple.size"))) * 10);
+-		
+-		if (randomNum <= 10)
+-		{
+-			produceAllRegionFromTule(value, context);
+-		}
+-		
+-		//justOutputTupleString(value, context);
+-		//justOutputValue(value, context);
+-	}
+-
+-	void produceAllRegionFromTule(Text value, Context context) throws IOException, InterruptedException
+-	{
+-		Text regionGroupKey = new Text();
+-		String tupleSplit[] = value.toString().split("\t");
+-
+-		int i = Integer.valueOf(conf.get("groupby.region.id"));
+-		
+-		String group = new String();
+-			
+-		for (int j = 0; j < lattice.getRegionBag().get(i).getSize(); j++)
+-		{
+-			if (lattice.getRegionBag().get(i).getField(j) != null)
+-			{
+-				if (group.length() > 0)
+-				{
+-					group += " " + tupleSplit[j];
+-				}
+-				else
+-				{
+-					group += tupleSplit[j];
+-				}
+-			}
+-		}
+-		
+-		regionGroupKey.set(group);
+-		context.write(regionGroupKey, one);
+-	}
+-}
+diff --git a/src/groupby/terasort/algebraic/mr2materialize/stringpair/TeraSortGroupByMaterializeStringPair.java b/src/groupby/terasort/algebraic/mr2materialize/stringpair/TeraSortGroupByMaterializeStringPair.java
+deleted file mode 100644
+index 34d18c8..0000000
+--- a/src/groupby/terasort/algebraic/mr2materialize/stringpair/TeraSortGroupByMaterializeStringPair.java
++++ /dev/null
+@@ -1,59 +0,0 @@
+-package groupby.terasort.algebraic.mr2materialize.stringpair;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.fs.Path;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Job;
+-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+-
+-import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterialize;
+-import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterializeMapper;
+-import datacube.common.datastructure.StringPair;
+-import datacube.common.datastructure.StringPairGroupByKeyComparator;
+-import datacube.common.datastructure.StringPairGroupByPartitioner;
+-import datacube.common.datastructure.StringTriple;
+-import datacube.common.datastructure.StringTripleTSCubeGroupComparator;
+-import datacube.common.datastructure.StringTripleTSCubeKeyComparator;
+-import datacube.common.datastructure.StringTripleTSCubePartitioner;
+-import datacube.common.reducer.StringTrippleNoBACombiner;
+-import datacube.common.reducer.StringTrippleNoBAReducer;
+-
+-public class TeraSortGroupByMaterializeStringPair 
+-{
+-	public void run(Configuration conf) throws Exception 
+-	{
+-		String jobName = "gbts_sp_mr2_" + conf.get("total.interval.number") + "_" + conf.get("dataset") + "_"  + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
+-
+-		System.out.println("reducer number:" + Integer.valueOf(conf.get("mapred.reduce.tasks")));
+-		
+- 		Job job = new Job(conf, jobName);
+-		job.setJarByClass(TeraSortGroupByMaterializeStringPair.class);
+-		
+-		job.setMapperClass(TeraSortGroupByMaterializeStringPairMapper.class);
+-		job.setCombinerClass(TeraSortGroupByMaterializeStringPairCombiner.class);
+-		job.setReducerClass(TeraSortGroupByMaterializeStringPairReducer.class);
+-
+-		job.setMapOutputKeyClass(StringPair.class);
+-		job.setMapOutputValueClass(IntWritable.class);
+-		
+-		job.setOutputKeyClass(Text.class);
+-		job.setOutputValueClass(IntWritable.class);
+-		
+-		job.setPartitionerClass(StringPairGroupByPartitioner.class);
+-		job.setSortComparatorClass(StringPairGroupByKeyComparator.class);
+-		job.setGroupingComparatorClass(StringPairGroupByKeyComparator.class);
+-    
+-		job.setInputFormatClass(TextInputFormat.class);
+-		job.setNumReduceTasks(Integer.valueOf(conf.get("mapred.reduce.tasks")));
+-
+-		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
+-		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("groupby.mr2.output.path");  
+-		
+-		FileInputFormat.addInputPath(job, new Path(inputPath));
+-		FileOutputFormat.setOutputPath(job, new Path(outputPath));
+-		job.waitForCompletion(true);
+-	}
+-}
+diff --git a/src/groupby/terasort/algebraic/mr2materialize/stringpair/TeraSortGroupByMaterializeStringPairCombiner.java b/src/groupby/terasort/algebraic/mr2materialize/stringpair/TeraSortGroupByMaterializeStringPairCombiner.java
+deleted file mode 100644
+index b41d85c..0000000
+--- a/src/groupby/terasort/algebraic/mr2materialize/stringpair/TeraSortGroupByMaterializeStringPairCombiner.java
++++ /dev/null
+@@ -1,27 +0,0 @@
+-package groupby.terasort.algebraic.mr2materialize.stringpair;
+-
+-import java.io.IOException;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.mapreduce.Reducer;
+-import org.apache.hadoop.mapreduce.Reducer.Context;
+-
+-import datacube.common.datastructure.StringPair;
+-
+-public class TeraSortGroupByMaterializeStringPairCombiner extends Reducer<StringPair, IntWritable, StringPair, IntWritable> 
+-{
+-	@Override
+-	public void reduce(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+-	{
+-		int count = 0;
+-		
+-		for (IntWritable val : values) 
+-	    {
+-			count += val.get();
+-	    }	
+-		
+-		IntWritable countW = new IntWritable(count);
+-		context.write(key, countW);
+-	}
+-}
+\ No newline at end of file
+diff --git a/src/groupby/terasort/algebraic/mr2materialize/stringpair/TeraSortGroupByMaterializeStringPairMapper.java b/src/groupby/terasort/algebraic/mr2materialize/stringpair/TeraSortGroupByMaterializeStringPairMapper.java
+deleted file mode 100644
+index ba1ef88..0000000
+--- a/src/groupby/terasort/algebraic/mr2materialize/stringpair/TeraSortGroupByMaterializeStringPairMapper.java
++++ /dev/null
+@@ -1,135 +0,0 @@
+-package groupby.terasort.algebraic.mr2materialize.stringpair;
+-
+-import java.io.BufferedReader;
+-import java.io.IOException;
+-import java.io.InputStreamReader;
+-import java.util.ArrayList;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.fs.FileSystem;
+-import org.apache.hadoop.fs.Path;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Mapper;
+-import org.apache.hadoop.mapreduce.Mapper.Context;
+-
+-import datacube.common.datastructure.CubeLattice;
+-import datacube.common.datastructure.StringPair;
+-import datacube.common.datastructure.StringTriple;
+-import datacube.common.datastructure.Tuple;
+-import datacube.configuration.DataCubeParameter;
+-
+-public class TeraSortGroupByMaterializeStringPairMapper extends Mapper<Object, Text, StringPair, IntWritable> 
+-{
+-	private CubeLattice cubeLattice;
+-	ArrayList<Tuple<Integer>> regionTupleBag = new ArrayList<Tuple<Integer>>();
+-	private IntWritable one = new IntWritable(1);
+-	private ArrayList<String> boundary;
+-	private Configuration conf;
+-	
+-	@Override
+-	public void setup(Context context) throws IOException
+-	{
+-		conf = context.getConfiguration();
+-		cubeLattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
+-		cubeLattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());		
+-		
+-		boundary = new ArrayList<String>(Integer.valueOf(conf.get("total.interval.number")));
+-
+-		String latticePath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("tscube.mr1.output.path") + conf.get("tscube.boundary.file.path");
+-
+-		Path path = new Path(latticePath);
+-		FileSystem fs = FileSystem.get(context.getConfiguration());
+-		BufferedReader br=new BufferedReader(new InputStreamReader(fs.open(path)));
+-		
+-		try 
+-		{
+-			String line;
+-			line=br.readLine();
+-			while (line != null)
+-			{
+-				String[] regionSplit = line.split("\t"); 
+-				boundary.add(regionSplit[0]);
+-				
+-				line = br.readLine();
+-			}
+-		} 	
+-		finally 
+-		{
+-			br.close();
+-		}
+-	}
+-     
+-	public void map(Object key, Text value, Context context) throws IOException, InterruptedException 
+-	{
+-		String tupleSplit[] = value.toString().split("\t");
+-		String regionNum = new String();
+-		String measureString = new String();
+-		int partitionerID = 0;
+-		
+-		int i = Integer.valueOf(conf.get("groupby.region.id"));
+-		
+-		regionNum = String.valueOf(i);
+-		String groupKey = new String();
+-			
+-		for (int k = 0; k < cubeLattice.getRegionBag().get(i).getSize(); k++)
+-		{
+-			if (cubeLattice.getRegionBag().get(i).getField(k) != null)
+-			{
+-				if (groupKey.length() > 0)
+-				{
+-					groupKey += " " + tupleSplit[k];
+-				}
+-				else
+-				{
+-					groupKey += tupleSplit[k];
+-				}
+-			}
+-		}
+-				
+-		String boundaryCMPString = groupKey; 
+-		partitionerID = binarySearchPartitionerBoundary(boundaryCMPString);
+-			
+-		StringPair outputKey = new StringPair();
+-		outputKey.setFirstString(groupKey);
+-		outputKey.setSecondString(String.valueOf(partitionerID));
+-
+-		context.write(outputKey, one);
+-	}
+-	
+-	private int binarySearchPartitionerBoundary(String target)
+-	{
+-		int head = 0;
+-		int tail = boundary.size();
+-		
+-		if (target.compareTo(boundary.get(0)) <= 0)
+-		{
+-			return 0;
+-		}
+-		else if (target.compareTo(boundary.get(boundary.size()-1)) > 0)
+-		{
+-			return boundary.size();
+-		}
+-		
+-		while (head < tail - 1)
+-		{
+-			int mid = (head +  tail) / 2;
+-			
+-			if (target.equals(boundary.get(mid)))
+-			{
+-				return mid;
+-			}
+-			
+-			if (target.compareTo(boundary.get(mid)) > 0)
+-			{
+-				head = mid;
+-			}
+-			else
+-			{
+-				tail = mid;
+-			}
+-		}
+-		
+-		return tail;
+-	}
+-}
+\ No newline at end of file
+diff --git a/src/groupby/terasort/algebraic/mr2materialize/stringpair/TeraSortGroupByMaterializeStringPairReducer.java b/src/groupby/terasort/algebraic/mr2materialize/stringpair/TeraSortGroupByMaterializeStringPairReducer.java
+deleted file mode 100644
+index 57cd75b..0000000
+--- a/src/groupby/terasort/algebraic/mr2materialize/stringpair/TeraSortGroupByMaterializeStringPairReducer.java
++++ /dev/null
+@@ -1,30 +0,0 @@
+-package groupby.terasort.algebraic.mr2materialize.stringpair;
+-
+-import java.io.IOException;
+-
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Reducer;
+-import org.apache.hadoop.mapreduce.Reducer.Context;
+-
+-import datacube.common.datastructure.StringPair;
+-
+-public class TeraSortGroupByMaterializeStringPairReducer extends Reducer<StringPair, IntWritable, Text, IntWritable> 
+-{
+-	@Override
+-	public void reduce(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+-	{
+-		int count = 0;
+-		
+-		for (IntWritable val : values) 
+-	    {
+-			count += val.get();
+-	    }	
+-		
+-		IntWritable countW = new IntWritable(count);
+-		Text outputKey = new Text();
+-		outputKey.set(key.getFirstString());
+-		
+-		context.write(outputKey, countW);
+-	}
+-}
+\ No newline at end of file
+diff --git a/src/groupby/terasort/algebraic/mr3postprocess/TeraSortGroupByPostProcess.java b/src/groupby/terasort/algebraic/mr3postprocess/TeraSortGroupByPostProcess.java
+deleted file mode 100644
+index 3071bd6..0000000
+--- a/src/groupby/terasort/algebraic/mr3postprocess/TeraSortGroupByPostProcess.java
++++ /dev/null
+@@ -1,53 +0,0 @@
+-package groupby.terasort.algebraic.mr3postprocess;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.fs.Path;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Job;
+-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+-
+-import tscube.holistic.mr3postprocess.HolisticTSCubePostProcess;
+-import datacube.common.postprocess.DataCubePostProcessFilePathFilter;
+-import datacube.common.postprocess.DataCubePostProcessMapper;
+-import datacube.common.postprocess.DataCubePostProcessReducer;
+-
+-public class TeraSortGroupByPostProcess 
+-{
+-	public void run(Configuration conf) throws Exception 
+-	{
+-		String jobName = "gbts_sp_mr3_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
+-		
+-		Job job = new Job(conf, jobName);
+-
+-		job.setJarByClass(TeraSortGroupByPostProcess.class);
+-		
+-		job.setMapperClass(DataCubePostProcessMapper.class);
+-		job.setCombinerClass(DataCubePostProcessReducer.class);
+-		job.setReducerClass(DataCubePostProcessReducer.class);
+-		
+-		job.setMapOutputKeyClass(Text.class);
+-		job.setMapOutputValueClass(IntWritable.class);
+-
+-		job.setOutputKeyClass(Text.class);
+-		job.setOutputValueClass(IntWritable.class);
+-		
+-		job.setInputFormatClass(TextInputFormat.class);
+-		
+-		job.setNumReduceTasks(Integer.valueOf(conf.get("mapred.reduce.tasks")));
+-		
+-		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("groupby.mr2.output.path");
+-		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("groupby.mr3.output.path");  
+-
+-		
+-		FileInputFormat.addInputPath(job, new Path(inputPath));
+-		FileInputFormat.setInputPathFilter(job, DataCubePostProcessFilePathFilter.class);
+-		FileOutputFormat.setOutputPath(job, new Path(outputPath));	
+-		
+-		job.waitForCompletion(true);
+-		
+-	}
+-
+-}
+diff --git a/src/naive/algebraic/text/NaiveMRCubeText.java b/src/naive/algebraic/text/NaiveMRCubeText.java
+deleted file mode 100644
+index 1986d3a..0000000
+--- a/src/naive/algebraic/text/NaiveMRCubeText.java
++++ /dev/null
+@@ -1,56 +0,0 @@
+-package naive.algebraic.text;
+-
+-import naive.holistic.stringpair.NaiveMRCubeStringPair;
+-import naive.holistic.stringpair.NaiveMRCubeStringPairMapper;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.fs.Path;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Job;
+-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+-
+-import datacube.common.datastructure.StringPair;
+-import datacube.common.datastructure.StringPairMRCubeGroupComparator;
+-import datacube.common.datastructure.StringPairMRCubeKeyComparator;
+-import datacube.common.datastructure.StringPairMRCubePartitioner;
+-import datacube.common.reducer.StringPairNoBACombiner;
+-import datacube.common.reducer.StringPairNoBAReducer;
+-
+-public class NaiveMRCubeText 
+-{
+-	public void run(Configuration conf) throws Exception 
+-	{
+-		String jobName = "naive_text_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
+-		
+-		Job job = new Job(conf, jobName);
+-		job.setJarByClass(NaiveMRCubeText.class);
+-		
+-		job.setMapperClass(NaiveMRCubeTextMapper.class);
+-		job.setCombinerClass(NaiveMRCubeTextReducer.class);
+-		job.setReducerClass(NaiveMRCubeTextReducer.class);
+-		
+-		job.setMapOutputKeyClass(Text.class);
+-		job.setMapOutputValueClass(IntWritable.class);
+-		
+-		job.setOutputKeyClass(Text.class);
+-		job.setOutputValueClass(IntWritable.class);
+-		
+-		job.setInputFormatClass(TextInputFormat.class);
+-		job.setNumReduceTasks(Integer.valueOf(conf.get("mapred.reduce.tasks")));
+-		
+-		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
+-		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("naive.output.path");  
+-		
+-		System.out.println("naive input: " + inputPath);
+-		System.out.println("naive output: " + outputPath);
+-		
+-		FileInputFormat.addInputPath(job, new Path(inputPath));
+-		FileOutputFormat.setOutputPath(job, new Path(outputPath));
+-		
+-		job.waitForCompletion(true);
+-	}
+-
+-}
+diff --git a/src/naive/algebraic/text/NaiveMRCubeTextMapper.java b/src/naive/algebraic/text/NaiveMRCubeTextMapper.java
+deleted file mode 100644
+index 79f1544..0000000
+--- a/src/naive/algebraic/text/NaiveMRCubeTextMapper.java
++++ /dev/null
+@@ -1,70 +0,0 @@
+-package naive.algebraic.text;
+-
+-import java.io.IOException;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Mapper;
+-import org.apache.hadoop.mapreduce.Mapper.Context;
+-
+-import datacube.common.datastructure.CubeLattice;
+-import datacube.common.datastructure.StringPair;
+-import datacube.common.datastructure.Tuple;
+-import datacube.configuration.DataCubeParameter;
+-
+-public class NaiveMRCubeTextMapper extends Mapper<Object, Text, Text, IntWritable> 
+-{
+-	private IntWritable one = new IntWritable(1);
+-	private CubeLattice lattice;
+-	private Configuration conf;
+-     
+-	@Override
+-	public void setup(Context context)
+-	{
+-		conf = context.getConfiguration();
+-		lattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
+-		lattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());
+-		lattice.printLattice();
+-		
+-		//System.out.println(conf.get("total.tuple.size"));
+-	}
+-	
+-	public void map(Object key, Text value, Context context) throws IOException, InterruptedException 
+-	{
+-		produceAllRegionFromTule(value, context);
+-		//justOutputTupleString(value, context);
+-		//justOutputValue(value, context);
+-	}
+-
+-	void produceAllRegionFromTule(Text value, Context context) throws IOException, InterruptedException
+-	{
+-		Text regionGroupKey = new Text();
+-		String tupleSplit[] = value.toString().split("\t");
+-
+-		for (int i = 0; i < lattice.getRegionBag().size(); i++)
+-		{
+-			String group = new String();
+-			
+-			for (int j = 0; j < lattice.getRegionBag().get(i).getSize(); j++)
+-			{
+-				if (lattice.getRegionBag().get(i).getField(j) != null)
+-				{
+-					if (group.length() > 0)
+-					{
+-						group += " " + tupleSplit[j];
+-					}
+-					else
+-					{
+-						group += tupleSplit[j];
+-					}
+-				}
+-			}
+-			
+-			regionGroupKey.set(i + "|" + group + "|");
+-			context.write(regionGroupKey, one);
+-		}
+-	}
+-
+-
+-}
+diff --git a/src/naive/algebraic/text/NaiveMRCubeTextReducer.java b/src/naive/algebraic/text/NaiveMRCubeTextReducer.java
+deleted file mode 100644
+index eb98820..0000000
+--- a/src/naive/algebraic/text/NaiveMRCubeTextReducer.java
++++ /dev/null
+@@ -1,25 +0,0 @@
+-package naive.algebraic.text;
+-
+-import java.io.IOException;
+-
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Reducer;
+-import org.apache.hadoop.mapreduce.Reducer.Context;
+-
+-public class NaiveMRCubeTextReducer extends Reducer<Text, IntWritable, Text, IntWritable> 
+-{
+-	@Override
+-	public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+-	{
+-		int count = 0;
+-		
+-		for (IntWritable val : values) 
+-	    {
+-			count += val.get();
+-	    }	
+-		
+-		IntWritable countW = new IntWritable(count);
+-		context.write(key, countW);
+-	}
+-}
+\ No newline at end of file
+diff --git a/src/naive/holistic/stringpair/NaiveMRCubeStringPair.java b/src/naive/holistic/stringpair/NaiveMRCubeStringPair.java
+index 3571469..047de42 100644
+--- a/src/naive/holistic/stringpair/NaiveMRCubeStringPair.java
++++ b/src/naive/holistic/stringpair/NaiveMRCubeStringPair.java
+@@ -27,7 +27,7 @@ public class NaiveMRCubeStringPair
+ {
+ 	public void run(Configuration conf) throws Exception 
+ 	{
+-		String jobName = "naive_sp_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
++		String jobName = "naive_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
+ 		
+ 		Job job = new Job(conf, jobName);
+ 		job.setJarByClass(NaiveMRCubeStringPair.class);
+diff --git a/src/topdown/holistic/mr1emitsortedcuboid/HolisticTopDownEmitSortedCuboid.java b/src/topdown/holistic/mr1emitsortedcuboid/HolisticTopDownEmitSortedCuboid.java
+new file mode 100644
+index 0000000..d5b59bf
+--- /dev/null
++++ b/src/topdown/holistic/mr1emitsortedcuboid/HolisticTopDownEmitSortedCuboid.java
+@@ -0,0 +1,51 @@
++package topdown.holistic.mr1emitsortedcuboid;
++
++import org.apache.hadoop.conf.Configuration;
++import org.apache.hadoop.fs.Path;
++import org.apache.hadoop.io.IntWritable;
++import org.apache.hadoop.io.Text;
++import org.apache.hadoop.mapreduce.Job;
++import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
++import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
++import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
++
++import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimate;
++import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimateMapper;
++import datacube.common.datastructure.StringPair;
++import datacube.common.datastructure.StringPairMRCubeGroupComparator;
++import datacube.common.datastructure.StringPairMRCubeKeyComparator;
++import datacube.common.datastructure.StringPairMRCubePartitioner;
++
++public class HolisticTopDownEmitSortedCuboid 
++{
++	public void run(Configuration conf) throws Exception 
++	{
++		String jobName = "topdcube_mr1_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
++		
++		Job job = new Job(conf, jobName);
++		job.setJarByClass(HolisticTopDownEmitSortedCuboid.class);
++		
++		job.setMapperClass(HolisticTopDownEmitSortedCuboidMapper.class);
++		job.setCombinerClass(HolisticTopDownEmitSortedCuboidCombiner.class);
++		job.setReducerClass(HolisticTopDownEmitSortedCuboidReducer.class);
++
++		job.setMapOutputKeyClass(Text.class);
++		job.setMapOutputValueClass(IntWritable.class);
++		
++		job.setOutputKeyClass(Text.class);
++		job.setOutputValueClass(IntWritable.class);
++
++		job.setInputFormatClass(TextInputFormat.class);
++
++		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
++		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("topdcube.mr1.output.path");  
++		
++		System.out.println("mr1 input: " + inputPath);
++		System.out.println("mr1 output: " + outputPath);
++		
++		FileInputFormat.addInputPath(job, new Path(inputPath));
++		FileOutputFormat.setOutputPath(job, new Path(outputPath));
++		job.waitForCompletion(true);
++	}
++
++}
+diff --git a/src/topdown/holistic/mr1emitsortedcuboid/HolisticTopDownEmitSortedCuboidCombiner.java b/src/topdown/holistic/mr1emitsortedcuboid/HolisticTopDownEmitSortedCuboidCombiner.java
+new file mode 100644
+index 0000000..ffb462f
+--- /dev/null
++++ b/src/topdown/holistic/mr1emitsortedcuboid/HolisticTopDownEmitSortedCuboidCombiner.java
+@@ -0,0 +1,59 @@
++package topdown.holistic.mr1emitsortedcuboid;
++
++import java.io.IOException;
++
++import org.apache.hadoop.conf.Configuration;
++import org.apache.hadoop.io.IntWritable;
++import org.apache.hadoop.io.Text;
++import org.apache.hadoop.mapreduce.Reducer;
++import org.apache.hadoop.mapreduce.Reducer.Context;
++
++import datacube.common.datastructure.StringPair;
++
++public class HolisticTopDownEmitSortedCuboidCombiner extends Reducer<Text,IntWritable,Text,IntWritable> 
++{
++	private Configuration conf;
++
++	@Override
++	public void setup(Context context) throws IOException
++	{
++		conf = context.getConfiguration();
++	}
++	
++	@Override
++	public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
++	{
++		if (conf.get("datacube.measure").equals("distinct"))
++		{
++			calculationDistinctGroupBy(key, values, context);
++		}
++		else if (conf.get("datacube.measure").equals("count"))
++		{
++			calculationCountGroupBy(key, values, context);
++		}
++		else
++		{
++			
++		}
++	}
++	
++	private void calculationDistinctGroupBy(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
++	{
++		IntWritable outputValue = new IntWritable(1);
++		context.write(key, outputValue);
++	}
++	
++	
++	private void calculationCountGroupBy(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
++	{
++		int count = 0;
++	
++		for (IntWritable val : values) 
++	    {
++			count += val.get();
++	    }	
++		
++		IntWritable countW = new IntWritable(count);
++		context.write(key, countW);
++	}
++}
+\ No newline at end of file
+diff --git a/src/topdown/holistic/mr1emitsortedcuboid/HolisticTopDownEmitSortedCuboidMapper.java b/src/topdown/holistic/mr1emitsortedcuboid/HolisticTopDownEmitSortedCuboidMapper.java
+new file mode 100644
+index 0000000..532fe94
+--- /dev/null
++++ b/src/topdown/holistic/mr1emitsortedcuboid/HolisticTopDownEmitSortedCuboidMapper.java
+@@ -0,0 +1,122 @@
++package topdown.holistic.mr1emitsortedcuboid;
++
++import java.io.BufferedReader;
++import java.io.IOException;
++import java.io.InputStreamReader;
++import java.util.ArrayList;
++import java.util.Random;
++
++import org.apache.hadoop.conf.Configuration;
++import org.apache.hadoop.fs.FileSystem;
++import org.apache.hadoop.fs.Path;
++import org.apache.hadoop.io.IntWritable;
++import org.apache.hadoop.io.Text;
++import org.apache.hadoop.mapreduce.Mapper;
++import org.apache.hadoop.mapreduce.Mapper.Context;
++
++import datacube.common.datastructure.BatchArea;
++import datacube.common.datastructure.BatchAreaGenerator;
++import datacube.common.datastructure.CubeLattice;
++import datacube.common.datastructure.StringPair;
++import datacube.common.datastructure.Tuple;
++import datacube.configuration.DataCubeParameter;
++
++public class HolisticTopDownEmitSortedCuboidMapper extends Mapper<Object, Text, Text, IntWritable> 
++{
++	private IntWritable one = new IntWritable(1);
++	private String oneString = "1";
++	private CubeLattice lattice;
++	private Configuration conf;
++	
++	private ArrayList<Integer> batchRootRegion = new ArrayList<Integer>();
++	private BatchAreaGenerator batchAreaGenerator = new BatchAreaGenerator();
++	private ArrayList<BatchArea> batchAreaBag = new ArrayList<BatchArea>();
++     
++	@Override
++	public void setup(Context context)
++	{
++		conf = context.getConfiguration();
++		lattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
++		lattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());
++		
++		//lattice.printLattice();
++		
++		batchRootRegion = batchAreaGenerator.getTSCubeBatchSampleRegion(conf.get("dataset"));
++		batchAreaBag = batchAreaGenerator.getBatchAreaPlan(conf.get("dataset"), lattice);
++	}
++	
++	public void map(Object key, Text value, Context context) throws IOException, InterruptedException 
++	{
++		produceAllPipeRootRegionFromTule(value, context);
++	}
++
++	void produceAllPipeRootRegionFromTule(Text value, Context context) throws IOException, InterruptedException
++	{
++		Text groupValue = new Text();
++		Text regionKey = new Text();
++		Tuple<String> tuple;
++		Text outputKey = new Text();
++		
++		String tupleSplit[] = value.toString().split("\t");
++		
++		for (int k = 0; k < batchRootRegion.size(); k++)
++		{
++			String group = new String();
++			String groupRegionID = new String();
++			
++			
++			int batchStartRegionID = batchAreaBag.get(k).getRegionID(0);
++			int i = batchStartRegionID;
++					
++			for (int j = 0; j < lattice.getRegionBag().get(i).getSize(); j++)
++			{
++				if (lattice.getRegionBag().get(i).getField(j) != null)
++				{
++					if (group.length() > 0)
++					{
++						group += " " + tupleSplit[j];
++					}
++					else
++					{
++						group += tupleSplit[j];
++					}
++				}
++			}
++
++			if (conf.get("datacube.measure").equals("distinct"))
++			{
++				outputKey.set(batchStartRegionID + "|" + group + "|" + DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset")) + "|");
++				context.write(outputKey, one);
++			}
++			else if (conf.get("datacube.measure").equals("count"))
++			{
++				outputKey.set(batchStartRegionID + "|" + group + "|");
++				context.write(outputKey, one);
++			}
++			else
++			{
++				//null
++			}
++		}
++	}
++
++
++	private void justOutputValue(Text value, Context context) throws IOException, InterruptedException
++	{
++		Text regionGroupKey = new Text();
++		regionGroupKey.set(value.toString());
++		
++		context.write(regionGroupKey, one);
++	}
++	
++	private void justOutputTupleString(Text value, Context context) throws IOException, InterruptedException
++	{
++		Tuple<String> tuple;		
++		tuple = DataCubeParameter.transformTestDataLineStringtoTuple(value.toString(), conf.get("dataset"));
++		
++		Text regionGroupKey = new Text();
++		regionGroupKey.set(tuple.toString('|'));
++		
++		context.write(regionGroupKey, one);
++	}
++}
+\ No newline at end of file
+diff --git a/src/topdown/holistic/mr1emitsortedcuboid/HolisticTopDownEmitSortedCuboidNoCombiner.java b/src/topdown/holistic/mr1emitsortedcuboid/HolisticTopDownEmitSortedCuboidNoCombiner.java
+new file mode 100644
+index 0000000..5975e30
+--- /dev/null
++++ b/src/topdown/holistic/mr1emitsortedcuboid/HolisticTopDownEmitSortedCuboidNoCombiner.java
+@@ -0,0 +1,43 @@
++package topdown.holistic.mr1emitsortedcuboid;
++
++import org.apache.hadoop.conf.Configuration;
++import org.apache.hadoop.fs.Path;
++import org.apache.hadoop.io.IntWritable;
++import org.apache.hadoop.io.Text;
++import org.apache.hadoop.mapreduce.Job;
++import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
++import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
++import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
++
++public class HolisticTopDownEmitSortedCuboidNoCombiner 
++{
++	public void run(Configuration conf) throws Exception 
++	{
++		String jobName = "topdcube_mr1_nocombiner_" + conf.get("dataset") + "_" + conf.get("total.tuple.size");
++		
++		Job job = new Job(conf, jobName);
++		job.setJarByClass(HolisticTopDownEmitSortedCuboidNoCombiner.class);
++		
++		job.setMapperClass(HolisticTopDownEmitSortedCuboidMapper.class);
++		job.setReducerClass(HolisticTopDownEmitSortedCuboidReducer.class);
++
++		job.setMapOutputKeyClass(Text.class);
++		job.setMapOutputValueClass(IntWritable.class);
++		
++		job.setOutputKeyClass(Text.class);
++		job.setOutputValueClass(IntWritable.class);
++
++		job.setInputFormatClass(TextInputFormat.class);
++
++		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
++		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("topdcube.mr1.output.path");  
++		
++		System.out.println("mr1 input: " + inputPath);
++		System.out.println("mr1 output: " + outputPath);
++		
++		FileInputFormat.addInputPath(job, new Path(inputPath));
++		FileOutputFormat.setOutputPath(job, new Path(outputPath));
++		job.waitForCompletion(true);
++	}
++
++}
+diff --git a/src/topdown/holistic/mr1emitsortedcuboid/HolisticTopDownEmitSortedCuboidNoReducer.java b/src/topdown/holistic/mr1emitsortedcuboid/HolisticTopDownEmitSortedCuboidNoReducer.java
+new file mode 100644
+index 0000000..7474bff
+--- /dev/null
++++ b/src/topdown/holistic/mr1emitsortedcuboid/HolisticTopDownEmitSortedCuboidNoReducer.java
+@@ -0,0 +1,44 @@
++package topdown.holistic.mr1emitsortedcuboid;
++
++import org.apache.hadoop.conf.Configuration;
++import org.apache.hadoop.fs.Path;
++import org.apache.hadoop.io.IntWritable;
++import org.apache.hadoop.io.Text;
++import org.apache.hadoop.mapreduce.Job;
++import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
++import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
++import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
++
++public class HolisticTopDownEmitSortedCuboidNoReducer 
++{
++	public void run(Configuration conf) throws Exception 
++	{
++		String jobName = "topdcube_mr1_noreducer_" + conf.get("dataset") + "_" + conf.get("total.tuple.size");
++		
++		Job job = new Job(conf, jobName);
++		job.setJarByClass(HolisticTopDownEmitSortedCuboid.class);
++		
++		job.setMapperClass(HolisticTopDownEmitSortedCuboidMapper.class);
++		//job.setCombinerClass(HolisticTopDownEmitSortedCuboidCombiner.class);
++		//job.setReducerClass(HolisticTopDownEmitSortedCuboidReducer.class);
++
++		job.setMapOutputKeyClass(Text.class);
++		job.setMapOutputValueClass(IntWritable.class);
++		
++		job.setOutputKeyClass(Text.class);
++		job.setOutputValueClass(IntWritable.class);
++
++		job.setInputFormatClass(TextInputFormat.class);
++
++		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
++		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("topdcube.mr1.output.path");  
++		
++		System.out.println("mr1 input: " + inputPath);
++		System.out.println("mr1 output: " + outputPath);
++		
++		FileInputFormat.addInputPath(job, new Path(inputPath));
++		FileOutputFormat.setOutputPath(job, new Path(outputPath));
++		job.waitForCompletion(true);
++	}
++
++}
+diff --git a/src/topdown/holistic/mr1emitsortedcuboid/HolisticTopDownEmitSortedCuboidReducer.java b/src/topdown/holistic/mr1emitsortedcuboid/HolisticTopDownEmitSortedCuboidReducer.java
+new file mode 100644
+index 0000000..0f2d792
+--- /dev/null
++++ b/src/topdown/holistic/mr1emitsortedcuboid/HolisticTopDownEmitSortedCuboidReducer.java
+@@ -0,0 +1,60 @@
++package topdown.holistic.mr1emitsortedcuboid;
++
++import java.io.IOException;
++
++import org.apache.hadoop.conf.Configuration;
++import org.apache.hadoop.io.IntWritable;
++import org.apache.hadoop.io.Text;
++import org.apache.hadoop.mapreduce.Reducer;
++import org.apache.hadoop.mapreduce.Reducer.Context;
++
++import datacube.common.datastructure.StringPair;
++
++public class HolisticTopDownEmitSortedCuboidReducer extends Reducer<Text,IntWritable,Text,IntWritable> 
++{
++	private Configuration conf;
++
++	@Override
++	public void setup(Context context) throws IOException
++	{
++		conf = context.getConfiguration();
++	}
++	
++	@Override
++	public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
++	{
++		if (conf.get("datacube.measure").equals("distinct"))
++		{
++			calculationDistinctGroupBy(key, values, context);
++		}
++		else if (conf.get("datacube.measure").equals("count"))
++		{
++			calculationCountGroupBy(key, values, context);
++		}
++		else
++		{
++			
++		}
++	}
++	
++	private void calculationDistinctGroupBy(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
++	{
++		IntWritable outputValue = new IntWritable(1);
++		
++		context.write(key, outputValue);
++	}
++	
++	
++	private void calculationCountGroupBy(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
++	{
++		int count = 0;
++	
++		for (IntWritable val : values) 
++	    {
++			count += val.get();
++	    }	
++		
++		IntWritable countW = new IntWritable(count);
++		context.write(key, countW);
++	}
++}
+\ No newline at end of file
+diff --git a/src/topdown/holistic/mr1emitsortedcuboid/text/HolisticTopDownEmitSortedCuboidText.java b/src/topdown/holistic/mr1emitsortedcuboid/text/HolisticTopDownEmitSortedCuboidText.java
+deleted file mode 100644
+index 22e7349..0000000
+--- a/src/topdown/holistic/mr1emitsortedcuboid/text/HolisticTopDownEmitSortedCuboidText.java
++++ /dev/null
+@@ -1,51 +0,0 @@
+-package topdown.holistic.mr1emitsortedcuboid.text;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.fs.Path;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Job;
+-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+-
+-import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimate;
+-import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimateMapper;
+-import datacube.common.datastructure.StringPair;
+-import datacube.common.datastructure.StringPairMRCubeGroupComparator;
+-import datacube.common.datastructure.StringPairMRCubeKeyComparator;
+-import datacube.common.datastructure.StringPairMRCubePartitioner;
+-
+-public class HolisticTopDownEmitSortedCuboidText 
+-{
+-	public void run(Configuration conf) throws Exception 
+-	{
+-		String jobName = "topdcube_mr1_text_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
+-		
+-		Job job = new Job(conf, jobName);
+-		job.setJarByClass(HolisticTopDownEmitSortedCuboidText.class);
+-		
+-		job.setMapperClass(HolisticTopDownEmitSortedCuboidTextMapper.class);
+-		job.setCombinerClass(HolisticTopDownEmitSortedCuboidTextCombiner.class);
+-		job.setReducerClass(HolisticTopDownEmitSortedCuboidTextReducer.class);
+-
+-		job.setMapOutputKeyClass(Text.class);
+-		job.setMapOutputValueClass(IntWritable.class);
+-		
+-		job.setOutputKeyClass(Text.class);
+-		job.setOutputValueClass(IntWritable.class);
+-
+-		job.setInputFormatClass(TextInputFormat.class);
+-
+-		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
+-		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("topdcube.mr1.output.path");  
+-		
+-		System.out.println("mr1 input: " + inputPath);
+-		System.out.println("mr1 output: " + outputPath);
+-		
+-		FileInputFormat.addInputPath(job, new Path(inputPath));
+-		FileOutputFormat.setOutputPath(job, new Path(outputPath));
+-		job.waitForCompletion(true);
+-	}
+-
+-}
+diff --git a/src/topdown/holistic/mr1emitsortedcuboid/text/HolisticTopDownEmitSortedCuboidTextCombiner.java b/src/topdown/holistic/mr1emitsortedcuboid/text/HolisticTopDownEmitSortedCuboidTextCombiner.java
+deleted file mode 100644
+index 81c3419..0000000
+--- a/src/topdown/holistic/mr1emitsortedcuboid/text/HolisticTopDownEmitSortedCuboidTextCombiner.java
++++ /dev/null
+@@ -1,59 +0,0 @@
+-package topdown.holistic.mr1emitsortedcuboid.text;
+-
+-import java.io.IOException;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Reducer;
+-import org.apache.hadoop.mapreduce.Reducer.Context;
+-
+-import datacube.common.datastructure.StringPair;
+-
+-public class HolisticTopDownEmitSortedCuboidTextCombiner extends Reducer<Text,IntWritable,Text,IntWritable> 
+-{
+-	private Configuration conf;
+-
+-	@Override
+-	public void setup(Context context) throws IOException
+-	{
+-		conf = context.getConfiguration();
+-	}
+-	
+-	@Override
+-	public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+-	{
+-		if (conf.get("datacube.measure").equals("distinct"))
+-		{
+-			calculationDistinctGroupBy(key, values, context);
+-		}
+-		else if (conf.get("datacube.measure").equals("count"))
+-		{
+-			calculationCountGroupBy(key, values, context);
+-		}
+-		else
+-		{
+-			
+-		}
+-	}
+-	
+-	private void calculationDistinctGroupBy(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+-	{
+-		IntWritable outputValue = new IntWritable(1);
+-		context.write(key, outputValue);
+-	}
+-	
+-	
+-	private void calculationCountGroupBy(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+-	{
+-		int count = 0;
+-	
+-		for (IntWritable val : values) 
+-	    {
+-			count += val.get();
+-	    }	
+-		
+-		IntWritable countW = new IntWritable(count);
+-		context.write(key, countW);
+-	}
+-}
+\ No newline at end of file
+diff --git a/src/topdown/holistic/mr1emitsortedcuboid/text/HolisticTopDownEmitSortedCuboidTextMapper.java b/src/topdown/holistic/mr1emitsortedcuboid/text/HolisticTopDownEmitSortedCuboidTextMapper.java
+deleted file mode 100644
+index a529f88..0000000
+--- a/src/topdown/holistic/mr1emitsortedcuboid/text/HolisticTopDownEmitSortedCuboidTextMapper.java
++++ /dev/null
+@@ -1,122 +0,0 @@
+-package topdown.holistic.mr1emitsortedcuboid.text;
+-
+-import java.io.BufferedReader;
+-import java.io.IOException;
+-import java.io.InputStreamReader;
+-import java.util.ArrayList;
+-import java.util.Random;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.fs.FileSystem;
+-import org.apache.hadoop.fs.Path;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Mapper;
+-import org.apache.hadoop.mapreduce.Mapper.Context;
+-
+-import datacube.common.datastructure.BatchArea;
+-import datacube.common.datastructure.BatchAreaGenerator;
+-import datacube.common.datastructure.CubeLattice;
+-import datacube.common.datastructure.StringPair;
+-import datacube.common.datastructure.Tuple;
+-import datacube.configuration.DataCubeParameter;
+-
+-public class HolisticTopDownEmitSortedCuboidTextMapper extends Mapper<Object, Text, Text, IntWritable> 
+-{
+-	private IntWritable one = new IntWritable(1);
+-	private String oneString = "1";
+-	private CubeLattice lattice;
+-	private Configuration conf;
+-	
+-	private ArrayList<Integer> batchRootRegion = new ArrayList<Integer>();
+-	private BatchAreaGenerator batchAreaGenerator = new BatchAreaGenerator();
+-	private ArrayList<BatchArea> batchAreaBag = new ArrayList<BatchArea>();
+-     
+-	@Override
+-	public void setup(Context context)
+-	{
+-		conf = context.getConfiguration();
+-		lattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
+-		lattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());
+-		
+-		//lattice.printLattice();
+-		
+-		batchRootRegion = batchAreaGenerator.getTSCubeBatchSampleRegion(conf.get("dataset"));
+-		batchAreaBag = batchAreaGenerator.getBatchAreaPlan(conf.get("dataset"), lattice);
+-	}
+-	
+-	public void map(Object key, Text value, Context context) throws IOException, InterruptedException 
+-	{
+-		produceAllPipeRootRegionFromTule(value, context);
+-	}
+-
+-	void produceAllPipeRootRegionFromTule(Text value, Context context) throws IOException, InterruptedException
+-	{
+-		Text groupValue = new Text();
+-		Text regionKey = new Text();
+-		Tuple<String> tuple;
+-		Text outputKey = new Text();
+-		
+-		String tupleSplit[] = value.toString().split("\t");
+-		
+-		for (int k = 0; k < batchRootRegion.size(); k++)
+-		{
+-			String group = new String();
+-			String groupRegionID = new String();
+-			
+-			
+-			int batchStartRegionID = batchAreaBag.get(k).getRegionID(0);
+-			int i = batchStartRegionID;
+-					
+-			for (int j = 0; j < lattice.getRegionBag().get(i).getSize(); j++)
+-			{
+-				if (lattice.getRegionBag().get(i).getField(j) != null)
+-				{
+-					if (group.length() > 0)
+-					{
+-						group += " " + tupleSplit[j];
+-					}
+-					else
+-					{
+-						group += tupleSplit[j];
+-					}
+-				}
+-			}
+-
+-			if (conf.get("datacube.measure").equals("distinct"))
+-			{
+-				outputKey.set(batchStartRegionID + "|" + group + "|" + DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset")) + "|");
+-				context.write(outputKey, one);
+-			}
+-			else if (conf.get("datacube.measure").equals("count"))
+-			{
+-				outputKey.set(batchStartRegionID + "|" + group + "|");
+-				context.write(outputKey, one);
+-			}
+-			else
+-			{
+-				//null
+-			}
+-		}
+-	}
+-
+-
+-	private void justOutputValue(Text value, Context context) throws IOException, InterruptedException
+-	{
+-		Text regionGroupKey = new Text();
+-		regionGroupKey.set(value.toString());
+-		
+-		context.write(regionGroupKey, one);
+-	}
+-	
+-	private void justOutputTupleString(Text value, Context context) throws IOException, InterruptedException
+-	{
+-		Tuple<String> tuple;		
+-		tuple = DataCubeParameter.transformTestDataLineStringtoTuple(value.toString(), conf.get("dataset"));
+-		
+-		Text regionGroupKey = new Text();
+-		regionGroupKey.set(tuple.toString('|'));
+-		
+-		context.write(regionGroupKey, one);
+-	}
+-}
+\ No newline at end of file
+diff --git a/src/topdown/holistic/mr1emitsortedcuboid/text/HolisticTopDownEmitSortedCuboidTextNoCombiner.java b/src/topdown/holistic/mr1emitsortedcuboid/text/HolisticTopDownEmitSortedCuboidTextNoCombiner.java
+deleted file mode 100644
+index 33da493..0000000
+--- a/src/topdown/holistic/mr1emitsortedcuboid/text/HolisticTopDownEmitSortedCuboidTextNoCombiner.java
++++ /dev/null
+@@ -1,43 +0,0 @@
+-package topdown.holistic.mr1emitsortedcuboid.text;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.fs.Path;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Job;
+-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+-
+-public class HolisticTopDownEmitSortedCuboidTextNoCombiner 
+-{
+-	public void run(Configuration conf) throws Exception 
+-	{
+-		String jobName = "topdcube_mr1_nocombiner_" + conf.get("dataset") + "_" + conf.get("total.tuple.size");
+-		
+-		Job job = new Job(conf, jobName);
+-		job.setJarByClass(HolisticTopDownEmitSortedCuboidTextNoCombiner.class);
+-		
+-		job.setMapperClass(HolisticTopDownEmitSortedCuboidTextMapper.class);
+-		job.setReducerClass(HolisticTopDownEmitSortedCuboidTextReducer.class);
+-
+-		job.setMapOutputKeyClass(Text.class);
+-		job.setMapOutputValueClass(IntWritable.class);
+-		
+-		job.setOutputKeyClass(Text.class);
+-		job.setOutputValueClass(IntWritable.class);
+-
+-		job.setInputFormatClass(TextInputFormat.class);
+-
+-		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
+-		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("topdcube.mr1.output.path");  
+-		
+-		System.out.println("mr1 input: " + inputPath);
+-		System.out.println("mr1 output: " + outputPath);
+-		
+-		FileInputFormat.addInputPath(job, new Path(inputPath));
+-		FileOutputFormat.setOutputPath(job, new Path(outputPath));
+-		job.waitForCompletion(true);
+-	}
+-
+-}
+diff --git a/src/topdown/holistic/mr1emitsortedcuboid/text/HolisticTopDownEmitSortedCuboidTextNoReducer.java b/src/topdown/holistic/mr1emitsortedcuboid/text/HolisticTopDownEmitSortedCuboidTextNoReducer.java
+deleted file mode 100644
+index 534ea1b..0000000
+--- a/src/topdown/holistic/mr1emitsortedcuboid/text/HolisticTopDownEmitSortedCuboidTextNoReducer.java
++++ /dev/null
+@@ -1,44 +0,0 @@
+-package topdown.holistic.mr1emitsortedcuboid.text;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.fs.Path;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Job;
+-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+-
+-public class HolisticTopDownEmitSortedCuboidTextNoReducer 
+-{
+-	public void run(Configuration conf) throws Exception 
+-	{
+-		String jobName = "topdcube_mr1_noreducer_" + conf.get("dataset") + "_" + conf.get("total.tuple.size");
+-		
+-		Job job = new Job(conf, jobName);
+-		job.setJarByClass(HolisticTopDownEmitSortedCuboidText.class);
+-		
+-		job.setMapperClass(HolisticTopDownEmitSortedCuboidTextMapper.class);
+-		//job.setCombinerClass(HolisticTopDownEmitSortedCuboidCombiner.class);
+-		//job.setReducerClass(HolisticTopDownEmitSortedCuboidReducer.class);
+-
+-		job.setMapOutputKeyClass(Text.class);
+-		job.setMapOutputValueClass(IntWritable.class);
+-		
+-		job.setOutputKeyClass(Text.class);
+-		job.setOutputValueClass(IntWritable.class);
+-
+-		job.setInputFormatClass(TextInputFormat.class);
+-
+-		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
+-		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("topdcube.mr1.output.path");  
+-		
+-		System.out.println("mr1 input: " + inputPath);
+-		System.out.println("mr1 output: " + outputPath);
+-		
+-		FileInputFormat.addInputPath(job, new Path(inputPath));
+-		FileOutputFormat.setOutputPath(job, new Path(outputPath));
+-		job.waitForCompletion(true);
+-	}
+-
+-}
+diff --git a/src/topdown/holistic/mr1emitsortedcuboid/text/HolisticTopDownEmitSortedCuboidTextReducer.java b/src/topdown/holistic/mr1emitsortedcuboid/text/HolisticTopDownEmitSortedCuboidTextReducer.java
+deleted file mode 100644
+index 332d0c7..0000000
+--- a/src/topdown/holistic/mr1emitsortedcuboid/text/HolisticTopDownEmitSortedCuboidTextReducer.java
++++ /dev/null
+@@ -1,60 +0,0 @@
+-package topdown.holistic.mr1emitsortedcuboid.text;
+-
+-import java.io.IOException;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Reducer;
+-import org.apache.hadoop.mapreduce.Reducer.Context;
+-
+-import datacube.common.datastructure.StringPair;
+-
+-public class HolisticTopDownEmitSortedCuboidTextReducer extends Reducer<Text,IntWritable,Text,IntWritable> 
+-{
+-	private Configuration conf;
+-
+-	@Override
+-	public void setup(Context context) throws IOException
+-	{
+-		conf = context.getConfiguration();
+-	}
+-	
+-	@Override
+-	public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+-	{
+-		if (conf.get("datacube.measure").equals("distinct"))
+-		{
+-			calculationDistinctGroupBy(key, values, context);
+-		}
+-		else if (conf.get("datacube.measure").equals("count"))
+-		{
+-			calculationCountGroupBy(key, values, context);
+-		}
+-		else
+-		{
+-			
+-		}
+-	}
+-	
+-	private void calculationDistinctGroupBy(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+-	{
+-		IntWritable outputValue = new IntWritable(1);
+-		
+-		context.write(key, outputValue);
+-	}
+-	
+-	
+-	private void calculationCountGroupBy(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+-	{
+-		int count = 0;
+-	
+-		for (IntWritable val : values) 
+-	    {
+-			count += val.get();
+-	    }	
+-		
+-		IntWritable countW = new IntWritable(count);
+-		context.write(key, countW);
+-	}
+-}
+\ No newline at end of file
+diff --git a/src/topdown/holistic/mr1estimatesortedcuboid/stringpair/HolisticTopDownEmitSortedCuboidStringPair.java b/src/topdown/holistic/mr1estimatesortedcuboid/stringpair/HolisticTopDownEmitSortedCuboidStringPair.java
+deleted file mode 100644
+index d96dac5..0000000
+--- a/src/topdown/holistic/mr1estimatesortedcuboid/stringpair/HolisticTopDownEmitSortedCuboidStringPair.java
++++ /dev/null
+@@ -1,68 +0,0 @@
+-package topdown.holistic.mr1estimatesortedcuboid.stringpair;
+-
+-import java.io.IOException;
+-import java.util.ArrayList;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.fs.Path;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Job;
+-import org.apache.hadoop.mapreduce.Mapper;
+-import org.apache.hadoop.mapreduce.Mapper.Context;
+-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+-
+-import topdown.holistic.mr1emitsortedcuboid.text.HolisticTopDownEmitSortedCuboidText;
+-import topdown.holistic.mr1emitsortedcuboid.text.HolisticTopDownEmitSortedCuboidTextCombiner;
+-import topdown.holistic.mr1emitsortedcuboid.text.HolisticTopDownEmitSortedCuboidTextMapper;
+-import topdown.holistic.mr1emitsortedcuboid.text.HolisticTopDownEmitSortedCuboidTextReducer;
+-import datacube.common.datastructure.BatchArea;
+-import datacube.common.datastructure.BatchAreaGenerator;
+-import datacube.common.datastructure.CubeLattice;
+-import datacube.common.datastructure.StringPair;
+-import datacube.common.datastructure.StringPairMRCubeGroupComparator;
+-import datacube.common.datastructure.StringPairMRCubeKeyComparator;
+-import datacube.common.datastructure.StringPairMRCubePartitioner;
+-import datacube.common.datastructure.Tuple;
+-import datacube.common.reducer.StringPairBatchAreaCombiner;
+-import datacube.configuration.DataCubeParameter;
+-
+-public class HolisticTopDownEmitSortedCuboidStringPair 
+-{
+-	public void run(Configuration conf) throws Exception 
+-	{
+-		String jobName = "topdcube_mr1_sp_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
+-		
+-		Job job = new Job(conf, jobName);
+-		job.setJarByClass(HolisticTopDownEmitSortedCuboidStringPair.class);
+-		
+-		job.setMapperClass(HolisticTopDownEmitSortedCuboidStringPairMapper.class);
+-		job.setCombinerClass(StringPairBatchAreaCombiner.class);
+-		job.setReducerClass(HolisticTopDownEmitSortedCuboidStringPairReducer.class);
+-
+-		job.setMapOutputKeyClass(StringPair.class);
+-		job.setMapOutputValueClass(IntWritable.class);
+-		
+-		job.setOutputKeyClass(Text.class);
+-		job.setOutputValueClass(IntWritable.class);
+-		
+-		job.setInputFormatClass(TextInputFormat.class);
+-		
+-		job.setPartitionerClass(StringPairMRCubePartitioner.class);
+-		job.setSortComparatorClass(StringPairMRCubeKeyComparator.class);
+-		job.setGroupingComparatorClass(StringPairMRCubeGroupComparator.class);
+-
+-		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
+-		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("topdcube.mr1.output.path");  
+-		
+-		System.out.println("mr1 input: " + inputPath);
+-		System.out.println("mr1 output: " + outputPath);
+-		
+-		FileInputFormat.addInputPath(job, new Path(inputPath));
+-		FileOutputFormat.setOutputPath(job, new Path(outputPath));
+-		job.waitForCompletion(true);
+-	}
+-
+-}
+\ No newline at end of file
+diff --git a/src/topdown/holistic/mr1estimatesortedcuboid/stringpair/HolisticTopDownEmitSortedCuboidStringPairMapper.java b/src/topdown/holistic/mr1estimatesortedcuboid/stringpair/HolisticTopDownEmitSortedCuboidStringPairMapper.java
+deleted file mode 100644
+index a482c3f..0000000
+--- a/src/topdown/holistic/mr1estimatesortedcuboid/stringpair/HolisticTopDownEmitSortedCuboidStringPairMapper.java
++++ /dev/null
+@@ -1,133 +0,0 @@
+-package topdown.holistic.mr1estimatesortedcuboid.stringpair;
+-
+-import java.io.IOException;
+-import java.util.ArrayList;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Mapper;
+-import org.apache.hadoop.mapreduce.Mapper.Context;
+-
+-import datacube.common.datastructure.BatchArea;
+-import datacube.common.datastructure.BatchAreaGenerator;
+-import datacube.common.datastructure.CubeLattice;
+-import datacube.common.datastructure.StringPair;
+-import datacube.common.datastructure.Tuple;
+-import datacube.configuration.DataCubeParameter;
+-
+-public class HolisticTopDownEmitSortedCuboidStringPairMapper extends Mapper<Object, Text, StringPair, IntWritable> 
+-{
+-	private CubeLattice cubeLattice;
+-	private ArrayList<Tuple<Integer>> regionTupleBag = new ArrayList<Tuple<Integer>>();
+-	private IntWritable one = new IntWritable(1);
+-	private ArrayList<BatchArea> batchAreaBag = new ArrayList<BatchArea>();
+-	private BatchAreaGenerator batchAreaGenerator = new BatchAreaGenerator();
+-	private Configuration conf;
+-	
+-	@Override
+-	public void setup(Context context) throws IOException
+-	{
+-		conf = context.getConfiguration();
+-		
+-		cubeLattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
+-		cubeLattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());
+-		cubeLattice.printLattice();
+-			
+-		batchAreaBag = batchAreaGenerator.getBatchAreaPlan(conf.get("dataset"), cubeLattice);
+-		
+-		//printBatchArea();
+-		//System.out.println("batchArea Bag: " + batchAreaBag.size());
+-	} 	
+-     
+-	public void map(Object key, Text value, Context context) throws IOException, InterruptedException 
+-	{
+-		int partitionFactor = 1;
+-		
+-		String tupleSplit[] = value.toString().split("\t");
+-		String pfKey = new String();
+-		String measureString = new String();
+-
+-		IntWritable outputValue = new IntWritable();
+-		
+-		for (int i = 0; i < batchAreaBag.size(); i++)
+-		{
+-			partitionFactor = cubeLattice.getRegionBag().get(i).getPartitionFactor();
+-			pfKey = String.valueOf(DataCubeParameter.getTestDataPartitionFactorKey(value.toString(), partitionFactor, conf.get("dataset"), conf.get("datacube.measure")));
+-			measureString = DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset"));
+-
+-			String groupPublicKey = new String();
+-			String groupPipeKey = new String();
+-			String groupRegionID = new String();
+-			
+-			int terminal = batchAreaBag.get(i).getlongestRegionAttributeSize() - batchAreaBag.get(i).getallRegionIDSize() + 1;
+-			
+-			
+-			for (int k = 0; k < batchAreaBag.get(i).getlongestRegionAttributeSize(); k++)
+-			{
+-				int aid = batchAreaBag.get(i).getRegionAttribute(k);
+-				
+-				if (k >= terminal)
+-				{
+-					if (groupPipeKey.length() > 0)
+-					{
+-						groupPipeKey += " " + tupleSplit[aid];
+-					}
+-					else
+-					{
+-						groupPipeKey += tupleSplit[aid];
+-					}
+-				}
+-				else  //public
+-				{
+-					if (groupPublicKey.length() > 0)
+-					{
+-						groupPublicKey += " " + tupleSplit[aid];
+-					}
+-					else
+-					{
+-						groupPublicKey += tupleSplit[aid];
+-					}
+-				}
+-			}
+-			
+-			groupRegionID = String.valueOf(batchAreaBag.get(i).getallRegionID().get(0));
+-					
+-			StringPair outputKey = new StringPair();
+-
+-			
+-			outputKey.setFirstString(groupRegionID + "|" +  groupPublicKey + "|");
+-			outputKey.setSecondString(groupPipeKey);
+-			
+-			if (conf.get("datacube.measure").equals("distinct"))
+-			{
+-				outputValue.set(Integer.valueOf(measureString));
+-			}
+-			else //count
+-			{
+-				outputValue.set(1);
+-			}
+-			
+-			context.write(outputKey, outputValue);
+-		}
+-	}
+-	
+-	private void printBatchArea()
+-	{
+-		for (int i = 0; i < batchAreaBag.size(); i++)
+-		{
+-			for (int k = 0; k < batchAreaBag.get(i).getLongestRegionAttributeID().size(); k++)
+-			{
+-				System.out.print(batchAreaBag.get(i).getLongestRegionAttributeID().get(k) + " ");
+-			}
+-			System.out.println();
+-
+-			for (int k = 0; k < batchAreaBag.get(i).getallRegionIDSize(); k++)
+-			{
+-				System.out.print(batchAreaBag.get(i).getRegionID(k) + " ");
+-			}
+-			System.out.println();
+-		}
+-	}
+-}
+-
+diff --git a/src/topdown/holistic/mr1estimatesortedcuboid/stringpair/HolisticTopDownEmitSortedCuboidStringPairReducer.java b/src/topdown/holistic/mr1estimatesortedcuboid/stringpair/HolisticTopDownEmitSortedCuboidStringPairReducer.java
+deleted file mode 100644
+index c3bbb78..0000000
+--- a/src/topdown/holistic/mr1estimatesortedcuboid/stringpair/HolisticTopDownEmitSortedCuboidStringPairReducer.java
++++ /dev/null
+@@ -1,108 +0,0 @@
+-package topdown.holistic.mr1estimatesortedcuboid.stringpair;
+-
+-import java.io.IOException;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Reducer;
+-import org.apache.hadoop.mapreduce.Reducer.Context;
+-
+-import datacube.common.datastructure.StringPair;
+-
+-public class HolisticTopDownEmitSortedCuboidStringPairReducer extends Reducer<StringPair, IntWritable, Text, IntWritable> 
+-{
+-	@Override
+-	public void reduce(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+-	{
+-		Configuration conf = context.getConfiguration();
+-		String keyFirstSplit[] = key.getFirstString().split("\\|");
+-		String attributeSplit[] = keyFirstSplit[0].split(" ");
+-		
+-		if (conf.get("datacube.measure").equals("distinct"))
+-		{
+-			calculationDistinctGroupBy(key, values, context);
+-		}
+-		else if (conf.get("datacube.measure").equals("count"))
+-		{
+-			calculationCountGroupBy(key, values, context);
+-		}
+-		else  
+-		{
+-			//null
+-		}
+-		
+-		//justPrintKeyValue(key, values, context);
+-	}
+-	
+-	/*
+-	private void justPrintKeyValue(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+-	{
+-		for (IntWritable val : values) 
+-	    {
+-			context.write(key, val);
+-	    }
+-	}
+-	*/
+-
+-	private void calculationDistinctGroupBy(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+-	{
+-		String lastS = null;
+-		int lastV = -1;
+-		
+-		Text outputKey = new Text();
+-		IntWritable one = new IntWritable(1);
+-		
+-		String[] publicSplit = key.getFirstString().split("\\|");
+-		
+-		for (IntWritable val : values) 
+-	    {
+-			if (!key.getSecondString().equals(lastS) ||  val.get() != lastV)
+-			{
+-	
+-				outputKey.set(publicSplit[0] + "|" + publicSplit[1] + " " + key.getSecondString() + "|" + String.valueOf(val) + "|");
+-				context.write(outputKey, one);
+-			}
+-
+-			lastS = key.getSecondString();
+-			lastV = val.get();
+-	    }		
+-	}
+-	
+-	private void calculationCountGroupBy(StringPair key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+-	{
+-		String lastS = null;
+-		
+-		IntWritable outputValue = new IntWritable();
+-		Text outputKey = new Text();
+-		
+-		String[] publicSplit = key.getFirstString().split("\\|");
+-		
+-		int count = 0;
+-		boolean first = true;
+-		
+-		for (IntWritable val : values) 
+-	    {
+-			if (first || key.getSecondString().equals(lastS) )
+-			{
+-				count += val.get();
+-			}
+-			else
+-			{
+-				outputValue.set(count);
+-				count = val.get();
+-				
+-				outputKey.set(publicSplit[0] + "|" + publicSplit[1] + " " + key.getSecondString() + "|");
+-				context.write(outputKey, outputValue);
+-			}
+-
+-			lastS = key.getSecondString();
+-			first = false;
+-	    }
+-		
+-		outputValue.set(count);
+-		outputKey.set(publicSplit[0] + "|" + publicSplit[1] + " " + key.getSecondString() + "|");
+-		
+-		context.write(outputKey, outputValue);
+-	}
+-}
+\ No newline at end of file
+diff --git a/src/tscube/holistic/mr1estimate/allregion/HolisticTSCubeEstimate.java b/src/tscube/holistic/mr1estimate/allregion/HolisticTSCubeEstimate.java
+index bea1edc..ad93083 100644
+--- a/src/tscube/holistic/mr1estimate/allregion/HolisticTSCubeEstimate.java
++++ b/src/tscube/holistic/mr1estimate/allregion/HolisticTSCubeEstimate.java
+@@ -24,19 +24,19 @@ public class HolisticTSCubeEstimate
+ 	public void run(Configuration conf) throws Exception 
+ 	{
+ 		String jobName = "tscube_mr1_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
+-
++		
+ 		Job job = new Job(conf, jobName);
+ 		job.setJarByClass(HolisticTSCubeEstimate.class);
+-
++		
+ 		job.setMapperClass(HolisticTSCubeEstimateMapper.class);
+ 		job.setReducerClass(TSCubeMR1EstimateReducer.class);
+ 
+ 		job.setMapOutputKeyClass(StringPair.class);
+ 		job.setMapOutputValueClass(IntWritable.class);
+-
++		
+ 		job.setOutputKeyClass(Text.class);
+ 		job.setOutputValueClass(Text.class);
+-
++		
+ 		job.setPartitionerClass(StringPairMRCubePartitioner.class);
+ 		job.setSortComparatorClass(StringPairMRCubeKeyComparator.class);
+ 		job.setGroupingComparatorClass(StringPairMRCubeGroupComparator.class);
+@@ -46,12 +46,12 @@ public class HolisticTSCubeEstimate
+ 
+ 		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
+ 		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("tscube.mr1.output.path");  
+-
++		
+ 		System.out.println("mr1 input: " + inputPath);
+ 		System.out.println("mr1 output: " + outputPath);
+-
++		
+ 		FileInputFormat.addInputPath(job, new Path(inputPath));
+ 		FileOutputFormat.setOutputPath(job, new Path(outputPath));
+ 		job.waitForCompletion(true);
+ 	}
+-}
+\ No newline at end of file
++}
+diff --git a/src/tscube/holistic/mr1estimate/allregion/HolisticTSCubeEstimateMapper.java b/src/tscube/holistic/mr1estimate/allregion/HolisticTSCubeEstimateMapper.java
+index 9117f31..4d124c2 100644
+--- a/src/tscube/holistic/mr1estimate/allregion/HolisticTSCubeEstimateMapper.java
++++ b/src/tscube/holistic/mr1estimate/allregion/HolisticTSCubeEstimateMapper.java
+@@ -26,19 +26,19 @@ public class HolisticTSCubeEstimateMapper extends Mapper<Object, Text, StringPai
+ 	public void setup(Context context)
+ 	{
+ 		conf = context.getConfiguration();
+-
++		
+ 		lattice = new CubeLattice(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize(), DataCubeParameter.getTestDataInfor(conf.get("dataset")).getGroupAttributeSize());
+ 		lattice.calculateAllRegion(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeCubeRollUp());
+ 
+ 		//lattice.printLattice();
+ 	}
+-
++	
+ 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException 
+ 	{
+-
++		
+ 		Random random = new Random();
+ 		int randomNum = random.nextInt(DataCubeParameter.getMRCubeSampleTuplePercent(Integer.valueOf(conf.get("total.tuple.size"))) * 10);
+-
++		
+ 		if (randomNum <= 10)
+ 		{
+ 			produceAllRegionFromTule(value, context);
+@@ -54,14 +54,14 @@ public class HolisticTSCubeEstimateMapper extends Mapper<Object, Text, StringPai
+ 		Text regionKey = new Text();
+ 		Tuple<String> tuple;
+ 		StringPair outputKey = new StringPair();
+-
++		
+ 		String tupleSplit[] = value.toString().split("\t");
+ 		Tuple<String> region = new Tuple<String>(DataCubeParameter.getTestDataInfor(conf.get("dataset")).getAttributeSize() + 1);
+-
++		
+ 		for (int i = 0; i < lattice.getRegionBag().size(); i++)
+ 		{
+ 			String group = new String();
+-
++			
+ 			for (int j = 0; j < lattice.getRegionBag().get(i).getSize(); j++)
+ 			{
+ 				if (lattice.getRegionBag().get(i).getField(j) != null)
+@@ -78,7 +78,7 @@ public class HolisticTSCubeEstimateMapper extends Mapper<Object, Text, StringPai
+ 			}
+ 
+ 			outputKey.setFirstString(oneString);
+-
++	
+ 			if (conf.get("datacube.measure").equals("distinct"))
+ 			{
+ 				outputKey.setSecondString(i + "|" + group + "|" + DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset")) + "|");
+@@ -91,7 +91,7 @@ public class HolisticTSCubeEstimateMapper extends Mapper<Object, Text, StringPai
+ 			{
+ 				//null
+ 			}
+-
++			
+ 			context.write(outputKey, one);
+ 		}
+ 	}
+@@ -100,23 +100,23 @@ public class HolisticTSCubeEstimateMapper extends Mapper<Object, Text, StringPai
+ 	private void justOutputValue(Text value, Context context) throws IOException, InterruptedException
+ 	{
+ 		StringPair outputKey = new StringPair();
+-
++		
+ 		outputKey.setFirstString(value.toString());
+ 		outputKey.setSecondString(one.toString());
+-
++		
+ 		context.write(outputKey, one);
+ 	}
+-
++	
+ 	private void justOutputTupleString(Text value, Context context) throws IOException, InterruptedException
+ 	{
+ 		Tuple<String> tuple;		
+ 		tuple = DataCubeParameter.transformTestDataLineStringtoTuple(value.toString(), conf.get("dataset"));
+-
++		
+ 		StringPair outputKey = new StringPair();
+-
++		
+ 		outputKey.setFirstString(tuple.toString('|'));
+ 		outputKey.setSecondString(one.toString());
+-
++		
+ 		context.write(outputKey, one);
+ 	}
+-}
+\ No newline at end of file
++}
+diff --git a/src/tscube/holistic/mr1estimate/batchregion/HolisticTSCubeEstimateBatchRegion.java b/src/tscube/holistic/mr1estimate/batchregion/HolisticTSCubeEstimateBatchRegion.java
+index 85ad090..edffd69 100644
+--- a/src/tscube/holistic/mr1estimate/batchregion/HolisticTSCubeEstimateBatchRegion.java
++++ b/src/tscube/holistic/mr1estimate/batchregion/HolisticTSCubeEstimateBatchRegion.java
+@@ -22,19 +22,19 @@ public class HolisticTSCubeEstimateBatchRegion
+ 	public void run(Configuration conf) throws Exception 
+ 	{
+ 		String jobName = "tscube_mr1_batch_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
+-
++		
+ 		Job job = new Job(conf, jobName);
+ 		job.setJarByClass(HolisticTSCubeEstimate.class);
+-
++		
+ 		job.setMapperClass(HolisticTSCubeEstimateBatchRegionMapper.class);
+ 		job.setReducerClass(TSCubeMR1EstimateReducer.class);
+ 
+ 		job.setMapOutputKeyClass(StringPair.class);
+ 		job.setMapOutputValueClass(IntWritable.class);
+-
++		
+ 		job.setOutputKeyClass(Text.class);
+ 		job.setOutputValueClass(Text.class);
+-
++		
+ 		job.setPartitionerClass(StringPairMRCubePartitioner.class);
+ 		job.setSortComparatorClass(StringPairMRCubeKeyComparator.class);
+ 		job.setGroupingComparatorClass(StringPairMRCubeGroupComparator.class);
+@@ -44,13 +44,13 @@ public class HolisticTSCubeEstimateBatchRegion
+ 
+ 		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
+ 		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("tscube.mr1.output.path");  
+-
++		
+ 		System.out.println("mr1 input: " + inputPath);
+ 		System.out.println("mr1 output: " + outputPath);
+-
++		
+ 		FileInputFormat.addInputPath(job, new Path(inputPath));
+ 		FileOutputFormat.setOutputPath(job, new Path(outputPath));
+ 		job.waitForCompletion(true);
+ 	}
+ 
+-}
+\ No newline at end of file
++}
+diff --git a/src/tscube/holistic/mr2materialize/batcharea/HolisticTSCubeMaterializeBatchArea.java b/src/tscube/holistic/mr2materialize/batcharea/HolisticTSCubeMaterializeBatchArea.java
+index 1345ae6..40bb4d0 100644
+--- a/src/tscube/holistic/mr2materialize/batcharea/HolisticTSCubeMaterializeBatchArea.java
++++ b/src/tscube/holistic/mr2materialize/batcharea/HolisticTSCubeMaterializeBatchArea.java
+@@ -37,7 +37,7 @@ public class HolisticTSCubeMaterializeBatchArea
+ 		job.setMapOutputValueClass(IntWritable.class);
+ 		
+ 		job.setOutputKeyClass(Text.class);
+-		job.setOutputValueClass(IntWritable.class);
++		job.setOutputValueClass(Text.class);
+ 		
+ 		job.setPartitionerClass(StringTripleTSCubePartitioner.class);
+ 		job.setSortComparatorClass(StringTripleTSCubeKeyComparator.class);
+diff --git a/src/tscube/holistic/mr2materialize/batcharea/HolisticTSCubeMaterializeBatchAreaMapper.java b/src/tscube/holistic/mr2materialize/batcharea/HolisticTSCubeMaterializeBatchAreaMapper.java
+index 0af0dff..eeef163 100644
+--- a/src/tscube/holistic/mr2materialize/batcharea/HolisticTSCubeMaterializeBatchAreaMapper.java
++++ b/src/tscube/holistic/mr2materialize/batcharea/HolisticTSCubeMaterializeBatchAreaMapper.java
+@@ -145,10 +145,6 @@ public class HolisticTSCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
+ 			else if (conf.get("datacube.measure").equals("count"))
+ 			{
+ 				measureString = DataCubeParameter.getTestDataTupleID(value.toString(), conf.get("dataset"));
+-				
+-				//String tupleID = DataCubeParameter.getTestDataTupleID(value.toString(), conf.get("dataset"));
+-				//long tupleIDNum = Long.valueOf(measureString) * batchAreaGenerator.getBatchAreaNumber(conf.get("dataset"));
+-				//measureString = String.valueOf(tupleIDNum);
+ 			}
+ 			
+ 			batchStartRegionID = String.valueOf(batchAreaBag.get(i).getRegionID(0));
+diff --git a/src/tscube/holistic/mr2materialize/batcharea/HolisticTSCubeMaterializeBatchAreaNoCombiner.java b/src/tscube/holistic/mr2materialize/batcharea/HolisticTSCubeMaterializeBatchAreaNoCombiner.java
+deleted file mode 100644
+index 6b79dfd..0000000
+--- a/src/tscube/holistic/mr2materialize/batcharea/HolisticTSCubeMaterializeBatchAreaNoCombiner.java
++++ /dev/null
+@@ -1,58 +0,0 @@
+-package tscube.holistic.mr2materialize.batcharea;
+-
+-import org.apache.hadoop.conf.Configuration;
+-import org.apache.hadoop.fs.Path;
+-import org.apache.hadoop.io.IntWritable;
+-import org.apache.hadoop.io.Text;
+-import org.apache.hadoop.mapreduce.Job;
+-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+-
+-import datacube.common.datastructure.StringTriple;
+-import datacube.common.datastructure.StringTripleTSCubeGroupComparator;
+-import datacube.common.datastructure.StringTripleTSCubeKeyComparator;
+-import datacube.common.datastructure.StringTripleTSCubePartitioner;
+-import datacube.common.reducer.StringTrippleBatchAreaCombiner;
+-import datacube.common.reducer.StringTrippleBatchAreaReducer;
+-
+-public class HolisticTSCubeMaterializeBatchAreaNoCombiner 
+-{
+-	public void run(Configuration conf) throws Exception 
+-	{
+-		String jobName = "tscube_mr2_batch_nocombiner_" + conf.get("total.interval.number") + "_" + conf.get("dataset") + "_"  + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
+-		
+-		System.out.println("reducer number:" + Integer.valueOf(conf.get("mapred.reduce.tasks")));
+-		
+- 		Job job = new Job(conf, jobName);
+-		job.setJarByClass(HolisticTSCubeMaterializeBatchArea.class);
+-		
+-		job.setMapperClass(HolisticTSCubeMaterializeBatchAreaMapper.class);
+-		job.setReducerClass(StringTrippleBatchAreaReducer.class);
+-
+-		job.setMapOutputKeyClass(StringTriple.class);
+-		job.setMapOutputValueClass(IntWritable.class);
+-		
+-		job.setOutputKeyClass(Text.class);
+-		job.setOutputValueClass(Text.class);
+-		
+-		job.setPartitionerClass(StringTripleTSCubePartitioner.class);
+-		job.setSortComparatorClass(StringTripleTSCubeKeyComparator.class);
+-		job.setGroupingComparatorClass(StringTripleTSCubeGroupComparator.class);
+-    
+-		job.setInputFormatClass(TextInputFormat.class);
+-		job.setNumReduceTasks(Integer.valueOf(conf.get("mapred.reduce.tasks")));
+-
+-		String inputPath = conf.get("hdfs.root.path") + conf.get("dataset") + conf.get("dataset.input.path") + conf.get("total.tuple.size");
+-		String outputPath = conf.get("hdfs.root.path") +  conf.get("dataset") + conf.get("tscube.mr2.output.path");  
+-		
+-		System.out.println("mr2 input: " + inputPath);
+-		System.out.println("mr2 output: " + outputPath);
+-		
+-		FileInputFormat.addInputPath(job, new Path(inputPath));
+-		FileOutputFormat.setOutputPath(job, new Path(outputPath));
+-		job.waitForCompletion(true);
+-	}
+-
+-
+-}
+diff --git a/src/tscube/holistic/mr2materialize/stringtripple/HolisticTSCubeMaterialize.java b/src/tscube/holistic/mr2materialize/stringtripple/HolisticTSCubeMaterialize.java
+index c29bee0..de823c7 100644
+--- a/src/tscube/holistic/mr2materialize/stringtripple/HolisticTSCubeMaterialize.java
++++ b/src/tscube/holistic/mr2materialize/stringtripple/HolisticTSCubeMaterialize.java
+@@ -35,7 +35,7 @@ public class HolisticTSCubeMaterialize
+ 		job.setMapOutputValueClass(IntWritable.class);
+ 		
+ 		job.setOutputKeyClass(Text.class);
+-		job.setOutputValueClass(IntWritable.class);
++		job.setOutputValueClass(Text.class);
+ 		
+ 		job.setPartitionerClass(StringTripleTSCubePartitioner.class);
+ 		job.setSortComparatorClass(StringTripleTSCubeKeyComparator.class);
