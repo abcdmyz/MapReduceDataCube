@@ -30,7 +30,7 @@ public class HolisticTSCubeMaterializeBatchArea
 		job.setJarByClass(HolisticTSCubeMaterializeBatchArea.class);
 		
 		job.setMapperClass(HolisticTSCubeMaterializeBatchAreaMapper.class);
-		//job.setCombinerClass(StringTrippleBatchAreaCombiner.class);
+		job.setCombinerClass(StringTripleBatchAreaCombiner.class);
 		job.setReducerClass(StringTripleBatchAreaReducer.class);
 
 		job.setMapOutputKeyClass(StringTriple.class);
