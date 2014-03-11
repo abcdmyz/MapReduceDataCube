@@ -17,7 +17,7 @@ import datacube.common.datastructure.StringPair;
 import datacube.common.datastructure.Tuple;
 import datacube.configuration.DataCubeParameter;
 
-public class HolisticTSCubeEstimateBatchRegionMapper extends Mapper<Object, Text, StringPair, IntWritable> 
+public class HolisticTSCubeEstimateBatchRegionLongMapper extends Mapper<Object, Text, StringPair, IntWritable> 
 {
 	private IntWritable one = new IntWritable(1);
 	private CubeLattice lattice;
@@ -66,14 +66,16 @@ public class HolisticTSCubeEstimateBatchRegionMapper extends Mapper<Object, Text
 		
 		String tupleSplit[] = value.toString().split("\t");
 
-		for (int k = 0; k < batchSampleRegion.size(); k++)
+		for (int k = 0; k < batchRootRegion.size(); k++)
 		{
 			String group = new String();
 			String groupRegionID = new String();
 
 			if (conf.get("datacube.measure").equals("distinct"))
 			{
-				i = batchSampleRegion.get(k);
+				//i = batchSampleRegion.get(k);
+				
+				i = batchRootRegion.get(k);
 			}
 			else //count
 			{

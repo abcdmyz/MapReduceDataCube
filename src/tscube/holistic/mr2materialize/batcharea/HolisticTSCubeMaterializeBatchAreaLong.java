@@ -16,25 +16,26 @@ import datacube.common.datastructure.StringTripleTSCubePartitioner;
 import datacube.common.reducer.StringTripleBatchAreaCombiner;
 import datacube.common.reducer.StringTripleBatchAreaReducer;
 
-public class HolisticTSCubeMaterializeBatchAreaNoCombiner 
+public class HolisticTSCubeMaterializeBatchAreaLong 
 {
 	public void run(Configuration conf) throws Exception 
 	{
-		String jobName = "tscube_mr2_batch_nocombiner_" + conf.get("total.interval.number") + "_" + conf.get("dataset") + "_"  + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
+		String jobName = "tscube_mr2_batch_long_" + conf.get("total.interval.number") + "_" + conf.get("dataset") + "_"  + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
 		
 		System.out.println("reducer number:" + Integer.valueOf(conf.get("mapred.reduce.tasks")));
 		
  		Job job = new Job(conf, jobName);
-		job.setJarByClass(HolisticTSCubeMaterializeBatchAreaShort.class);
+		job.setJarByClass(HolisticTSCubeMaterializeBatchAreaLong.class);
 		
-		job.setMapperClass(HolisticTSCubeMaterializeBatchAreaShortMapper.class);
+		job.setMapperClass(HolisticTSCubeMaterializeBatchAreaLongMapper.class);
+		job.setCombinerClass(StringTripleBatchAreaCombiner.class);
 		job.setReducerClass(StringTripleBatchAreaReducer.class);
 
 		job.setMapOutputKeyClass(StringTriple.class);
 		job.setMapOutputValueClass(IntWritable.class);
 		
 		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(Text.class);
+		job.setOutputValueClass(IntWritable.class);
 		
 		job.setPartitionerClass(StringTripleTSCubePartitioner.class);
 		job.setSortComparatorClass(StringTripleTSCubeKeyComparator.class);
@@ -53,6 +54,5 @@ public class HolisticTSCubeMaterializeBatchAreaNoCombiner
 		FileOutputFormat.setOutputPath(job, new Path(outputPath));
 		job.waitForCompletion(true);
 	}
-
 
 }

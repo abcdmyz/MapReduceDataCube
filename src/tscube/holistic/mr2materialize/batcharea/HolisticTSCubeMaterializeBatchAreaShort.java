@@ -18,18 +18,18 @@ import datacube.common.datastructure.StringTripleTSCubePartitioner;
 import datacube.common.reducer.StringTripleBatchAreaCombiner;
 import datacube.common.reducer.StringTripleBatchAreaReducer;
 
-public class HolisticTSCubeMaterializeBatchArea 
+public class HolisticTSCubeMaterializeBatchAreaShort 
 {
 	public void run(Configuration conf) throws Exception 
 	{
-		String jobName = "tscube_mr2_batch_" + conf.get("total.interval.number") + "_" + conf.get("dataset") + "_"  + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
+		String jobName = "tscube_mr2_batch_short_" + conf.get("total.interval.number") + "_" + conf.get("dataset") + "_"  + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
 		
 		System.out.println("reducer number:" + Integer.valueOf(conf.get("mapred.reduce.tasks")));
 		
  		Job job = new Job(conf, jobName);
-		job.setJarByClass(HolisticTSCubeMaterializeBatchArea.class);
+		job.setJarByClass(HolisticTSCubeMaterializeBatchAreaShort.class);
 		
-		job.setMapperClass(HolisticTSCubeMaterializeBatchAreaMapper.class);
+		job.setMapperClass(HolisticTSCubeMaterializeBatchAreaShortMapper.class);
 		job.setCombinerClass(StringTripleBatchAreaCombiner.class);
 		job.setReducerClass(StringTripleBatchAreaReducer.class);
 

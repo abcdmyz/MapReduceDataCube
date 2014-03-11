@@ -26,8 +26,10 @@ import topdown.holistic.mr1emitsortedcuboid.text.HolisticTopDownEmitSortedCuboid
 import topdown.holistic.mr1estimatesortedcuboid.stringpair.HolisticTopDownEmitSortedCuboidStringPair;
 import topdown.holistic.mr2pipeline.HolisticTopDownPipeline;
 import tscube.holistic.mr1estimate.allregion.HolisticTSCubeEstimate;
-import tscube.holistic.mr1estimate.batchregion.HolisticTSCubeEstimateBatchRegion;
-import tscube.holistic.mr2materialize.batcharea.HolisticTSCubeMaterializeBatchArea;
+import tscube.holistic.mr1estimate.batchregion.HolisticTSCubeEstimateBatchRegionLong;
+import tscube.holistic.mr1estimate.batchregion.HolisticTSCubeEstimateBatchRegionShort;
+import tscube.holistic.mr2materialize.batcharea.HolisticTSCubeMaterializeBatchAreaLong;
+import tscube.holistic.mr2materialize.batcharea.HolisticTSCubeMaterializeBatchAreaShort;
 import tscube.holistic.mr2materialize.batcharea.HolisticTSCubeMaterializeBatchAreaNoCombiner;
 import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterialize;
 import tscube.holistic.mr2materialize.stringtripple.HolisticTSCubeMaterializeNoCombiner;
@@ -174,10 +176,20 @@ public class DataCubeMain extends Configured implements Tool
 			tsCube2.run(conf);
 			tsCube3.run(conf);
 		}
-		else if (otherArgs[0].equals("tscubeba"))
+		else if (otherArgs[0].equals("tscubeba") || otherArgs[0].equals("tscubebashort"))
 		{
-			HolisticTSCubeEstimateBatchRegion tsCube1 = new HolisticTSCubeEstimateBatchRegion();
-			HolisticTSCubeMaterializeBatchArea tsCube2 = new HolisticTSCubeMaterializeBatchArea();
+			HolisticTSCubeEstimateBatchRegionShort tsCube1 = new HolisticTSCubeEstimateBatchRegionShort();
+			HolisticTSCubeMaterializeBatchAreaShort tsCube2 = new HolisticTSCubeMaterializeBatchAreaShort();
+			HolisticTSCubePostProcess tsCube3 = new HolisticTSCubePostProcess();
+			
+			tsCube1.run(conf);
+			tsCube2.run(conf);
+			tsCube3.run(conf);
+		}
+		else if (otherArgs[0].equals("tscubebalong"))
+		{
+			HolisticTSCubeEstimateBatchRegionLong tsCube1 = new HolisticTSCubeEstimateBatchRegionLong();
+			HolisticTSCubeMaterializeBatchAreaLong tsCube2 = new HolisticTSCubeMaterializeBatchAreaLong();
 			HolisticTSCubePostProcess tsCube3 = new HolisticTSCubePostProcess();
 			
 			tsCube1.run(conf);
@@ -186,15 +198,15 @@ public class DataCubeMain extends Configured implements Tool
 		}
 		else if (otherArgs[0].equals("tscubebamr12"))
 		{
-			HolisticTSCubeEstimateBatchRegion tsCube1 = new HolisticTSCubeEstimateBatchRegion();
-			HolisticTSCubeMaterializeBatchArea tsCube2 = new HolisticTSCubeMaterializeBatchArea();
+			HolisticTSCubeEstimateBatchRegionShort tsCube1 = new HolisticTSCubeEstimateBatchRegionShort();
+			HolisticTSCubeMaterializeBatchAreaShort tsCube2 = new HolisticTSCubeMaterializeBatchAreaShort();
 				
 			tsCube1.run(conf);
 			tsCube2.run(conf);
 		}
 		else if (otherArgs[0].equals("tscubebamr23"))
 		{
-			HolisticTSCubeMaterializeBatchArea tsCube2 = new HolisticTSCubeMaterializeBatchArea();
+			HolisticTSCubeMaterializeBatchAreaShort tsCube2 = new HolisticTSCubeMaterializeBatchAreaShort();
 			HolisticTSCubePostProcess tsCube3 = new HolisticTSCubePostProcess();
 			
 			tsCube2.run(conf);
@@ -202,13 +214,13 @@ public class DataCubeMain extends Configured implements Tool
 		}
 		else if (otherArgs[0].equals("tscubebamr2"))
 		{
-			HolisticTSCubeMaterializeBatchArea tsCube2 = new HolisticTSCubeMaterializeBatchArea();
+			HolisticTSCubeMaterializeBatchAreaShort tsCube2 = new HolisticTSCubeMaterializeBatchAreaShort();
 
 			tsCube2.run(conf);
 		}
 		else if (otherArgs[0].equals("tscubebanc"))
 		{
-			HolisticTSCubeEstimateBatchRegion tsCube1 = new HolisticTSCubeEstimateBatchRegion();
+			HolisticTSCubeEstimateBatchRegionShort tsCube1 = new HolisticTSCubeEstimateBatchRegionShort();
 			HolisticTSCubeMaterializeBatchAreaNoCombiner tsCube2 = new HolisticTSCubeMaterializeBatchAreaNoCombiner();
 			HolisticTSCubePostProcess tsCube3 = new HolisticTSCubePostProcess();
 			
@@ -223,7 +235,7 @@ public class DataCubeMain extends Configured implements Tool
 		}
 		else if (otherArgs[0].equals("tscubebamr1"))
 		{
-			HolisticTSCubeEstimateBatchRegion tsCube1 = new HolisticTSCubeEstimateBatchRegion();
+			HolisticTSCubeEstimateBatchRegionShort tsCube1 = new HolisticTSCubeEstimateBatchRegionShort();
 			tsCube1.run(conf);
 		}
 		else if (otherArgs[0].equals("tscubemr2"))

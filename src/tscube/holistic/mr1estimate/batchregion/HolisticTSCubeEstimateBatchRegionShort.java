@@ -17,16 +17,16 @@ import datacube.common.datastructure.StringPairMRCubeKeyComparator;
 import datacube.common.datastructure.StringPairMRCubePartitioner;
 import datacube.common.reducer.TSCubeMR1EstimateReducer;
 
-public class HolisticTSCubeEstimateBatchRegion 
+public class HolisticTSCubeEstimateBatchRegionShort 
 {
 	public void run(Configuration conf) throws Exception 
 	{
-		String jobName = "tscube_mr1_batch_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
+		String jobName = "tscube_mr1_batch_short_" + conf.get("dataset") + "_" + conf.get("total.tuple.size") + "_" + conf.get("datacube.measure");
 
 		Job job = new Job(conf, jobName);
-		job.setJarByClass(HolisticTSCubeEstimate.class);
+		job.setJarByClass(HolisticTSCubeEstimateBatchRegionShort.class);
 
-		job.setMapperClass(HolisticTSCubeEstimateBatchRegionMapper.class);
+		job.setMapperClass(HolisticTSCubeEstimateBatchRegionShortMapper.class);
 		job.setReducerClass(TSCubeMR1EstimateReducer.class);
 
 		job.setMapOutputKeyClass(StringPair.class);

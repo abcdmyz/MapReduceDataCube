@@ -9,7 +9,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
@@ -17,12 +16,11 @@ import org.apache.hadoop.mapreduce.Mapper.Context;
 import datacube.common.datastructure.BatchArea;
 import datacube.common.datastructure.BatchAreaGenerator;
 import datacube.common.datastructure.CubeLattice;
-import datacube.common.datastructure.StringPair;
 import datacube.common.datastructure.StringTriple;
 import datacube.common.datastructure.Tuple;
 import datacube.configuration.DataCubeParameter;
 
-public class HolisticTSCubeMaterializeBatchAreaMapper extends Mapper<Object, Text, StringTriple, IntWritable> 
+public class HolisticTSCubeMaterializeBatchAreaLongMapper extends Mapper<Object, Text, StringTriple, IntWritable> 
 {
 	private CubeLattice cubeLattice;
 	ArrayList<Tuple<Integer>> regionTupleBag = new ArrayList<Tuple<Integer>>();
@@ -144,13 +142,15 @@ public class HolisticTSCubeMaterializeBatchAreaMapper extends Mapper<Object, Tex
 			if (conf.get("datacube.measure").equals("distinct"))
 			{
 				measureString = DataCubeParameter.getTestDataMeasureString(value.toString(), conf.get("dataset"));
-				boundaryCMPString = batchStartRegionID + "|" + groupPublicKey + "|" + measureString + "|"; 
+				//boundaryCMPString = batchStartRegionID + "|" + groupPublicKey + "|" + measureString + "|"; 
 			}
 			else if (conf.get("datacube.measure").equals("count"))
 			{
 				measureString = DataCubeParameter.getTestDataTupleID(value.toString(), conf.get("dataset"));
-				boundaryCMPString = batchStartRegionID + "|" + groupPublicKey + " " + groupPipeKey + "|" + measureString + "|"; 
+				//boundaryCMPString = batchStartRegionID + "|" + groupPublicKey + " " + groupPipeKey + "|" + measureString + "|"; 
 			}
+			
+			boundaryCMPString = batchStartRegionID + "|" + groupPublicKey + " " + groupPipeKey + "|" + measureString + "|"; 
 			
 			partitionerID = binarySearchPartitionerBoundary(boundaryCMPString);
 			
